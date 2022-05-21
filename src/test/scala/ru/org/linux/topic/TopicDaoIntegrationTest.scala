@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2018 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Bean, Configuration, ImportResource}
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.transaction.PlatformTransactionManager
+import ru.org.linux.auth.IPBlockDao
 import ru.org.linux.edithistory.{EditHistoryDao, EditHistoryService}
 import ru.org.linux.gallery.{ImageDao, ImageService}
 import ru.org.linux.group.GroupDao
@@ -31,8 +33,10 @@ import ru.org.linux.section.{SectionDao, SectionDaoImpl, SectionService}
 import ru.org.linux.spring.SiteConfig
 import ru.org.linux.spring.dao.{DeleteInfoDao, MsgbaseDao}
 import ru.org.linux.topic.TopicDaoIntegrationTest._
-import ru.org.linux.user.{IgnoreListDao, UserDao, UserLogDao, UserService}
+import ru.org.linux.user.{IgnoreListDao, UserDao, UserInvitesDao, UserLogDao, UserService}
 import ru.org.linux.util.bbcode.LorCodeService
+
+import javax.sql.DataSource
 
 @RunWith (classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration (classes = Array (classOf[TopicDaoIntegrationTestConfiguration] ) )
@@ -71,7 +75,7 @@ class TopicDaoIntegrationTestConfiguration {
   def groupDao = new GroupDao()
 
   @Bean
-  def sectionService(sectionDao:SectionDao) = new SectionService(sectionDao)
+  def sectionService(sectionDao: SectionDao) = new SectionService(sectionDao)
 
   @Bean
   def sectionDao = new SectionDaoImpl()
@@ -83,7 +87,13 @@ class TopicDaoIntegrationTestConfiguration {
   def userDao = new UserDao()
 
   @Bean
+  def userInvitesDao(ds: DataSource) = new UserInvitesDao(ds)
+
+  @Bean
   def imageDao = new ImageDao()
+
+  @Bean
+  def ipBlockDao = new IPBlockDao()
 
   @Bean
   def imageService = Mockito.mock(classOf[ImageService])
@@ -92,8 +102,11 @@ class TopicDaoIntegrationTestConfiguration {
   def ignoreListDao = new IgnoreListDao()
 
   @Bean
-  def userService(siteConfig:SiteConfig, userDao:UserDao,
-                  ignoreListDao:IgnoreListDao) = new UserService(siteConfig, userDao, ignoreListDao)
+  def userService(siteConfig: SiteConfig, userDao: UserDao, ignoreListDao: IgnoreListDao,
+                  userInvitesDao: UserInvitesDao, userLogDao: UserLogDao, deleteInfoDao: DeleteInfoDao,
+                  IPBlockDao: IPBlockDao, transactionManager: PlatformTransactionManager) =
+    new UserService(siteConfig, userDao, ignoreListDao, userInvitesDao, userLogDao, deleteInfoDao, IPBlockDao, null,
+      transactionManager)
 
   @Bean
   def userLogDao = Mockito.mock(classOf[UserLogDao])

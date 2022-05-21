@@ -1,12 +1,5 @@
-<%@ page import="org.joda.time.DateTime" %>
-<%@ page contentType="text/html; charset=utf-8" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%--
-  ~ Copyright 1998-2021 Linux.org.ru
+  ~ Copyright 1998-2022 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -19,6 +12,13 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   --%>
+<%@ page import="org.joda.time.DateTime" %>
+<%@ page contentType="text/html; charset=utf-8" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
+<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%--@elvariable id="user" type="ru.org.linux.user.User"--%>
 <%--@elvariable id="userpic" type="ru.org.linux.user.Userpic"--%>
 <%--@elvariable id="userInfo" type="ru.org.linux.user.UserInfo"--%>
@@ -102,6 +102,10 @@
     <div style="margin-bottom: 1em">
         <a href="/people/${user.nick}/edit" class="btn btn-default">Редактировать профиль</a>
         <a href="/people/${user.nick}/settings" class="btn btn-default">Настройки</a>
+
+        <c:if test="${canInvite}">
+            <a href="/create-invite" class="btn btn-default">Пригласить нового участника</a>
+        </c:if>
 
         <form action="logout" method="POST" style="display: inline-block">
             <lor:csrf/>
@@ -195,8 +199,10 @@
 
     <br>
     <c:if test="${banInfo != null}">
-        Блокирован <lor:date date="${banInfo.date}"/>,
-            модератором <lor:user link="true" user="${banInfo.moderator}"/>
+        Блокирован <lor:date date="${banInfo.date}"/>
+            <c:if test="${banInfo.moderator.id != user.id}">
+                модератором <lor:user link="true" user="${banInfo.moderator}"/>
+            </c:if>
             по причине: <c:out escapeXml="true" value="${banInfo.reason}"/>
     </c:if>
 </div>
@@ -225,6 +231,14 @@
     </c:if>
 
     <br>
+
+    <c:if test="${not empty invitedUsers}">
+      <b>Приглашенные пользователи: </b>
+        <c:forEach items="${invitedUsers}" var="u">
+          <lor:user user="${u}" link="true"/><c:out value=" "/>
+        </c:forEach>
+      <br>
+    </c:if>
 
     <b>Score:</b> ${user.score}
     <c:if test="${template.moderatorSession and user.score<50}">
@@ -525,9 +539,12 @@
 
 <h2>Сообщения пользователя</h2>
 <ul>
-    <c:if test="${not empty userStat.topicsBySection}">
+    <c:if test="${not empty userStat.topicsBySection || moderatorOrCurrentUser}">
         <li>
             <a href="/people/${user.nick}/">Темы</a>
+            <c:if test="${moderatorOrCurrentUser}">
+                (<a href="/people/${user.nick}/deleted-topics">удаленные</a>)
+            </c:if>
         </li>
     </c:if>
 

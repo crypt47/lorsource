@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2021 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -90,16 +90,17 @@ public class TopicListDao {
    *
    * @param sectionId номер раздела или 0 для всех премодерируемых
    * @param skipEmptyReason Пропускать темы, удаленные с пустым комментарием
+   * @param includeAnonymous
    * @return список удаленных тем
    */
-  public List<TopicListDto.DeletedTopic> getDeletedTopics(int sectionId, boolean skipEmptyReason) {
+  public List<DeletedTopic> getDeletedTopics(int sectionId, boolean skipEmptyReason, boolean includeAnonymous) {
     StringBuilder query = new StringBuilder();
     List <Object> queryParameters = new ArrayList<>();
 
     query
       .append("SELECT ")
       .append("topics.title as subj, nick, groups.section, topics.id as msgid, ")
-      .append("reason, topics.postdate, del_info.delDate ")
+      .append("reason, topics.postdate, del_info.delDate, bonus ")
       .append("FROM topics,groups,users,sections,del_info ")
       .append("WHERE sections.id=groups.section AND topics.userid=users.id ")
       .append("AND topics.groupid=groups.id AND sections.moderate AND deleted ")
@@ -110,6 +111,10 @@ public class TopicListDao {
       query.append("AND reason!='' ");
     }
 
+    if (!includeAnonymous) {
+      query.append("AND topics.userid != " + User.ANONYMOUS_ID + " ");
+    }
+
     if (sectionId != 0) {
       query.append(" AND section=? ");
       queryParameters.add(sectionId);
@@ -117,11 +122,28 @@ public class TopicListDao {
 
     query.append(" ORDER BY del_info.delDate DESC LIMIT 20");
 
-    return jdbcTemplate.query(
-      query.toString(),
-      queryParameters.toArray(),
-      (rs, rowNum) -> new TopicListDto.DeletedTopic(rs)
-    );
+    return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
+  }
+
+  public List<DeletedTopic> getDeletedUserTopics(User user, int topics) {
+    StringBuilder query = new StringBuilder();
+    List <Object> queryParameters = new ArrayList<>();
+
+    query
+            .append("SELECT ")
+            .append("topics.title as subj, nick, groups.section, topics.id as msgid, ")
+            .append("reason, topics.postdate, del_info.delDate, bonus ")
+            .append("FROM topics,groups,users,del_info ")
+            .append("WHERE topics.userid=users.id ")
+            .append("AND topics.groupid=groups.id AND deleted ")
+            .append("AND del_info.msgid=topics.id ")
+            .append("AND delDate is not null ");
+
+    query.append("AND topics.userid = " + user.getId() + " ");
+
+    query.append(" ORDER BY del_info.delDate DESC LIMIT " + topics);
+
+    return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
   }
 
   /**
@@ -149,6 +171,10 @@ public class TopicListDao {
     if (request.getGroup() != 0) {
       where.append(" AND groupid=:groupId");
       paramsBuilder.put("groupId", request.getGroup());
+    }
+
+    if (!request.isIncludeAnonymous()) {
+      where.append(" AND topics.userid != " + User.ANONYMOUS_ID);
     }
 
     switch (request.getDateLimitType()) {
@@ -219,10 +245,6 @@ public class TopicListDao {
    * @return строка, содержащая условия сортировки
    */
   private static String makeSortOrder(TopicListDto topicListDto) {
-    if (topicListDto.isLastmodSort()) {
-      return "ORDER BY lastmod DESC";
-    }
-
     if (topicListDto.isUserFavs()) {
       return "ORDER BY memories.id DESC";
     }

@@ -3,7 +3,7 @@
 <%@ page import="ru.org.linux.topic.Topic" %>
 <%@ page import="ru.org.linux.topic.TopicPermissionService" %>
 <%--
-  ~ Copyright 1998-2015 Linux.org.ru
+  ~ Copyright 1998-2022 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -52,6 +52,8 @@
     <option <%= postscore==500?"selected":"" %> value="500">500 - пять "звезд"</option>
     <option <%= postscore== TopicPermissionService.POSTSCORE_MOD_AUTHOR?"selected":"" %> value="<%= TopicPermissionService.POSTSCORE_MOD_AUTHOR%>">только для модераторов и автора</option>
     <option <%= postscore== TopicPermissionService.POSTSCORE_MODERATORS_ONLY?"selected":"" %> value="<%= TopicPermissionService.POSTSCORE_MODERATORS_ONLY%>">только для модераторов</option>
+    <option <%= postscore== TopicPermissionService.POSTSCORE_NO_COMMENTS?"selected":"" %> value="<%= TopicPermissionService.POSTSCORE_NO_COMMENTS%>">комментарии запрещены</option>
+    <option <%= postscore== TopicPermissionService.POSTSCORE_HIDE_COMMENTS?"selected":"" %> value="<%= TopicPermissionService.POSTSCORE_HIDE_COMMENTS%>">без комментариев</option>
   </select>
     </label>
 
@@ -60,7 +62,7 @@
   </c:if>
   <label>Удалить из top10 и Telegram <input type=checkbox name="notop" <%= notop?"checked":"" %>></label>
   <div class="form-actions">
-    <button type=submit>Изменить</button>
+    <button type=submit class="btn btn-primary">Изменить</button>
   </div>
 </form>
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

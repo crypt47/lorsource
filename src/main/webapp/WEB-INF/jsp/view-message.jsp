@@ -4,7 +4,7 @@
 <%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
 <%--
-  ~ Copyright 1998-2021 Linux.org.ru
+  ~ Copyright 1998-2022 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -76,12 +76,11 @@
   </c:if>
 
   <c:if test="${not message.expired and not pages.hasNext}">
-    $script('/js/realtime.js', "realtime");
     $script.ready('realtime', function() {
-        startRealtimeWS(${message.id}, "${message.link}", ${lastCommentId}, "${template.WSUrl}");
+        RealtimeContext.setupTopic(${message.id}, "${message.link}", ${lastCommentId})
+        RealtimeContext.start("${template.WSUrl}");
     });
   </c:if>
-
 </script>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
@@ -281,17 +280,15 @@
           var ads = [
               {
                   type: 'rimg',
-                  img728: '/linuxpiter/728x90 Linux.jpg',
-                  img468: '/linuxpiter/468x60 Linux.jpg',
-                  img320: '/linuxpiter/320x100 Linux.jpg',
-                  href: 'https://linuxpiter.com/speakers'
+                  img730: '/adv/linux-banner-730-90.png',
+                  img320: '/adv/linux-banner-320-100.png',
+                  href: 'https://otus.ru/lessons/linux-professional/?utm_source=partners&utm_medium=cpm&utm_campaign=linux&utm_content=kungfu-test&utm_term=linux-org-ru'
               },
               {
                   type: 'rimg',
-                  img728: '/linuxpiter/728x90 PiterPy.jpg',
-                  img468: '/linuxpiter/468x60 PiterPy.jpg',
-                  img320: '/linuxpiter/320x100 PiterPy.jpg',
-                  href: 'https://piterpy.com/speakers'
+                  img730: '/adv/spec-730x90.png',
+                  img320: '/adv/spec-320x100.png',
+                  href: 'https://otus.ru/lessons/linux-specialization/?utm_source=partners&utm_medium=cpm&utm_campaign=spec-linux&utm_content=all-lesson&utm_term=linux-org-ru#broadcast'
               }
           ];
 
@@ -360,7 +357,7 @@
   </div>
 </c:if>
 
-<c:if test="${template.sessionAuthorized && (!message.expired || template.moderatorSession) && !showDeleted && !message.draft}">
+<c:if test="${showDeletedButton}">
     <hr>
     <form action="${message.link}" method=POST>
     <lor:csrf/>

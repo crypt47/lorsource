@@ -1,3 +1,17 @@
+<%--
+  ~ Copyright 1998-2022 Linux.org.ru
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  --%>
 <%@ tag import="com.google.common.net.InternetDomainName" %>
 <%@ tag import="ru.org.linux.group.Group" %>
 <%@ tag import="ru.org.linux.site.Template" %>
@@ -17,20 +31,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
 <%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%--
-  ~ Copyright 1998-2018 Linux.org.ru
-  ~    Licensed under the Apache License, Version 2.0 (the "License");
-  ~    you may not use this file except in compliance with the License.
-  ~    You may obtain a copy of the License at
-  ~
-  ~        http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~    Unless required by applicable law or agreed to in writing, software
-  ~    distributed under the License is distributed on an "AS IS" BASIS,
-  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~    See the License for the specific language governing permissions and
-  ~    limitations under the License.
-  --%>
 <%--@elvariable id="template" type="ru.org.linux.site.Template"--%>
 <c:set var="message" value="${preparedMessage.message}"/>
 
@@ -41,7 +41,7 @@
 %>
 
 <c:set var="commentsLinks">
-  <c:if test="${message.commentCount > 0}">
+  <c:if test="${messageMenu.showComments && message.commentCount > 0}">
   <a href="${message.link}#comments"><lor:comment-count count="${message.commentCount}"/></a><%
       if (pages != 1) {
         int PG_COUNT=3;
@@ -152,7 +152,7 @@
       %>
         <c:choose>
             <c:when test="${not message.commited || not preparedMessage.message.expired}">
-                <lor:poll-form poll="${preparedMessage.poll.poll}" enabled="${!preparedMessage.message.expired}"/>
+                <lor:poll-form poll="${preparedMessage.poll.poll}" enabled="${!preparedMessage.message.expired && message.commited}"/>
             </c:when>
             <c:otherwise>
                 <lor:poll poll="${preparedMessage.poll}"/>
@@ -218,7 +218,7 @@
     </c:if>
 </c:if>
 
-  <c:if test="${message.commentCount>0}">
+  <c:if test="${messageMenu.showComments && message.commentCount>0}">
     (<lor:comment-count count="${message.commentCount}"/>)
   </c:if>
 </article>

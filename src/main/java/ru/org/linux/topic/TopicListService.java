@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2021 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -17,7 +17,6 @@ package ru.org.linux.topic;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.org.linux.group.Group;
 import ru.org.linux.section.Section;
@@ -35,11 +34,14 @@ import java.util.List;
 public class TopicListService {
   private static final Logger logger = LoggerFactory.getLogger(TopicListService.class);
 
-  @Autowired
-  private TagService tagService;
+  private final TagService tagService;
 
-  @Autowired
-  private TopicListDao topicListDao;
+  private final TopicListDao topicListDao;
+
+  public TopicListService(TagService tagService, TopicListDao topicListDao) {
+    this.tagService = tagService;
+    this.topicListDao = topicListDao;
+  }
 
   /**
    * Получение списка топиков.
@@ -55,14 +57,14 @@ public class TopicListService {
    * @throws TagNotFoundException
    */
   public List<Topic> getTopicsFeed(
-    Section section,
-    Group group,
-    String tag,
-    Integer offset,
-    Integer year,
-    Integer month,
-    int count,
-    @Nullable User currentUser
+          Section section,
+          Group group,
+          String tag,
+          Integer offset,
+          Integer year,
+          Integer month,
+          int count,
+          @Nullable User currentUser
   ) throws TagNotFoundException {
     logger.debug(
             "TopicListService.getTopicsFeed()" +
@@ -90,7 +92,7 @@ public class TopicListService {
     }
 
     if (tag != null) {
-      topicListDto.setTag(tagService.getTagId(tag));
+      topicListDto.setTag(tagService.getTagId(tag, false));
     }
 
     if (month != null && year != null) {
@@ -131,9 +133,9 @@ public class TopicListService {
   /**
    * Получение списка топиков пользователя.
    *
-   * @param user       объект пользователя
-   * @param section    секция, из которой выбрать сообщения
-   * @param offset     смещение в результатах выборки
+   * @param user      объект пользователя
+   * @param section   секция, из которой выбрать сообщения
+   * @param offset    смещение в результатах выборки
    * @param favorites true если нужно выбрать избранные сообщения пользователя
    * @return список топиков пользователя
    */
@@ -166,8 +168,8 @@ public class TopicListService {
   /**
    * Получение списка черновиков пользователя.
    *
-   * @param user       объект пользователя
-   * @param offset     смещение в результатах выборки
+   * @param user   объект пользователя
+   * @param offset смещение в результатах выборки
    * @return список топиков пользователя
    */
   public List<Topic> getDrafts(User user, Integer offset) {
@@ -185,20 +187,19 @@ public class TopicListService {
   /**
    * Получение списка топиков для RSS-ленты.
    *
-   * @param section    секция
-   * @param group      группа
-   * @param fromDate   от какой даты получить список
-   * @param noTalks    без Talks
-   * @param tech       только технические
-   * @param feedBurner
+   * @param section  секция
+   * @param group    группа
+   * @param fromDate от какой даты получить список
+   * @param noTalks  без Talks
+   * @param tech     только технические
    * @return список топиков для RSS-ленты
    */
   public List<Topic> getRssTopicsFeed(
-    Section section,
-    Group group,
-    Date fromDate,
-    boolean noTalks,
-    boolean tech
+          Section section,
+          Group group,
+          Date fromDate,
+          boolean noTalks,
+          boolean tech
   ) {
     logger.debug(
             "TopicListService.getRssTopicsFeed()" +
@@ -233,16 +234,7 @@ public class TopicListService {
     return topicListDao.getTopics(topicListDto, null);
   }
 
-  public List<Topic> getAllTopicsFeed(
-    Section section,
-    Date fromDate
-  ) {
-    logger.debug(
-            "TopicListService.getAllTopicsFeed()" +
-                    "; section=" + ((section != null) ? section.toString() : "(null)") +
-                    "; fromDate=" + fromDate
-    );
-
+  public List<Topic> getUncommitedTopic(Section section, Date fromDate, boolean includeAnonymous) {
     TopicListDto topicListDto = new TopicListDto();
     topicListDto.setCommitMode(TopicListDao.CommitMode.UNCOMMITED_ONLY);
     if (section != null) {
@@ -251,12 +243,13 @@ public class TopicListService {
 
     topicListDto.setDateLimitType(TopicListDto.DateLimitType.FROM_DATE);
     topicListDto.setFromDate(fromDate);
+    topicListDto.setIncludeAnonymous(includeAnonymous);
 
     return topicListDao.getTopics(topicListDto, null);
   }
 
-  public List<TopicListDto.DeletedTopic> getDeletedTopics(int sectionId, boolean skipEmptyReason) {
-    return topicListDao.getDeletedTopics(sectionId, skipEmptyReason);
+  public List<DeletedTopic> getDeletedTopics(int sectionId, boolean skipEmptyReason, boolean includeAnonymous) {
+    return topicListDao.getDeletedTopics(sectionId, skipEmptyReason, includeAnonymous);
   }
 
   public List<Topic> getMainPageFeed(boolean showGalleryOnMain, int count, boolean hideMinor) {
@@ -271,7 +264,7 @@ public class TopicListService {
     if (hideMinor) {
       topicListDto.setMiniNewsMode(TopicListDto.MiniNewsMode.MAJOR);
     }
-    
+
     topicListDto.setCommitMode(TopicListDao.CommitMode.COMMITED_ONLY);
 
     if (showGalleryOnMain) {
@@ -308,5 +301,9 @@ public class TopicListService {
 
   public List<Topic> getTopics(TopicListDto topicListDto, @Nullable User currentUser) {
     return topicListDao.getTopics(topicListDto, currentUser);
+  }
+
+  public List<DeletedTopic> getDeletedUserTopics(User user, int topics) {
+    return topicListDao.getDeletedUserTopics(user, topics);
   }
 }

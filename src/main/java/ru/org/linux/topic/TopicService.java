@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2021 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package ru.org.linux.topic;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import ru.org.linux.spring.dao.MessageText;
 import ru.org.linux.tag.TagName;
 import ru.org.linux.user.*;
 import ru.org.linux.util.LorHttpUtils;
+import scala.Tuple2;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +87,7 @@ public class TopicService {
   private MessageTextService textService;
 
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-  public int addMessage(
+  public Tuple2<Integer, Set<Integer>> addMessage(
           HttpServletRequest request,
           AddTopicRequest form,
           MessageText message,
@@ -120,18 +122,22 @@ public class TopicService {
 
     topicTagService.updateTags(msgid, ImmutableList.of(), tags);
 
+    Set<Integer> notified;
+
     if (!previewMsg.isDraft()) {
       if (section.isPremoderated()) {
-        sendEvents(message, msgid, ImmutableList.of(), user.getId());
+        notified = sendEvents(message, msgid, ImmutableList.of(), user.getId());
       } else {
-        sendEvents(message, msgid, tags, user.getId());
+        notified = sendEvents(message, msgid, tags, user.getId());
       }
+    } else {
+      notified = ImmutableSet.of();
     }
 
     String logmessage = "Написана тема " + msgid + ' ' + LorHttpUtils.getRequestIP(request);
     logger.info(logmessage);
 
-    return msgid;
+    return Tuple2.apply(msgid, notified);
   }
 
   /**
@@ -141,7 +147,7 @@ public class TopicService {
    * @param msgid идентификатор сообщения
    * @param author автор сообщения (ему не будет отправлено уведомление)
    */
-  private void sendEvents(MessageText message, int msgid, List<String> tags, int author) {
+  private Set<Integer> sendEvents(MessageText message, int msgid, List<String> tags, int author) {
     Set<Integer> notifiedUsers = userEventService.getNotifiedUsers(msgid);
 
     Set<User> userRefs = textService.mentions(message);
@@ -159,11 +165,18 @@ public class TopicService {
             .collect(Collectors.toSet());
 
     // не оповещать пользователей. которые ранее были оповещены через упоминание
-    Iterable<Integer> tagUsers = userIdListByTags.stream()
+    List<Integer> tagUsers = userIdListByTags.stream()
             .filter(not(or(in(userRefIds), in(notifiedUsers)))).collect(Collectors.toList());
 
     userEventService.addUserRefEvent(userRefIds, msgid);
     userEventService.addUserTagEvent(tagUsers, msgid);
+
+    HashSet<Integer> notified = new HashSet<>();
+
+    notified.addAll(userRefIds);
+    notified.addAll(tagUsers);
+
+    return notified;
   }
 
   /**
@@ -179,11 +192,11 @@ public class TopicService {
       throw new IllegalArgumentException("Некорректное значение bonus");
     }
 
-    if (user.isModerator() && bonus!=0 && user.getId()!=message.getUid() && !message.isDraft()) {
+    if (user.isModerator() && bonus!=0 && user.getId()!=message.getAuthorUserId() && !message.isDraft()) {
       boolean deleted = deleteTopic(message.getId(), user, reason, -bonus);
 
       if (deleted) {
-        userDao.changeScore(message.getUid(), -bonus);
+        userDao.changeScore(message.getAuthorUserId(), -bonus);
       }
     } else {
       deleteTopic(message.getId(), user, reason, 0);
@@ -248,7 +261,7 @@ public class TopicService {
   }
 
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-  public boolean updateAndCommit(
+  public Tuple2<Boolean, Set<Integer>> updateAndCommit(
           Topic newMsg,
           Topic oldMsg,
           User user,
@@ -265,14 +278,18 @@ public class TopicService {
     boolean modified = topicDao.updateMessage(oldMsg, newMsg, user, newTags, newText.text(), imagePreview,
             pollVariants, multiselect);
 
+    Set<Integer> notified;
+
     if (!newMsg.isDraft() && !newMsg.isExpired()) {
       Section section = sectionService.getSection(oldMsg.getSectionId());
 
       if (newTags!=null && sendTagEventsNeeded(section, oldMsg, commit)) {
-        sendEvents(newText, oldMsg.getId(), newTags, oldMsg.getUid());
+        notified = sendEvents(newText, oldMsg.getId(), newTags, oldMsg.getAuthorUserId());
       } else {
-        sendEvents(newText, oldMsg.getId(), ImmutableList.of(), oldMsg.getUid());
+        notified = sendEvents(newText, oldMsg.getId(), ImmutableList.of(), oldMsg.getAuthorUserId());
       }
+    } else {
+      notified = ImmutableSet.of();
     }
 
     if (oldMsg.isDraft() && !newMsg.isDraft()) {
@@ -293,7 +310,7 @@ public class TopicService {
       logger.info("сообщение " + oldMsg.getId() + " исправлено " + user.getNick());
     }
 
-    return modified;
+    return Tuple2.apply(modified, notified);
   }
 
   private void commit(Topic msg, User commiter, int bonus, Map<Integer, Integer> editorBonus) {
@@ -307,7 +324,7 @@ public class TopicService {
 
     topicDao.commit(msg, commiter);
 
-    userDao.changeScore(msg.getUid(), bonus);
+    userDao.changeScore(msg.getAuthorUserId(), bonus);
 
     if (editorBonus!=null) {
       for (Map.Entry<Integer, Integer> entry : editorBonus.entrySet()) {

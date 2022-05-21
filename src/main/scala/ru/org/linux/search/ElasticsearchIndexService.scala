@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2019 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -16,32 +16,32 @@
 package ru.org.linux.search
 
 import com.sksamuel.elastic4s.IndexAndType
-import com.sksamuel.elastic4s.http.ElasticDsl._
 import com.sksamuel.elastic4s.analyzers._
 import com.sksamuel.elastic4s.bulk.{BulkCompatibleRequest, BulkRequest}
 import com.sksamuel.elastic4s.http.ElasticClient
+import com.sksamuel.elastic4s.http.ElasticDsl._
 import com.sksamuel.elastic4s.indexes.IndexRequest
 import com.sksamuel.elastic4s.mappings.{MappingDefinition, TermVector}
 import com.typesafe.scalalogging.StrictLogging
 import org.apache.commons.text.StringEscapeUtils
 import org.joda.time.DateTime
 import org.springframework.stereotype.Service
-import ru.org.linux.comment.{Comment, CommentList, CommentService}
-import ru.org.linux.group.GroupDao
+import ru.org.linux.comment.{Comment, CommentList, CommentReadService}
+import ru.org.linux.group.{Group, GroupDao}
 import ru.org.linux.markup.MessageTextService
 import ru.org.linux.section.SectionService
 import ru.org.linux.spring.dao.MsgbaseDao
-import ru.org.linux.topic.{Topic, TopicDao, TopicTagService}
+import ru.org.linux.topic.{Topic, TopicDao, TopicPermissionService, TopicTagService}
 import ru.org.linux.user.UserDao
 
-import scala.jdk.CollectionConverters._
 import scala.collection.{Seq => MSeq}
+import scala.jdk.CollectionConverters._
 
 object ElasticsearchIndexService {
   val MessageIndex = "messages"
   val MessageType = "message"
 
-  val MessageIndexType = IndexAndType(MessageIndex, MessageType)
+  val MessageIndexType: IndexAndType = IndexAndType(MessageIndex, MessageType)
 
   val COLUMN_TOPIC_AWAITS_COMMIT = "topic_awaits_commit"
 
@@ -75,21 +75,11 @@ object ElasticsearchIndexService {
 }
 
 @Service
-class ElasticsearchIndexService
-(
-  sectionService: SectionService,
-  groupDao: GroupDao,
-  userDao: UserDao,
-  topicTagService: TopicTagService,
-  messageTextService: MessageTextService,
-  msgbaseDao: MsgbaseDao,
-  topicDao: TopicDao,
-  commentService: CommentService,
-  elastic: ElasticClient
-) extends StrictLogging {
+class ElasticsearchIndexService(sectionService: SectionService, groupDao: GroupDao, userDao: UserDao,
+                                topicTagService: TopicTagService, messageTextService: MessageTextService,
+                                msgbaseDao: MsgbaseDao, topicDao: TopicDao, commentService: CommentReadService,
+                                elastic: ElasticClient, topicPermissionService: TopicPermissionService) extends StrictLogging {
   import ElasticsearchIndexService._
-
-  private def isTopicSearchable(msg: Topic) = !msg.isDeleted && !msg.isDraft
 
   private def reindexComments(topic: Topic, comments: CommentList): MSeq[BulkCompatibleRequest] = {
     for (comment <- comments.getList.asScala) yield {
@@ -97,16 +87,18 @@ class ElasticsearchIndexService
         delete(comment.getId.toString) from MessageIndexType
       } else {
         val message = messageTextService.extractPlainText(msgbaseDao.getMessageText(comment.getId))
-        indexOfComment(topic, comment, message)
+        val group = groupDao.getGroup(topic.getGroupId)
+        indexOfComment(topic, comment, message, group)
       }
     }
   }
 
   def reindexMessage(msgid: Int, withComments: Boolean):Unit = {
     val topic = topicDao.getById(msgid)
+    val group = groupDao.getGroup(topic.getGroupId)
 
-    if (isTopicSearchable(topic)) {
-      val topicIndex = indexOfTopic(topic)
+    if (topicPermissionService.isTopicSearchable(topic, group)) {
+      val topicIndex = indexOfTopic(topic, group)
 
       val commentsIndex = if (withComments) {
         reindexComments(topic, commentService.getCommentList(topic, true))
@@ -144,12 +136,13 @@ class ElasticsearchIndexService
     val requests = for (msgid <- comments if msgid != 0) yield {
       val comment = commentService.getById(msgid)
       val topic = topicDao.getById(comment.getTopicId)
+      val group = groupDao.getGroup(topic.getGroupId)
 
-      if (!isTopicSearchable(topic) || comment.isDeleted) {
+      if (!topicPermissionService.isTopicSearchable(topic, group) || comment.isDeleted) {
         delete(comment.getId.toString) from MessageIndexType
       } else {
         val message = messageTextService.extractPlainText(msgbaseDao.getMessageText(comment.getId))
-        indexOfComment(topic, comment, message)
+        indexOfComment(topic, comment, message, group)
       }
     }
 
@@ -189,11 +182,10 @@ class ElasticsearchIndexService
     }
   }
 
-  private def indexOfComment(topic: Topic, comment: Comment, message: String): IndexRequest = {
+  private def indexOfComment(topic: Topic, comment: Comment, message: String, group: Group): IndexRequest = {
     val section = sectionService.getSection(topic.getSectionId)
-    val group = groupDao.getGroup(topic.getGroupId)
     val author = userDao.getUserCached(comment.getUserid)
-    val topicAuthor = userDao.getUserCached(topic.getUid)
+    val topicAuthor = userDao.getUserCached(topic.getAuthorUserId)
 
     val topicTitle = topic.getTitleUnescaped
 
@@ -227,10 +219,9 @@ class ElasticsearchIndexService
     section.isPremoderated && !msg.isCommited
   }
 
-  private def indexOfTopic(topic: Topic): IndexRequest = {
+  private def indexOfTopic(topic: Topic, group: Group): IndexRequest = {
     val section = sectionService.getSection(topic.getSectionId)
-    val group = groupDao.getGroup(topic.getGroupId)
-    val author = userDao.getUserCached(topic.getUid)
+    val author = userDao.getUserCached(topic.getAuthorUserId)
 
     indexInto(MessageIndexType) id topic.getId.toString fields(
       "section" -> section.getUrlName,

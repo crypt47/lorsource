@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2019 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,7 +15,10 @@
 package ru.org.linux.user
 
 import com.typesafe.scalalogging.StrictLogging
+import org.jasypt.util.text.AES256TextEncryptor
+import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.io.ResourceLoader
 import org.springframework.security.authentication.{AuthenticationManager, BadCredentialsException, UsernamePasswordAuthenticationToken}
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -38,25 +41,87 @@ import javax.validation.Valid
 import scala.jdk.CollectionConverters._
 
 @Controller
-class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
-                                       rememberMeServices: RememberMeServices,
-                                       @Qualifier("authenticationManager") authenticationManager: AuthenticationManager,
-                                       userDetailsService: UserDetailsServiceImpl,
-                                       userDao: UserDao,
-                                       emailService: EmailService,
-                                       siteConfig: SiteConfig
-                                      ) extends StrictLogging {
+class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMeServices,
+                         @Qualifier("authenticationManager") authenticationManager: AuthenticationManager,
+                         userDetailsService: UserDetailsServiceImpl, userDao: UserDao, emailService: EmailService,
+                         siteConfig: SiteConfig, userService: UserService, invitesDao: UserInvitesDao,
+                         resourceLoader: ResourceLoader) extends StrictLogging {
+  private val registerRequestValidator = new RegisterRequestValidator(resourceLoader)
+
   @RequestMapping(value = Array("/register.jsp"), method = Array(RequestMethod.GET))
-  def register(@ModelAttribute("form") form: RegisterRequest, response: HttpServletResponse): ModelAndView = {
+  def register(@ModelAttribute("form") form: RegisterRequest, response: HttpServletResponse,
+               request: HttpServletRequest, @RequestParam(required = false) invite: String): ModelAndView = {
     response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
-    new ModelAndView("register")
+
+    if (invite!=null) {
+      val emailOpt = invitesDao.emailFromValidInvite(invite)
+
+      emailOpt match {
+        case None =>
+          throw new AccessViolationException("Код приглашения не действителен")
+        case Some(email) =>
+          form.setEmail(email)
+      }
+      new ModelAndView("register", "invite", invite)
+    } else {
+      if (userService.canRegister(request.getRemoteAddr)) {
+        new ModelAndView("register", "permit", makePermit)
+      } else {
+        new ModelAndView("no-register")
+      }
+    }
+  }
+
+  private def makePermit: String = {
+    val key = siteConfig.getSecret
+    val message = s"permit:${DateTime.now().plusHours(1).getMillis}"
+
+    val textEncryptor = new AES256TextEncryptor
+    textEncryptor.setPassword(key)
+    textEncryptor.encrypt(message)
+  }
+
+  private def checkPermit(permit: String): Boolean = {
+    val key = siteConfig.getSecret
+    val textEncryptor = new AES256TextEncryptor
+    textEncryptor.setPassword(key)
+
+    textEncryptor.decrypt(permit).split(":", 2) match {
+      case Array("permit", date) =>
+        val decodedDate = new DateTime(date.toLong)
+        logger.debug(s"Decoded permit date: ${decodedDate}")
+        decodedDate.isAfterNow
+      case other =>
+        logger.warn(s"Invalid permit - decrypted: $other")
+        false
+    }
   }
 
   @RequestMapping(value = Array("/register.jsp"), method = Array(RequestMethod.POST))
   def doRegister(request: HttpServletRequest, @Valid @ModelAttribute("form") form: RegisterRequest,
-                 errors: Errors): ModelAndView = {
+                 errors: Errors, @RequestParam(required = false) invite: String,
+                 @RequestParam(required = false) permit: String): ModelAndView = {
+    if (invite==null && permit == null) {
+      return new ModelAndView("no-register")
+    } else {
+      if (invite!=null) {
+        val emailOpt = invitesDao.emailFromValidInvite(invite)
+
+        emailOpt match {
+          case None =>
+            throw new AccessViolationException("Код приглашения не действителен")
+          case Some(email) =>
+            form.setEmail(email)
+        }
+      } else if (!checkPermit(permit)) {
+        return new ModelAndView("no-register")
+      }
+    }
+
     if (!errors.hasErrors) {
-      captcha.checkCaptcha(request, errors)
+      if (invite==null) {
+        captcha.checkCaptcha(request, errors)
+      }
 
       if (userDao.isUserExists(form.getNick) || userDao.hasSimilarUsers(form.getNick)) {
         errors.rejectValue("nick", null, "Это имя пользователя уже используется. Пожалуйста выберите другое имя.")
@@ -69,34 +134,25 @@ class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
     }
 
     if (!errors.hasErrors) {
-      ipBlockDao.checkBlockIP(request.getRemoteAddr, errors, null)
-
-      val unactivatedCount = userDao.countUnactivated(request.getRemoteAddr)
-
-      if (unactivatedCount>=3) {
-        logger.warn(s"To many registrations for ${request.getRemoteAddr} (count=$unactivatedCount), rejecting new registration")
-        errors.reject(null, "Превышен лимит регистраций для IP адреса")
-      }
-    }
-
-    if (!errors.hasErrors) {
       val mail = new InternetAddress(form.getEmail.toLowerCase)
-      val userid = userDao.createUser("", form.getNick, form.getPassword, "", mail, "", request.getRemoteAddr)
+      val userid = userService.createUser("", form.getNick, form.getPassword, "", mail, "",
+        request.getRemoteAddr, Option(invite))
 
       logger.info(s"Зарегистрирован пользователь ${form.getNick} (id=$userid) ${LorHttpUtils.getRequestIP(request)}")
 
-      emailService.sendEmail(form.getNick, mail.getAddress, isNew = true)
+      emailService.sendRegistrationEmail(form.getNick, mail.getAddress, isNew = true)
 
       new ModelAndView(
         "action-done",
         "message",
         "Добавление пользователя прошло успешно. Ожидайте письма с кодом активации.")
     } else {
-      new ModelAndView("register")
+      val params = Map("invite" -> invite, "permit" -> permit)
+      new ModelAndView("register", params.asJava)
     }
   }
 
-  private def formParams(nick: String, activation: String) = {
+  private def activationFormParams(nick: String, activation: String) = {
     val nickSanitized = Option(nick).filter(StringUtil.checkLoginName).orNull
     val activationSanitized = Option(activation).filter(_.forall(_.isLetterOrDigit)).orNull
 
@@ -109,7 +165,7 @@ class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
   @RequestMapping(value = Array("/activate", "/activate.jsp"), method = Array(RequestMethod.GET))
   def activateForm(@RequestParam(required = false) nick: String,
                    @RequestParam(required = false) activation: String): ModelAndView = {
-    new ModelAndView("activate", formParams(nick, activation).asJava)
+    new ModelAndView("activate", activationFormParams(nick, activation).asJava)
   }
 
   @RequestMapping(value = Array("/activate", "/activate.jsp"), method = Array(RequestMethod.POST), params = Array("action"))
@@ -141,7 +197,7 @@ class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
 
           new ModelAndView(new RedirectView("/"))
         } else {
-          val params = formParams(nick, activation) + ("error" -> "Неправильный код активации")
+          val params = activationFormParams(nick, activation) + ("error" -> "Неправильный код активации")
           new ModelAndView("activate", params.asJava)
         }
       } else {
@@ -149,10 +205,10 @@ class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
       }
     } catch {
       case _: UsernameNotFoundException =>
-        val params = formParams(nick, activation) + ("error" -> "Пользователь не найден")
+        val params = activationFormParams(nick, activation) + ("error" -> "Пользователь не найден")
         new ModelAndView("activate", params.asJava)
       case _: BadCredentialsException =>
-        val params = formParams(nick, activation) + ("error" -> "Неправильный логин или пароль")
+        val params = activationFormParams(nick, activation) + ("error" -> "Неправильный логин или пароль")
         new ModelAndView("activate", params.asJava)
     }
   }
@@ -174,7 +230,7 @@ class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
     val regcode = user.getActivationCode(siteConfig.getSecret, newEmail)
 
     if (!regcode.equalsIgnoreCase(activation)) {
-      val params = formParams(user.getNick, activation) + ("error" -> "Неправильный код активации")
+      val params = activationFormParams(user.getNick, activation) + ("error" -> "Неправильный код активации")
 
       new ModelAndView("activate", params.asJava)
     } else {
@@ -202,7 +258,55 @@ class RegisterController(captcha: CaptchaService, ipBlockDao: IPBlockDao,
 
   @InitBinder(Array("form"))
   def requestValidator(binder: WebDataBinder):Unit = {
-    binder.setValidator(new RegisterRequestValidator)
+    binder.setValidator(registerRequestValidator)
     binder.setBindingErrorProcessor(new ExceptionBindingErrorProcessor)
+  }
+
+  @RequestMapping(value = Array("create-invite"), method = Array(RequestMethod.GET))
+  def createInviteForm(request: HttpServletRequest): ModelAndView = {
+    val tmpl = Template.getTemplate(request)
+
+    if (!tmpl.isSessionAuthorized) {
+      throw new AccessViolationException("Not authorized")
+    }
+
+    val currentUser = tmpl.getCurrentUser
+
+    if (!userService.canInvite(currentUser)) {
+      throw new AccessViolationException("Вы не можете пригласить нового пользователя")
+    }
+
+    new ModelAndView("create-invite")
+  }
+
+  @RequestMapping(value = Array("create-invite"), method = Array(RequestMethod.POST))
+  def createInvite(request: HttpServletRequest, @RequestParam email: String): ModelAndView = {
+    val tmpl = Template.getTemplate(request)
+
+    if (!tmpl.isSessionAuthorized) {
+      throw new AccessViolationException("Not authorized")
+    }
+
+    val currentUser = tmpl.getCurrentUser
+
+    if (!userService.canInvite(currentUser)) {
+      throw new AccessViolationException("Вы не можете пригласить нового пользователя")
+    }
+
+    if (userDao.getByEmail(email, false) != null) {
+      throw new AccessViolationException("Пользователь с этим адресом уже зарегистрирован")
+    }
+
+    val parsedEmail = new InternetAddress(email)
+
+    if (!registerRequestValidator.isGoodDomainEmail(parsedEmail)) {
+      throw new AccessViolationException("Некорректный email домен")
+    }
+
+    val (token, validUntil) = invitesDao.createInvite(currentUser, email)
+
+    emailService.sendInviteEmail(currentUser, email, token, validUntil)
+
+    new ModelAndView("action-done", "message", s"Приглашение отправлено по адресу $email")
   }
 }

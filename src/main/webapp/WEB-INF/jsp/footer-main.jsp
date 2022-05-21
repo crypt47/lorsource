@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=utf-8"%>
 <%--
-  ~ Copyright 1998-2020 Linux.org.ru
+  ~ Copyright 1998-2022 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -22,7 +22,7 @@
     <a href="/about">О Сервере</a> -
     <a href="/help/rules.md">Правила форума</a><br>
 
-  Разработка и&nbsp;поддержка&nbsp;&#8212; <a href="/people/maxcom/profile">Максим Валянский</a> 1998&ndash;2021  <br>
+  Разработка и&nbsp;поддержка&nbsp;&#8212; <a href="/people/maxcom/profile">Максим Валянский</a> 1998&ndash;2022  <br>
   Сервер для сайта предоставлен &laquo;<a href="http://www.ittelo.ru/" target="_blank">ITTelo</a>&raquo;<br>
   Размещение сервера и&nbsp;подключение к&nbsp;сети Интернет осуществляется компанией
     &laquo;<a href="https://selectel.ru/?ref_code=3dce4333ba" target="_blank">Selectel</a>&raquo;.
@@ -42,6 +42,14 @@
     ga.src = 'https://ssl.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
+</script>
+
+<script type="text/javascript">
+  <c:if test="${template.sessionAuthorized}">
+    $script.ready('realtime', function() {
+      RealtimeContext.start("${template.WSUrl}");
+    });
+  </c:if>
 </script>
 
 </div>

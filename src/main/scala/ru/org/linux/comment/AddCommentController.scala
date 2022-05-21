@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2019 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -42,7 +42,7 @@ import scala.jdk.CollectionConverters._
 
 @Controller
 class AddCommentController(ipBlockDao: IPBlockDao, commentPrepareService: CommentPrepareService,
-                           commentService: CommentService, topicPermissionService: TopicPermissionService,
+                           commentService: CommentCreateService, topicPermissionService: TopicPermissionService,
                            topicPrepareService: TopicPrepareService, searchQueueSender: SearchQueueSender,
                            @Qualifier("realtimeHubWS") realtimeHubWS: ActorRef, textService: MessageTextService) {
 
@@ -146,11 +146,12 @@ class AddCommentController(ipBlockDao: IPBlockDao, commentPrepareService: Commen
 
       new ModelAndView("add_comment", (commentService.prepareReplyto(add).asScala ++ info).asJava)
     } else {
-      val msgid = commentService.create(user, comment, msg, request.getRemoteAddr, request.getHeader("X-Forwarded-For"),
+      val (msgid, mentions) = commentService.create(user, comment, msg, request.getRemoteAddr, request.getHeader("X-Forwarded-For"),
         Optional.ofNullable(request.getHeader("user-agent")))
 
       searchQueueSender.updateComment(msgid)
       realtimeHubWS ! RealtimeEventHub.NewComment(comment.getTopicId, msgid)
+      realtimeHubWS ! RealtimeEventHub.RefreshEvents(mentions.asScala.map(_.toInt).toSet)
 
       new ModelAndView(new RedirectView(add.getTopic.getLink + "?cid=" + msgid))
     }
@@ -182,12 +183,13 @@ class AddCommentController(ipBlockDao: IPBlockDao, commentPrepareService: Commen
         Map("errors" -> errorsList.asJava)
       }
     } else {
-      val msgid = commentService.create(user, comment, msg, request.getRemoteAddr, request.getHeader("X-Forwarded-For"),
+      val (msgid, mentions) = commentService.create(user, comment, msg, request.getRemoteAddr, request.getHeader("X-Forwarded-For"),
         Optional.ofNullable(request.getHeader("user-agent")))
 
       searchQueueSender.updateComment(msgid)
 
       realtimeHubWS ! RealtimeEventHub.NewComment(comment.getTopicId, msgid)
+      realtimeHubWS ! RealtimeEventHub.RefreshEvents(mentions.asScala.map(_.toInt).toSet)
 
       Map("url" -> (add.getTopic.getLink + "?cid=" + msgid))
     }).asJava

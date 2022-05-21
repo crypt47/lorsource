@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2021 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -16,13 +16,10 @@
 package ru.org.linux.comment;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +30,8 @@ import ru.org.linux.auth.FloodProtector;
 import ru.org.linux.auth.IPBlockDao;
 import ru.org.linux.auth.IPBlockInfo;
 import ru.org.linux.csrf.CSRFProtectionService;
-import ru.org.linux.edithistory.EditHistoryRecord;
 import ru.org.linux.edithistory.EditHistoryObjectTypeEnum;
+import ru.org.linux.edithistory.EditHistoryRecord;
 import ru.org.linux.edithistory.EditHistoryService;
 import ru.org.linux.markup.MessageTextService;
 import ru.org.linux.site.MessageNotFoundException;
@@ -46,61 +43,54 @@ import ru.org.linux.topic.TopicDao;
 import ru.org.linux.topic.TopicPermissionService;
 import ru.org.linux.user.*;
 import ru.org.linux.util.ExceptionBindingErrorProcessor;
+import scala.Tuple2;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyEditorSupport;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class CommentService {
-  private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
+public class CommentCreateService {
+  private static final Logger logger = LoggerFactory.getLogger(CommentCreateService.class);
 
-  @Autowired
-  private CommentDao commentDao;
+  private final CommentDao commentDao;
+  private final TopicDao topicDao;
+  private final UserDao userDao;
+  private final UserService userService;
+  private final CaptchaService captcha;
+  private final CommentPrepareService commentPrepareService;
+  private final FloodProtector floodProtector;
+  private final MessageTextService textService;
+  private final UserEventService userEventService;
+  private final MsgbaseDao msgbaseDao;
+  private final IgnoreListDao ignoreListDao;
+  private final EditHistoryService editHistoryService;
+  private final TopicPermissionService permissionService;
 
-  @Autowired
-  private TopicDao topicDao;
-
-  @Autowired
-  private UserDao userDao;
-
-  @Autowired
-  private UserService userService;
-
-  @Autowired
-  private CaptchaService captcha;
-
-  @Autowired
-  private CommentPrepareService commentPrepareService;
-
-  @Autowired
-  private FloodProtector floodProtector;
-
-  @Autowired
-  private MessageTextService textService;
-
-  @Autowired
-  private UserEventService userEventService;
-
-  @Autowired
-  private MsgbaseDao msgbaseDao;
-
-  @Autowired
-  private IgnoreListDao ignoreListDao;
-
-  @Autowired
-  private EditHistoryService editHistoryService;
-
-  @Autowired
-  private TopicPermissionService permissionService;
-
-  private final Cache<Integer, CommentList> cache =
-          CacheBuilder.newBuilder()
-          .maximumSize(10000)
-          .build();
+  public CommentCreateService(UserDao userDao, CommentDao commentDao, TopicDao topicDao, UserService userService,
+                              CaptchaService captcha, CommentPrepareService commentPrepareService,
+                              FloodProtector floodProtector, EditHistoryService editHistoryService,
+                              MessageTextService textService, UserEventService userEventService, MsgbaseDao msgbaseDao,
+                              IgnoreListDao ignoreListDao, TopicPermissionService permissionService) {
+    this.userDao = userDao;
+    this.commentDao = commentDao;
+    this.topicDao = topicDao;
+    this.userService = userService;
+    this.captcha = captcha;
+    this.commentPrepareService = commentPrepareService;
+    this.floodProtector = floodProtector;
+    this.editHistoryService = editHistoryService;
+    this.textService = textService;
+    this.userEventService = userEventService;
+    this.msgbaseDao = msgbaseDao;
+    this.ignoreListDao = ignoreListDao;
+    this.permissionService = permissionService;
+  }
 
   public void requestValidator(WebDataBinder binder) {
     binder.setValidator(new CommentRequestValidator());
@@ -290,7 +280,7 @@ public class CommentService {
     }
   }
 
-  /**
+   /**
    * Создание нового комментария.
    *
    *
@@ -299,10 +289,10 @@ public class CommentService {
    * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
    * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
    * @param userAgent      заголовок User-Agent запроса
-   * @return идентификационный номер нового комментария
+   * @return идентификационный номер нового комментария + список пользователей у которых появились события
    */
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-  public int create(
+  public Tuple2<Integer, List<Integer>> create(
           @Nonnull User author,
           @Nonnull Comment comment,
           MessageText commentBody,
@@ -311,43 +301,68 @@ public class CommentService {
           Optional<String> userAgent) throws MessageNotFoundException {
     Preconditions.checkArgument(comment.getUserid() == author.getId());
 
+    ImmutableList.Builder<Integer> notifyUsers = ImmutableList.builder();
+
     int commentId = commentDao.saveNewMessage(comment, userAgent);
     msgbaseDao.saveNewMessage(commentBody, commentId);
 
-    /* кастование пользователей */
     if (permissionService.isUserCastAllowed(author)) {
-      Set<User> userRefs = textService.mentions(commentBody);
-      userRefs = userRefs.stream()
-              .filter(p -> !userService.isIgnoring(p.getId(), author.getId()))
-              .collect(Collectors.toSet());
-      userEventService.addUserRefEvent(userRefs, comment.getTopicId(), commentId);
+      Set<User> mentions = notifyMentions(author, comment, commentBody, commentId);
+
+      notifyUsers.addAll(mentions.stream().map(User::getId).iterator());
     }
 
-    /* оповещение об ответе на коммент */
+    Optional<Comment> parentCommentOpt;
+
     if (comment.getReplyTo() != 0) {
       Comment parentComment = commentDao.getById(comment.getReplyTo());
 
-      if (parentComment.getUserid() != comment.getUserid()) {
-        User parentAuthor = userDao.getUserCached(parentComment.getUserid());
+      Optional<User> mention = notifyReply(comment, commentId, parentComment);
 
-        if (!parentAuthor.isAnonymous()) {
-          Set<Integer> ignoreList = ignoreListDao.get(parentAuthor);
+      mention.ifPresent(user -> notifyUsers.add(user.getId()));
 
-          if (!ignoreList.contains(comment.getUserid())) {
-            userEventService.addReplyEvent(
-                    parentAuthor,
-                    comment.getTopicId(),
-                    commentId
-            );
-          }
-        }
-      }
+      parentCommentOpt = Optional.of(parentComment);
+    } else {
+      parentCommentOpt = Optional.empty();
     }
+
+    List<Integer> commentNotified = userEventService.insertCommentWatchNotification(comment, parentCommentOpt, commentId);
+    notifyUsers.addAll(commentNotified);
 
     String logMessage = makeLogString("Написан комментарий " + commentId, remoteAddress, xForwardedFor);
     logger.info(logMessage);
 
-    return commentId;
+    return Tuple2.apply(commentId, notifyUsers.build());
+  }
+
+  /* оповещение об ответе на коммент */
+  private Optional<User> notifyReply(Comment comment, int commentId, Comment parentComment) {
+    if (parentComment.getUserid() != comment.getUserid()) {
+      User parentAuthor = userDao.getUserCached(parentComment.getUserid());
+
+      if (!parentAuthor.isAnonymous()) {
+        Set<Integer> ignoreList = ignoreListDao.get(parentAuthor);
+
+        if (!ignoreList.contains(comment.getUserid())) {
+          userEventService.addReplyEvent(parentAuthor, comment.getTopicId(), commentId);
+          return Optional.of(parentAuthor);
+        }
+      }
+    }
+
+    return Optional.empty();
+  }
+
+  /* кастование пользователей */
+  private Set<User> notifyMentions(User author, Comment comment, MessageText commentBody, int commentId) {
+    Set<User> userRefs = textService.mentions(commentBody);
+    userRefs = userRefs.stream()
+            .filter(p -> !userService.isIgnoring(p.getId(), author.getId()))
+            .collect(Collectors.toSet());
+
+    userEventService.addUserRefEvent(userRefs, comment.getTopicId(), commentId);
+
+    return userRefs;
   }
 
   /**
@@ -401,27 +416,6 @@ public class CommentService {
   }
 
   /**
-   * Проверка, имеет ли указанный комментарий ответы.
-   *
-   * @param comment  объект комментария
-   * @return true если есть ответы, иначе false
-   */
-  public boolean isHaveAnswers(@Nonnull Comment comment) {
-    return commentDao.getReplaysCount(comment.getId())>0;
-  }
-
-  /**
-   * Получить объект комментария по идентификационному номеру
-   *
-   * @param id идентификационный номер комментария
-   * @return объект комментария
-   * @throws MessageNotFoundException если комментарий не найден
-   */
-  public Comment getById(int id) throws MessageNotFoundException {
-    return commentDao.getById(id);
-  }
-
-  /**
    * Добавить элемент истории для комментария.
    *
    * @param editor              пользователь, изменивший комментарий
@@ -472,39 +466,6 @@ public class CommentService {
   }
 
   /**
-   * Список комментариев топика.
-   *
-   * @param topic       топик
-   * @param showDeleted вместе с удаленными
-   * @return список комментариев топика
-   */
-  @Nonnull
-  public CommentList getCommentList(@Nonnull Topic topic, boolean showDeleted) {
-    if (showDeleted) {
-      return new CommentList(commentDao.getCommentList(topic.getId(), true), topic.getLastModified().getTime());
-    } else {
-      CommentList commentList = cache.getIfPresent(topic.getId());
-
-      if (commentList == null || commentList.getLastmod() < topic.getLastModified().getTime()) {
-        commentList = new CommentList(commentDao.getCommentList(topic.getId(), false), topic.getLastModified().getTime());
-        cache.put(topic.getId(), commentList);
-      }
-
-      return commentList;
-    }
-  }
-
-  /**
-   * Получить список последних удалённых комментариев пользователя.
-   *
-   * @param user  объект пользователя
-   * @return список удалённых комментариев пользователя
-   */
-  public List<CommentsListItem> getDeletedComments(User user) {
-    return commentDao.getDeletedComments(user.getId());
-  }
-
-  /**
    * Формирование строки в лог-файл.
    *
    * @param message        сообщение
@@ -527,32 +488,5 @@ public class CommentService {
     }
 
     return logMessage.toString();
-  }
-
-  @Nonnull
-  public Set<Integer> makeHideSet(
-          CommentList comments,
-          int filterChain,
-          @Nonnull Set<Integer> ignoreList
-  ) throws SQLException, UserNotFoundException {
-    if (filterChain == CommentFilter.FILTER_NONE) {
-      return ImmutableSet.of();
-    }
-
-    Set<Integer> hideSet = new HashSet<>();
-
-    /* hide anonymous */
-    if ((filterChain & CommentFilter.FILTER_ANONYMOUS) > 0) {
-      comments.getRoot().hideAnonymous(userDao, hideSet);
-    }
-
-    /* hide ignored */
-    if ((filterChain & CommentFilter.FILTER_IGNORED) > 0) {
-      if (!ignoreList.isEmpty()) {
-        comments.getRoot().hideIgnored(hideSet, ignoreList);
-      }
-    }
-
-    return hideSet;
   }
 }

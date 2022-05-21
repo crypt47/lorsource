@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2021 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -17,6 +17,7 @@ package ru.org.linux.user;
 
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.password.PasswordEncryptor;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.internet.InternetAddress;
 import javax.sql.DataSource;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -57,11 +60,6 @@ public class UserDao {
   private static final String queryUserById = "SELECT id,nick,score,max_score,candel,canmod,corrector,passwd,blocked,activated,photo,email,name,unread_events,style,frozen_until,frozen_by,freezing_reason FROM users where id=?";
   private static final String queryUserIdByNick = "SELECT id FROM users where nick=?";
   private static final String updateUserStyle = "UPDATE users SET style=? WHERE id=?";
-
-  private static final String queryNewUsers = "SELECT id FROM users where " +
-                                                "regdate IS NOT null " +
-                                                "AND regdate > CURRENT_TIMESTAMP - interval '3 days' " +
-                                              "ORDER BY regdate";
 
   private static final String queryBanInfoClass = "SELECT * FROM ban_info WHERE userid=?";
 
@@ -190,7 +188,24 @@ public class UserDao {
    * @return список новых пользователей
    */
   public List<Integer> getNewUserIds() {
-    return jdbcTemplate.queryForList(queryNewUsers, Integer.class);
+    return jdbcTemplate.queryForList("SELECT id FROM users where " +
+                                                  "regdate IS NOT null " +
+                                                  "AND regdate > CURRENT_TIMESTAMP - interval '3 days' " +
+                                                "ORDER BY regdate", Integer.class);
+  }
+
+  public List<Tuple2<Integer, DateTime>> getFrozenUserIds() {
+    return jdbcTemplate.query("SELECT id, lastlogin FROM users where " +
+            "frozen_until > CURRENT_TIMESTAMP and not blocked " +
+            "ORDER BY frozen_until",
+            (rs, rowNum) -> Tuple2.apply(rs.getInt("id"), new DateTime(rs.getTimestamp("lastlogin").getTime())));
+  }
+
+  public List<Tuple2<Integer, DateTime>> getUnFrozenUserIds() {
+    return jdbcTemplate.query("SELECT id, lastlogin FROM users where " +
+                    "frozen_until < CURRENT_TIMESTAMP and frozen_until > CURRENT_TIMESTAMP - '3 days'::interval and not blocked " +
+                    "ORDER BY frozen_until",
+            (rs, rowNum) -> Tuple2.apply(rs.getInt("id"), new DateTime(rs.getTimestamp("lastlogin").getTime())));
   }
 
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -480,7 +495,7 @@ public class UserDao {
     setUserInfo(user.getId(), info);
   }
 
-  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
   public int createUser(
           String name,
           String nick,
@@ -506,8 +521,6 @@ public class UserDao {
             mail.getAddress(),
             town
     );
-
-    userLogDao.logRegister(userid, ip);
 
     return userid;
   }

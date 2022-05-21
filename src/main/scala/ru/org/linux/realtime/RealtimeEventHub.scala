@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2019 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,34 +15,37 @@
 
 package ru.org.linux.realtime
 
-import java.io.IOException
-
-import akka.NotUsed
+import akka.Done
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, PoisonPill, Props, SupervisorStrategy, Terminated, Timers}
 import akka.pattern.ask
 import akka.util.Timeout
+import com.google.common.collect.ImmutableList
 import com.typesafe.scalalogging.StrictLogging
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.security.authentication.RememberMeAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.config.annotation.{EnableWebSocket, WebSocketConfigurer, WebSocketHandlerRegistry}
 import org.springframework.web.socket.handler.TextWebSocketHandler
 import org.springframework.web.socket.{CloseStatus, PingMessage, TextMessage, WebSocketSession}
-import ru.org.linux.comment.CommentService
-import ru.org.linux.realtime.RealtimeEventHub.{NewComment, SessionTerminated, Subscribe, Tick}
+import ru.org.linux.auth.UserDetailsImpl
+import ru.org.linux.comment.{CommentList, CommentReadService}
+import ru.org.linux.realtime.RealtimeEventHub._
 import ru.org.linux.spring.SiteConfig
-import ru.org.linux.topic.TopicDao
+import ru.org.linux.topic.{TopicDao, TopicPermissionService}
 
-import scala.jdk.CollectionConverters._
+import java.io.IOException
 import scala.collection.mutable
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext}
+import scala.jdk.CollectionConverters._
 import scala.util.control.NonFatal
 
 // TODO ignore list support
 // TODO fix face conditions on simultaneous posting comment, subscription and missing processing
 class RealtimeEventHub extends Actor with ActorLogging with Timers {
-  private val data = new mutable.HashMap[Int, mutable.Set[ActorRef]] with mutable.MultiMap[Int, ActorRef]
+  private val topicSubscriptions: mutable.MultiDict[Int, ActorRef] = mutable.MultiDict[Int, ActorRef]()
+  private val userSubscriptions: mutable.MultiDict[Int, ActorRef] = mutable.MultiDict[Int, ActorRef]()
   private val sessions = new mutable.HashMap[String, ActorRef]
   private var maxDataSize: Int = 0
 
@@ -51,15 +54,15 @@ class RealtimeEventHub extends Actor with ActorLogging with Timers {
   override def supervisorStrategy = SupervisorStrategy.stoppingStrategy
 
   override def receive: Receive = {
-    case Subscribe(session, _) if sessions.contains(session.getId) =>
-      log.warning(s"Session ${session.getId} already subscribed")
-    case Subscribe(session, topic) =>
+    case SessionStarted(session, user) if !sessions.contains(session.getId) =>
       val actor = context.actorOf(RealtimeSessionActor.props(session))
-
       context.watch(actor)
 
-      data.addBinding(topic, actor)
       sessions += (session.getId -> actor)
+
+      user.foreach { user =>
+        userSubscriptions += (user -> actor)
+      }
 
       val dataSize = context.children.size
 
@@ -67,19 +70,26 @@ class RealtimeEventHub extends Actor with ActorLogging with Timers {
         maxDataSize = dataSize
       }
 
-      sender() ! NotUsed
+      sender() ! Done
+    case SubscribeTopic(session, topic) if sessions.contains(session.getId) =>
+      val actor = sessions(session.getId)
+
+      topicSubscriptions += (topic -> actor)
+
+      sender() ! Done
     case Terminated(actorRef) =>
       log.debug(s"RealtimeSessionActor $actorRef terminated")
 
-      data.find(_._2.contains(actorRef)) match {
-        case Some((msgid, _)) =>
-          log.debug(s"Removed $actorRef")
-          data.removeBinding(msgid, actorRef)
-        case None =>
-          log.warning(s"Unknown actor was terminated $actorRef")
+      topicSubscriptions.sets.find(_._2.contains(actorRef)).foreach { case (msgid, _) =>
+        topicSubscriptions -= (msgid -> actorRef)
+      }
+
+      userSubscriptions.sets.find(_._2.contains(actorRef)).foreach { case (user, _) =>
+        userSubscriptions -= (user -> actorRef)
       }
 
       sessions.find(_._2 == actorRef).foreach { f =>
+        log.debug(s"Removed $actorRef")
         sessions.remove(f._1)
       }
     case SessionTerminated(id) =>
@@ -91,8 +101,14 @@ class RealtimeEventHub extends Actor with ActorLogging with Timers {
     case msg@NewComment(msgid, _) =>
       log.debug(s"New comment in topic $msgid")
 
-      data.getOrElse(msgid, Set.empty).foreach {
+      topicSubscriptions.sets.getOrElse(msgid, Set.empty).foreach {
         _ ! msg
+      }
+    case msg@RefreshEvents(users) =>
+      users.foreach { user =>
+        userSubscriptions.sets.getOrElse(user, Set.empty).foreach {
+          _ ! msg
+        }
       }
     case Tick =>
       log.info(s"Realtime hub: maximum number connections was $maxDataSize")
@@ -101,30 +117,43 @@ class RealtimeEventHub extends Actor with ActorLogging with Timers {
 }
 
 object RealtimeEventHub {
-  case class GetEmmiterForTopic(msgid: Int, missedComments: Vector[Int])
   case class NewComment(msgid: Int, cid: Int)
+  case class RefreshEvents(users: Set[Int])
   case object Tick
 
-  case class Subscribe(session: WebSocketSession, topic: Int)
+  case class SessionStarted(session: WebSocketSession, user: Option[Int])
+  case class SubscribeTopic(session: WebSocketSession, topic: Int)
   case class SessionTerminated(session: String)
 
-  def props = Props(new RealtimeEventHub())
+  def props: Props = Props(new RealtimeEventHub())
+
+  private[realtime] def notifyComment(session: WebSocketSession, comment: Int): Unit = {
+    session.sendMessage(new TextMessage(s"comment $comment"))
+  }
+
+  private[realtime] def notifyEvent(session: WebSocketSession): Unit = {
+    session.sendMessage(new TextMessage(s"events-refresh"))
+  }
+
+  def notifyEvents(realtimeEventHub: ActorRef, users: java.lang.Iterable[Integer]): Unit = {
+    realtimeEventHub ! RefreshEvents(users.asScala.map(_.toInt).toSet)
+  }
 }
 
-class RealtimeSessionActor(session: WebSocketSession) extends Actor with ActorLogging {
+class RealtimeSessionActor(session: WebSocketSession) extends Actor with ActorLogging with Timers {
   private implicit val ec: ExecutionContext = context.dispatcher
-  private val schedule = context.system.scheduler.schedule(5.seconds, 1.minute, self, Tick)
-
-  private def notifyComment(comment: Int): Unit = {
-    session.sendMessage(new TextMessage(comment.toString))
-  }
+  timers.startTimerWithFixedDelay(Tick, Tick, initialDelay = 5.seconds, delay = 1.minute)
 
   override def receive: Receive = {
     case NewComment(_, cid) =>
       try {
-        notifyComment(cid)
+        notifyComment(session, cid)
       } catch handleExceptions
 
+    case RefreshEvents(_) =>
+      try {
+        notifyEvent(session)
+      } catch handleExceptions
     case Tick =>
       log.debug("Sending keepalive")
       try {
@@ -140,7 +169,6 @@ class RealtimeSessionActor(session: WebSocketSession) extends Actor with ActorLo
 
   @scala.throws[Exception](classOf[Exception])
   override def postStop(): Unit = {
-    schedule.cancel()
     session.close()
   }
 }
@@ -151,13 +179,28 @@ object RealtimeSessionActor {
 
 @Service
 class RealtimeWebsocketHandler(@Qualifier("realtimeHubWS") hub: ActorRef,
-                               topicDao: TopicDao, commentService: CommentService) extends TextWebSocketHandler
+                               topicDao: TopicDao, commentService: CommentReadService) extends TextWebSocketHandler
   with StrictLogging {
 
   private implicit val Timeout: Timeout = 30.seconds
 
   override def afterConnectionEstablished(session: WebSocketSession): Unit = {
-    logger.debug(s"Connected!")
+    try {
+      val currentUser =
+        Option(session.getPrincipal)
+          .collect { case token: RememberMeAuthenticationToken if token.isAuthenticated => token.getPrincipal }
+          .collect { case user: UserDetailsImpl => user.getUser }
+
+      logger.debug(s"Connected! currentUser=${currentUser.map(_.getNick)}")
+
+      val result = hub ? SessionStarted(session, currentUser.map(_.getId))
+
+      Await.result(result, 10.seconds)
+    } catch {
+      case NonFatal(e) =>
+        logger.warn("WS request failed", e)
+        session.close(CloseStatus.SERVER_ERROR)
+    }
   }
 
   override def handleTextMessage(session: WebSocketSession, message: TextMessage): Unit = {
@@ -177,16 +220,20 @@ class RealtimeWebsocketHandler(@Qualifier("realtimeHubWS") hub: ActorRef,
 
       val last = maybeComment.getOrElse(0)
 
-      val comments = commentService.getCommentList(topic, false)
+      val comments = if (topic.getPostscore != TopicPermissionService.POSTSCORE_HIDE_COMMENTS) {
+        commentService.getCommentList(topic, false)
+      } else {
+        new CommentList(ImmutableList.of(), 0)
+      }
 
       val missed = comments.getList.asScala.map(_.getId).dropWhile(_ <= last).toVector
 
       missed.foreach { cid =>
         logger.debug(s"Sending missed comment $cid")
-        session.sendMessage(new TextMessage(cid.toString))
+        notifyComment(session, cid)
       }
 
-      val result = hub ? Subscribe(session, topic.getId)
+      val result = hub ? SubscribeTopic(session, topic.getId)
 
       Await.result(result, 10.seconds)
     } catch {

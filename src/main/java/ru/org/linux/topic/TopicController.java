@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2021 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -33,6 +33,7 @@ import ru.org.linux.comment.*;
 import ru.org.linux.edithistory.EditHistoryService;
 import ru.org.linux.edithistory.EditInfoSummary;
 import ru.org.linux.group.Group;
+import ru.org.linux.group.GroupDao;
 import ru.org.linux.markup.MessageTextService;
 import ru.org.linux.paginator.PagesInfo;
 import ru.org.linux.search.MoreLikeThisService;
@@ -85,7 +86,7 @@ public class TopicController {
   private TopicPrepareService topicPrepareService;
 
   @Autowired
-  private CommentService commentService;
+  private CommentReadService commentService;
 
   @Autowired
   private IgnoreListDao ignoreListDao;
@@ -117,6 +118,9 @@ public class TopicController {
   @Autowired
   private EditHistoryService editHistoryService;
 
+  @Autowired
+  private GroupDao groupDao;
+
   @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)}/{group}/{id}")
   public ModelAndView getMessageNewMain(
           WebRequest webRequest,
@@ -140,7 +144,7 @@ public class TopicController {
     if (rss) {
       return getMessageRss(section, request, response, groupName, msgid);
     } else {
-      return getMessageNew(section, webRequest, request, response, 0, filter, groupName, msgid, 0);
+      return getMessage(section, webRequest, request, response, 0, filter, groupName, msgid, 0);
     }
   }
 
@@ -157,7 +161,7 @@ public class TopicController {
   ) throws Exception {
     Section section = sectionService.getSectionByName(sectionName);
 
-    return getMessageNew(section, webRequest, request, response, page, filter, groupName, msgid, 0);
+    return getMessage(section, webRequest, request, response, page, filter, groupName, msgid, 0);
   }
 
   @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)}/{group}/{id}/thread/{threadRoot}")
@@ -174,7 +178,7 @@ public class TopicController {
   ) throws Exception {
     Section section = sectionService.getSectionByName(sectionName);
 
-    return getMessageNew(section, webRequest, request, response, 0, filter, groupName, msgid, threadRoot);
+    return getMessage(section, webRequest, request, response, 0, filter, groupName, msgid, threadRoot);
   }
 
   private static int getDefaultFilter(Profile prof, boolean emptyIgnoreList) {
@@ -207,7 +211,7 @@ public class TopicController {
     return new PagesInfo(out, currentPage);
   }
 
-  private ModelAndView getMessageNew(
+  private ModelAndView getMessage(
           Section section,
           WebRequest webRequest,
           HttpServletRequest request,
@@ -219,7 +223,6 @@ public class TopicController {
           int threadRoot) throws Exception {
 
     Deadline deadline = MoreLikeThisTimeout.fromNow();
-
 
     Topic topic = messageDao.getById(msgid);
     List<TagRef> tags = topicTagService.getTagRefs(topic);
@@ -261,7 +264,7 @@ public class TopicController {
 
     User currentUser = AuthUtil.getCurrentUser();
 
-    permissionService.checkView(group, topic, currentUser, showDeleted);
+    permissionService.checkView(group, topic, currentUser, preparedMessage.getAuthor(), showDeleted);
 
     if (!tmpl.isModeratorSession()) {
       if (showDeleted && !"POST".equals(request.getMethod())) {
@@ -353,7 +356,7 @@ public class TopicController {
 
     loadTopicScroller(params, topic, currentUser, !ignoreList.isEmpty());
 
-    CommentList comments = commentService.getCommentList(topic, showDeleted);
+    CommentList comments = getCommentList(topic, group, showDeleted);
 
     Set<Integer> hideSet = commentService.makeHideSet(comments, filterMode, ignoreList);
 
@@ -399,7 +402,7 @@ public class TopicController {
     add.setMode(tmpl.getFormatMode());
     params.put("add", add);
 
-    if (pages > 1 && !showDeleted && threadRoot == 0) {
+    if (pages > 1 && !showDeleted && threadRoot == 0 && !comments.getList().isEmpty()) {
       params.put("pages", buildPages(topic, tmpl.getProf().getMessages(), filterMode, defaultFilterMode, page));
     }
 
@@ -407,7 +410,19 @@ public class TopicController {
             moreLikeThisService.resultsOrNothing(topic, moreLikeThis, deadline)
     );
 
+    params.put("showDeletedButton", permissionService.allowViewDeletedComments(topic, currentUser) && !showDeleted);
+
     return new ModelAndView("view-message", params);
+  }
+
+  private CommentList getCommentList(Topic topic, Group group, boolean showDeleted) {
+    CommentList comments;
+    if (permissionService.getPostscore(group, topic) == TopicPermissionService.POSTSCORE_HIDE_COMMENTS && !showDeleted) {
+      comments = new CommentList(ImmutableList.of(), 0);
+    } else {
+      comments = commentService.getCommentList(topic, showDeleted);
+    }
+    return comments;
   }
 
   private ModelAndView getMessageRss(
@@ -444,7 +459,7 @@ public class TopicController {
 
     User currentUser = AuthUtil.getCurrentUser();
 
-    permissionService.checkView(group, topic, currentUser, false);
+    permissionService.checkView(group, topic, currentUser, preparedMessage.getAuthor(),false);
 
     params.put("message", topic);
     params.put("preparedMessage", preparedMessage);
@@ -453,7 +468,7 @@ public class TopicController {
       response.setDateHeader("Expires", System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L);
     }
 
-    CommentList comments = commentService.getCommentList(topic, false);
+    CommentList comments = getCommentList(topic, group, false);
 
     CommentFilter cv = new CommentFilter(comments);
 
@@ -571,8 +586,9 @@ public class TopicController {
           int cid, boolean skipDeleted) throws Exception {
     Template tmpl = Template.getTemplate(request);
     Topic topic = messageDao.getById(msgid);
+    Group group = groupDao.getGroup(topic.getGroupId());
 
-    CommentList comments = commentService.getCommentList(topic, false);
+    CommentList comments = getCommentList(topic, group, false);
     CommentNode node = comments.getNode(cid);
 
     if (node == null && skipDeleted) {
@@ -590,7 +606,7 @@ public class TopicController {
     boolean deleted = false;
 
     if (node == null && tmpl.isModeratorSession()) {
-      comments = commentService.getCommentList(topic, true);
+      comments = getCommentList(topic, group, true);
       node = comments.getNode(cid);
       deleted = true;
     }

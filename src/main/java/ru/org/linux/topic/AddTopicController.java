@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2020 Linux.org.ru
+ * Copyright 1998-2022 Linux.org.ru
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,9 +15,11 @@
 
 package ru.org.linux.topic;
 
+import akka.actor.ActorRef;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -25,10 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.org.linux.auth.CaptchaService;
-import ru.org.linux.auth.FloodProtector;
-import ru.org.linux.auth.IPBlockDao;
-import ru.org.linux.auth.IPBlockInfo;
+import ru.org.linux.auth.*;
 import ru.org.linux.csrf.CSRFNoAuto;
 import ru.org.linux.csrf.CSRFProtectionService;
 import ru.org.linux.gallery.Image;
@@ -41,6 +40,7 @@ import ru.org.linux.markup.MarkupPermissions;
 import ru.org.linux.markup.MessageTextService;
 import ru.org.linux.poll.Poll;
 import ru.org.linux.poll.PollVariant;
+import ru.org.linux.realtime.RealtimeEventHub;
 import ru.org.linux.search.SearchQueueSender;
 import ru.org.linux.section.Section;
 import ru.org.linux.section.SectionService;
@@ -54,19 +54,18 @@ import ru.org.linux.user.UserErrorException;
 import ru.org.linux.user.UserPropertyEditor;
 import ru.org.linux.user.UserService;
 import ru.org.linux.util.ExceptionBindingErrorProcessor;
+import scala.Tuple2;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class AddTopicController {
+  @Autowired
   private SearchQueueSender searchQueueSender;
 
   @Autowired
@@ -99,13 +98,12 @@ public class AddTopicController {
   @Autowired
   private TopicService topicService;
 
+  @Autowired
+  @Qualifier("realtimeHubWS")
+  private ActorRef realtimeHubWS;
+
   private static final int MAX_MESSAGE_LENGTH_ANONYMOUS = 8196;
   private static final int MAX_MESSAGE_LENGTH = 32768;
-
-  @Autowired
-  public void setSearchQueueSender(SearchQueueSender searchQueueSender) {
-    this.searchQueueSender = searchQueueSender;
-  }
 
   @Autowired
   public void setDupeProtector(FloodProtector dupeProtector) {
@@ -337,7 +335,7 @@ public class AddTopicController {
                                       MessageText message, UploadedImagePreview scrn, Topic previewMsg) throws Exception {
     session.removeAttribute("image");
 
-    int msgid = topicService.addMessage(
+    Tuple2<Integer, Set<Integer>> result = topicService.addMessage(
             request,
             form,
             message,
@@ -347,20 +345,23 @@ public class AddTopicController {
             previewMsg
     );
 
+    int msgid = result._1;
+
     if (!previewMsg.isDraft())  {
       searchQueueSender.updateMessageOnly(msgid);
+      RealtimeEventHub.notifyEvents(realtimeHubWS, result._2);
     }
 
     String messageUrl = "view-message.jsp?msgid=" + msgid;
 
     if (!section.isPremoderated() || previewMsg.isDraft()) {
       return new ModelAndView(new RedirectView(messageUrl));
+    } else {
+      params.put("url", messageUrl);
+      params.put("authorized", AuthUtil.isSessionAuthorized());
+
+      return new ModelAndView("add-done-moderated", params);
     }
-
-    params.put("moderated", section.isPremoderated());
-    params.put("url", messageUrl);
-
-    return new ModelAndView("add-done-moderated", params);
   }
 
   private static Poll preparePollPreview(AddTopicRequest form) {
