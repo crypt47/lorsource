@@ -263,13 +263,7 @@ class UserService(siteConfig: SiteConfig, userDao: UserDao, ignoreListDao: Ignor
     userInvitesDao.getAllInvitedUsers(user).map(userDao.getUserCached).asJava
 
   def canRegister(remoteAddr: String): Boolean = {
-    val currentHour = DateTime.now().hourOfDay().get
-
-    currentHour >= 9 && currentHour <= 21 &&
-      !ipBlockDao.getBlockInfo(remoteAddr).isBlocked &&
-      userDao.countUnactivated(remoteAddr) < MaxUnactivatedPerIp &&
-      userDao.getNewUserIds.size() < MaxNewUsers &&
-      getCountry(remoteAddr).exists(c => c != "UA")
+    !ipBlockDao.getBlockInfo(remoteAddr).isBlocked
   }
 
   def getCountry(remoteAddr: String): Option[String] = {
