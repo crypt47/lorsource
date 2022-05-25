@@ -34,7 +34,7 @@ class ElasticsearchConfiguration(config: SiteConfig) {
   def elasticsearch: MaybeNode = {
     MaybeNode(config.getElasticsearch match {
       case "embedded" =>
-        Some(ElasticsearchConfiguration.createEmbedded("elasticsearch", "target/elasticsearch-data"))
+        Some(ElasticsearchConfiguration.createEmbedded("elasticsearch", "/tmp/elasticsearch-data"))
       case _ =>
         None
     })

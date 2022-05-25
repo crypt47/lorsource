@@ -83,23 +83,23 @@
 
 
   <rule>
-    <condition name="host" operator="notequal">^www\.linux\.org\.ru</condition>
-    <condition name="host" operator="notequal">^beta\.linux\.org\.ru</condition>
+    <condition name="host" operator="notequal">^www\.linuxtalks\.co</condition>
+    <condition name="host" operator="notequal">^linuxtalks\.co</condition>
     <condition name="host" operator="notequal">^test-lor</condition>
     <condition name="host" operator="notequal">^localhost</condition>
     <condition name="host" operator="notequal">^10.0.2.2</condition>  
     <condition name="host" operator="notequal">^127.0.0.1</condition>  
     <condition name="host" operator="notequal">^$</condition>
     <from>^/(.*)</from>
-    <to type="redirect" last="true">https://www.linux.org.ru/$1</to>
+    <to type="redirect" last="true">https://linuxtalks.co/$1</to>
   </rule>
 
-  <rule>
-    <condition name="host" operator="equal">^www\.linux\.org\.ru</condition>
-    <condition operator="equal" type="scheme">^http$</condition>
-    <from>^/(.*)</from>
-    <to type="redirect" last="true">https://www.linux.org.ru/$1</to>
-  </rule>
+<!--  <rule>-->
+<!--    <condition name="host" operator="equal">^linuxtalks\.co</condition>-->
+<!--    <condition operator="equal" type="scheme">^http$</condition>-->
+<!--    <from>^/(.*)</from>-->
+<!--    <to type="redirect" last="true">https://linuxtalks.co/$1</to>-->
+<!--  </rule>-->
 
   <rule>
     <from>jquery.*\.(js)$</from>
