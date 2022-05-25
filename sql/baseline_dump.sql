@@ -45,7 +45,7 @@ COMMENT ON EXTENSION hstore IS 'data type for storing sets of (key, value) pairs
 
 
 --
--- Name: edit_event_type; Type: TYPE; Schema: public; Owner: maxcom
+-- Name: edit_event_type; Type: TYPE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TYPE public.edit_event_type AS ENUM (
@@ -54,10 +54,10 @@ CREATE TYPE public.edit_event_type AS ENUM (
 );
 
 
-ALTER TYPE public.edit_event_type OWNER TO maxcom;
+ALTER TYPE public.edit_event_type OWNER TO linuxtalks;
 
 --
--- Name: event_type; Type: TYPE; Schema: public; Owner: maxcom
+-- Name: event_type; Type: TYPE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TYPE public.event_type AS ENUM (
@@ -70,10 +70,10 @@ CREATE TYPE public.event_type AS ENUM (
 );
 
 
-ALTER TYPE public.event_type OWNER TO maxcom;
+ALTER TYPE public.event_type OWNER TO linuxtalks;
 
 --
--- Name: markup_type; Type: TYPE; Schema: public; Owner: maxcom
+-- Name: markup_type; Type: TYPE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TYPE public.markup_type AS ENUM (
@@ -84,10 +84,10 @@ CREATE TYPE public.markup_type AS ENUM (
 );
 
 
-ALTER TYPE public.markup_type OWNER TO maxcom;
+ALTER TYPE public.markup_type OWNER TO linuxtalks;
 
 --
--- Name: user_log_action; Type: TYPE; Schema: public; Owner: maxcom
+-- Name: user_log_action; Type: TYPE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TYPE public.user_log_action AS ENUM (
@@ -108,10 +108,10 @@ CREATE TYPE public.user_log_action AS ENUM (
 );
 
 
-ALTER TYPE public.user_log_action OWNER TO maxcom;
+ALTER TYPE public.user_log_action OWNER TO linuxtalks;
 
 --
--- Name: comins(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: comins(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.comins() RETURNS trigger
@@ -128,10 +128,10 @@ CREATE FUNCTION public.comins() RETURNS trigger
                                   $$;
 
 
-ALTER FUNCTION public.comins() OWNER TO maxcom;
+ALTER FUNCTION public.comins() OWNER TO linuxtalks;
 
 --
--- Name: create_user_agent(character varying); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: create_user_agent(character varying); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.create_user_agent(character varying) RETURNS integer
@@ -153,10 +153,10 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.create_user_agent(character varying) OWNER TO maxcom;
+ALTER FUNCTION public.create_user_agent(character varying) OWNER TO linuxtalks;
 
 --
--- Name: event_delete(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: event_delete(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.event_delete() RETURNS trigger
@@ -183,10 +183,10 @@ CREATE FUNCTION public.event_delete() RETURNS trigger
           $$;
 
 
-ALTER FUNCTION public.event_delete() OWNER TO maxcom;
+ALTER FUNCTION public.event_delete() OWNER TO linuxtalks;
 
 --
--- Name: get_branch_authors(integer); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: get_branch_authors(integer); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.get_branch_authors(comment integer) RETURNS SETOF integer
@@ -201,10 +201,10 @@ CREATE FUNCTION public.get_branch_authors(comment integer) RETURNS SETOF integer
       $$;
 
 
-ALTER FUNCTION public.get_branch_authors(comment integer) OWNER TO maxcom;
+ALTER FUNCTION public.get_branch_authors(comment integer) OWNER TO linuxtalks;
 
 --
--- Name: get_title(bigint); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: get_title(bigint); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.get_title(bigint) RETURNS character varying
@@ -212,10 +212,10 @@ CREATE FUNCTION public.get_title(bigint) RETURNS character varying
     AS $_$select title from comments where id=$1 union select title from topics where id=$1$_$;
 
 
-ALTER FUNCTION public.get_title(bigint) OWNER TO maxcom;
+ALTER FUNCTION public.get_title(bigint) OWNER TO linuxtalks;
 
 --
--- Name: msgdel(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: msgdel(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.msgdel() RETURNS trigger
@@ -228,10 +228,10 @@ CREATE FUNCTION public.msgdel() RETURNS trigger
           $$;
 
 
-ALTER FUNCTION public.msgdel() OWNER TO maxcom;
+ALTER FUNCTION public.msgdel() OWNER TO linuxtalks;
 
 --
--- Name: msgundel(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: msgundel(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.msgundel() RETURNS trigger
@@ -244,10 +244,10 @@ CREATE FUNCTION public.msgundel() RETURNS trigger
                     $$;
 
 
-ALTER FUNCTION public.msgundel() OWNER TO maxcom;
+ALTER FUNCTION public.msgundel() OWNER TO linuxtalks;
 
 --
--- Name: new_event(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: new_event(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.new_event() RETURNS trigger
@@ -260,10 +260,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.new_event() OWNER TO maxcom;
+ALTER FUNCTION public.new_event() OWNER TO linuxtalks;
 
 --
--- Name: normalize_email(text); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: normalize_email(text); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.normalize_email(email text) RETURNS text
@@ -285,10 +285,10 @@ CREATE FUNCTION public.normalize_email(email text) RETURNS text
 $_$;
 
 
-ALTER FUNCTION public.normalize_email(email text) OWNER TO maxcom;
+ALTER FUNCTION public.normalize_email(email text) OWNER TO linuxtalks;
 
 --
--- Name: stat_update(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: stat_update(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.stat_update() RETURNS timestamp with time zone
@@ -314,10 +314,10 @@ CREATE FUNCTION public.stat_update() RETURNS timestamp with time zone
           $$;
 
 
-ALTER FUNCTION public.stat_update() OWNER TO maxcom;
+ALTER FUNCTION public.stat_update() OWNER TO linuxtalks;
 
 --
--- Name: stat_update2(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: stat_update2(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.stat_update2() RETURNS timestamp with time zone
@@ -340,10 +340,10 @@ CREATE FUNCTION public.stat_update2() RETURNS timestamp with time zone
                         $$;
 
 
-ALTER FUNCTION public.stat_update2() OWNER TO maxcom;
+ALTER FUNCTION public.stat_update2() OWNER TO linuxtalks;
 
 --
--- Name: topins(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: topins(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.topins() RETURNS trigger
@@ -358,10 +358,10 @@ CREATE FUNCTION public.topins() RETURNS trigger
                         $$;
 
 
-ALTER FUNCTION public.topins() OWNER TO maxcom;
+ALTER FUNCTION public.topins() OWNER TO linuxtalks;
 
 --
--- Name: update_monthly_stats(); Type: FUNCTION; Schema: public; Owner: maxcom
+-- Name: update_monthly_stats(); Type: FUNCTION; Schema: public; Owner: linuxtalks
 --
 
 CREATE FUNCTION public.update_monthly_stats() RETURNS timestamp without time zone
@@ -376,14 +376,14 @@ end;
 $$;
 
 
-ALTER FUNCTION public.update_monthly_stats() OWNER TO maxcom;
+ALTER FUNCTION public.update_monthly_stats() OWNER TO linuxtalks;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: b_ips; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: b_ips; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.b_ips (
@@ -397,17 +397,17 @@ CREATE TABLE public.b_ips (
 );
 
 
-ALTER TABLE public.b_ips OWNER TO maxcom;
+ALTER TABLE public.b_ips OWNER TO linuxtalks;
 
 --
--- Name: TABLE b_ips; Type: COMMENT; Schema: public; Owner: maxcom
+-- Name: TABLE b_ips; Type: COMMENT; Schema: public; Owner: linuxtalks
 --
 
 COMMENT ON TABLE public.b_ips IS 'banned ip list table';
 
 
 --
--- Name: ban_info; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: ban_info; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.ban_info (
@@ -418,10 +418,10 @@ CREATE TABLE public.ban_info (
 );
 
 
-ALTER TABLE public.ban_info OWNER TO maxcom;
+ALTER TABLE public.ban_info OWNER TO linuxtalks;
 
 --
--- Name: comments; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: comments; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.comments (
@@ -440,10 +440,10 @@ CREATE TABLE public.comments (
 );
 
 
-ALTER TABLE public.comments OWNER TO maxcom;
+ALTER TABLE public.comments OWNER TO linuxtalks;
 
 --
--- Name: databasechangelog; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: databasechangelog; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.databasechangelog (
@@ -461,10 +461,10 @@ CREATE TABLE public.databasechangelog (
 );
 
 
-ALTER TABLE public.databasechangelog OWNER TO maxcom;
+ALTER TABLE public.databasechangelog OWNER TO linuxtalks;
 
 --
--- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.databasechangeloglock (
@@ -475,10 +475,10 @@ CREATE TABLE public.databasechangeloglock (
 );
 
 
-ALTER TABLE public.databasechangeloglock OWNER TO maxcom;
+ALTER TABLE public.databasechangeloglock OWNER TO linuxtalks;
 
 --
--- Name: del_info; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: del_info; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.del_info (
@@ -490,10 +490,10 @@ CREATE TABLE public.del_info (
 );
 
 
-ALTER TABLE public.del_info OWNER TO maxcom;
+ALTER TABLE public.del_info OWNER TO linuxtalks;
 
 --
--- Name: edit_info; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: edit_info; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.edit_info (
@@ -513,10 +513,10 @@ CREATE TABLE public.edit_info (
 );
 
 
-ALTER TABLE public.edit_info OWNER TO maxcom;
+ALTER TABLE public.edit_info OWNER TO linuxtalks;
 
 --
--- Name: edit_info_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: edit_info_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.edit_info_id_seq
@@ -527,17 +527,17 @@ CREATE SEQUENCE public.edit_info_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.edit_info_id_seq OWNER TO maxcom;
+ALTER TABLE public.edit_info_id_seq OWNER TO linuxtalks;
 
 --
--- Name: edit_info_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: edit_info_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.edit_info_id_seq OWNED BY public.edit_info.id;
 
 
 --
--- Name: groups; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: groups; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.groups (
@@ -555,10 +555,10 @@ CREATE TABLE public.groups (
 );
 
 
-ALTER TABLE public.groups OWNER TO maxcom;
+ALTER TABLE public.groups OWNER TO linuxtalks;
 
 --
--- Name: ignore_list; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: ignore_list; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.ignore_list (
@@ -567,10 +567,10 @@ CREATE TABLE public.ignore_list (
 );
 
 
-ALTER TABLE public.ignore_list OWNER TO maxcom;
+ALTER TABLE public.ignore_list OWNER TO linuxtalks;
 
 --
--- Name: images; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: images; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.images (
@@ -581,10 +581,10 @@ CREATE TABLE public.images (
 );
 
 
-ALTER TABLE public.images OWNER TO maxcom;
+ALTER TABLE public.images OWNER TO linuxtalks;
 
 --
--- Name: images_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: images_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.images_id_seq
@@ -596,17 +596,17 @@ CREATE SEQUENCE public.images_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.images_id_seq OWNER TO maxcom;
+ALTER TABLE public.images_id_seq OWNER TO linuxtalks;
 
 --
--- Name: images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.images_id_seq OWNED BY public.images.id;
 
 
 --
--- Name: memories; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: memories; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.memories (
@@ -618,10 +618,10 @@ CREATE TABLE public.memories (
 );
 
 
-ALTER TABLE public.memories OWNER TO maxcom;
+ALTER TABLE public.memories OWNER TO linuxtalks;
 
 --
--- Name: memories_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: memories_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.memories_id_seq
@@ -632,17 +632,17 @@ CREATE SEQUENCE public.memories_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.memories_id_seq OWNER TO maxcom;
+ALTER TABLE public.memories_id_seq OWNER TO linuxtalks;
 
 --
--- Name: memories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: memories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.memories_id_seq OWNED BY public.memories.id;
 
 
 --
--- Name: monthly_stats; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: monthly_stats; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.monthly_stats (
@@ -654,10 +654,10 @@ CREATE TABLE public.monthly_stats (
 );
 
 
-ALTER TABLE public.monthly_stats OWNER TO maxcom;
+ALTER TABLE public.monthly_stats OWNER TO linuxtalks;
 
 --
--- Name: msgbase; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: msgbase; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.msgbase (
@@ -667,10 +667,10 @@ CREATE TABLE public.msgbase (
 );
 
 
-ALTER TABLE public.msgbase OWNER TO maxcom;
+ALTER TABLE public.msgbase OWNER TO linuxtalks;
 
 --
--- Name: polls; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: polls; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.polls (
@@ -680,10 +680,10 @@ CREATE TABLE public.polls (
 );
 
 
-ALTER TABLE public.polls OWNER TO maxcom;
+ALTER TABLE public.polls OWNER TO linuxtalks;
 
 --
--- Name: polls_variants; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: polls_variants; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.polls_variants (
@@ -694,10 +694,10 @@ CREATE TABLE public.polls_variants (
 );
 
 
-ALTER TABLE public.polls_variants OWNER TO maxcom;
+ALTER TABLE public.polls_variants OWNER TO linuxtalks;
 
 --
--- Name: s_guid; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: s_guid; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.s_guid
@@ -708,10 +708,10 @@ CREATE SEQUENCE public.s_guid
     CACHE 1;
 
 
-ALTER TABLE public.s_guid OWNER TO maxcom;
+ALTER TABLE public.s_guid OWNER TO linuxtalks;
 
 --
--- Name: s_msg; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: s_msg; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.s_msg
@@ -722,10 +722,10 @@ CREATE SEQUENCE public.s_msg
     CACHE 1;
 
 
-ALTER TABLE public.s_msg OWNER TO maxcom;
+ALTER TABLE public.s_msg OWNER TO linuxtalks;
 
 --
--- Name: s_msgid; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: s_msgid; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.s_msgid
@@ -736,10 +736,10 @@ CREATE SEQUENCE public.s_msgid
     CACHE 1;
 
 
-ALTER TABLE public.s_msgid OWNER TO maxcom;
+ALTER TABLE public.s_msgid OWNER TO linuxtalks;
 
 --
--- Name: s_uid; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: s_uid; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.s_uid
@@ -750,10 +750,10 @@ CREATE SEQUENCE public.s_uid
     CACHE 1;
 
 
-ALTER TABLE public.s_uid OWNER TO maxcom;
+ALTER TABLE public.s_uid OWNER TO linuxtalks;
 
 --
--- Name: sections; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: sections; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.sections (
@@ -772,10 +772,10 @@ CREATE TABLE public.sections (
 );
 
 
-ALTER TABLE public.sections OWNER TO maxcom;
+ALTER TABLE public.sections OWNER TO linuxtalks;
 
 --
--- Name: tags; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: tags; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.tags (
@@ -784,10 +784,10 @@ CREATE TABLE public.tags (
 );
 
 
-ALTER TABLE public.tags OWNER TO maxcom;
+ALTER TABLE public.tags OWNER TO linuxtalks;
 
 --
--- Name: tags_values; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: tags_values; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.tags_values (
@@ -797,10 +797,10 @@ CREATE TABLE public.tags_values (
 );
 
 
-ALTER TABLE public.tags_values OWNER TO maxcom;
+ALTER TABLE public.tags_values OWNER TO linuxtalks;
 
 --
--- Name: tags_values_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: tags_values_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.tags_values_id_seq
@@ -811,17 +811,17 @@ CREATE SEQUENCE public.tags_values_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.tags_values_id_seq OWNER TO maxcom;
+ALTER TABLE public.tags_values_id_seq OWNER TO linuxtalks;
 
 --
--- Name: tags_values_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: tags_values_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.tags_values_id_seq OWNED BY public.tags_values.id;
 
 
 --
--- Name: telegram_posts; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: telegram_posts; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.telegram_posts (
@@ -831,10 +831,10 @@ CREATE TABLE public.telegram_posts (
 );
 
 
-ALTER TABLE public.telegram_posts OWNER TO maxcom;
+ALTER TABLE public.telegram_posts OWNER TO linuxtalks;
 
 --
--- Name: topic_users_notified; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: topic_users_notified; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.topic_users_notified (
@@ -843,10 +843,10 @@ CREATE TABLE public.topic_users_notified (
 );
 
 
-ALTER TABLE public.topic_users_notified OWNER TO maxcom;
+ALTER TABLE public.topic_users_notified OWNER TO linuxtalks;
 
 --
--- Name: topics; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: topics; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.topics (
@@ -876,10 +876,10 @@ CREATE TABLE public.topics (
 );
 
 
-ALTER TABLE public.topics OWNER TO maxcom;
+ALTER TABLE public.topics OWNER TO linuxtalks;
 
 --
--- Name: user_agents; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_agents; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_agents (
@@ -888,10 +888,10 @@ CREATE TABLE public.user_agents (
 );
 
 
-ALTER TABLE public.user_agents OWNER TO maxcom;
+ALTER TABLE public.user_agents OWNER TO linuxtalks;
 
 --
--- Name: user_agents_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: user_agents_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.user_agents_id_seq
@@ -902,17 +902,17 @@ CREATE SEQUENCE public.user_agents_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_agents_id_seq OWNER TO maxcom;
+ALTER TABLE public.user_agents_id_seq OWNER TO linuxtalks;
 
 --
--- Name: user_agents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: user_agents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.user_agents_id_seq OWNED BY public.user_agents.id;
 
 
 --
--- Name: user_events; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_events; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_events (
@@ -928,10 +928,10 @@ CREATE TABLE public.user_events (
 );
 
 
-ALTER TABLE public.user_events OWNER TO maxcom;
+ALTER TABLE public.user_events OWNER TO linuxtalks;
 
 --
--- Name: user_events_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: user_events_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.user_events_id_seq
@@ -942,17 +942,17 @@ CREATE SEQUENCE public.user_events_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_events_id_seq OWNER TO maxcom;
+ALTER TABLE public.user_events_id_seq OWNER TO linuxtalks;
 
 --
--- Name: user_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: user_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.user_events_id_seq OWNED BY public.user_events.id;
 
 
 --
--- Name: user_invites; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_invites; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_invites (
@@ -965,10 +965,10 @@ CREATE TABLE public.user_invites (
 );
 
 
-ALTER TABLE public.user_invites OWNER TO maxcom;
+ALTER TABLE public.user_invites OWNER TO linuxtalks;
 
 --
--- Name: user_log; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_log; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_log (
@@ -981,10 +981,10 @@ CREATE TABLE public.user_log (
 );
 
 
-ALTER TABLE public.user_log OWNER TO maxcom;
+ALTER TABLE public.user_log OWNER TO linuxtalks;
 
 --
--- Name: user_log_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: user_log_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.user_log_id_seq
@@ -996,17 +996,17 @@ CREATE SEQUENCE public.user_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_log_id_seq OWNER TO maxcom;
+ALTER TABLE public.user_log_id_seq OWNER TO linuxtalks;
 
 --
--- Name: user_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: user_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.user_log_id_seq OWNED BY public.user_log.id;
 
 
 --
--- Name: user_remarks; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_remarks; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_remarks (
@@ -1017,10 +1017,10 @@ CREATE TABLE public.user_remarks (
 );
 
 
-ALTER TABLE public.user_remarks OWNER TO maxcom;
+ALTER TABLE public.user_remarks OWNER TO linuxtalks;
 
 --
--- Name: user_remarks_id_seq; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: user_remarks_id_seq; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.user_remarks_id_seq
@@ -1032,17 +1032,17 @@ CREATE SEQUENCE public.user_remarks_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_remarks_id_seq OWNER TO maxcom;
+ALTER TABLE public.user_remarks_id_seq OWNER TO linuxtalks;
 
 --
--- Name: user_remarks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: maxcom
+-- Name: user_remarks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: linuxtalks
 --
 
 ALTER SEQUENCE public.user_remarks_id_seq OWNED BY public.user_remarks.id;
 
 
 --
--- Name: user_settings; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_settings; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_settings (
@@ -1052,10 +1052,10 @@ CREATE TABLE public.user_settings (
 );
 
 
-ALTER TABLE public.user_settings OWNER TO maxcom;
+ALTER TABLE public.user_settings OWNER TO linuxtalks;
 
 --
--- Name: user_tags; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: user_tags; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.user_tags (
@@ -1065,10 +1065,10 @@ CREATE TABLE public.user_tags (
 );
 
 
-ALTER TABLE public.user_tags OWNER TO maxcom;
+ALTER TABLE public.user_tags OWNER TO linuxtalks;
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: users; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.users (
@@ -1101,10 +1101,10 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO maxcom;
+ALTER TABLE public.users OWNER TO linuxtalks;
 
 --
--- Name: vote_id; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: vote_id; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.vote_id
@@ -1115,10 +1115,10 @@ CREATE SEQUENCE public.vote_id
     CACHE 1;
 
 
-ALTER TABLE public.vote_id OWNER TO maxcom;
+ALTER TABLE public.vote_id OWNER TO linuxtalks;
 
 --
--- Name: vote_users; Type: TABLE; Schema: public; Owner: maxcom
+-- Name: vote_users; Type: TABLE; Schema: public; Owner: linuxtalks
 --
 
 CREATE TABLE public.vote_users (
@@ -1128,10 +1128,10 @@ CREATE TABLE public.vote_users (
 );
 
 
-ALTER TABLE public.vote_users OWNER TO maxcom;
+ALTER TABLE public.vote_users OWNER TO linuxtalks;
 
 --
--- Name: votes_id; Type: SEQUENCE; Schema: public; Owner: maxcom
+-- Name: votes_id; Type: SEQUENCE; Schema: public; Owner: linuxtalks
 --
 
 CREATE SEQUENCE public.votes_id
@@ -1142,66 +1142,66 @@ CREATE SEQUENCE public.votes_id
     CACHE 1;
 
 
-ALTER TABLE public.votes_id OWNER TO maxcom;
+ALTER TABLE public.votes_id OWNER TO linuxtalks;
 
 --
--- Name: edit_info id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: edit_info id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.edit_info ALTER COLUMN id SET DEFAULT nextval('public.edit_info_id_seq'::regclass);
 
 
 --
--- Name: images id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: images id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.images ALTER COLUMN id SET DEFAULT nextval('public.images_id_seq'::regclass);
 
 
 --
--- Name: memories id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: memories id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.memories ALTER COLUMN id SET DEFAULT nextval('public.memories_id_seq'::regclass);
 
 
 --
--- Name: tags_values id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: tags_values id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.tags_values ALTER COLUMN id SET DEFAULT nextval('public.tags_values_id_seq'::regclass);
 
 
 --
--- Name: user_agents id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: user_agents id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_agents ALTER COLUMN id SET DEFAULT nextval('public.user_agents_id_seq'::regclass);
 
 
 --
--- Name: user_events id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: user_events id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_events ALTER COLUMN id SET DEFAULT nextval('public.user_events_id_seq'::regclass);
 
 
 --
--- Name: user_log id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: user_log id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_log ALTER COLUMN id SET DEFAULT nextval('public.user_log_id_seq'::regclass);
 
 
 --
--- Name: user_remarks id; Type: DEFAULT; Schema: public; Owner: maxcom
+-- Name: user_remarks id; Type: DEFAULT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_remarks ALTER COLUMN id SET DEFAULT nextval('public.user_remarks_id_seq'::regclass);
 
 
 --
--- Data for Name: b_ips; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: b_ips; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.b_ips (ip, mod_id, date, reason, ban_date, allow_posting, captcha_required) FROM stdin;
@@ -1209,7 +1209,7 @@ COPY public.b_ips (ip, mod_id, date, reason, ban_date, allow_posting, captcha_re
 
 
 --
--- Data for Name: ban_info; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: ban_info; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.ban_info (userid, bandate, reason, ban_by) FROM stdin;
@@ -1217,7 +1217,7 @@ COPY public.ban_info (userid, bandate, reason, ban_by) FROM stdin;
 
 
 --
--- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.comments (id, topic, userid, title, postdate, replyto, deleted, postip, ua_id, editor_id, edit_date, edit_count) FROM stdin;
@@ -1225,7 +1225,7 @@ COPY public.comments (id, topic, userid, title, postdate, replyto, deleted, post
 
 
 --
--- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase) FROM stdin;
@@ -1236,7 +1236,7 @@ COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted
 2011122902	Slava Zanko	sql/updates/2011-12-29-section-scrollMode.xml	2022-05-21 15:09:17.719405+02	5	EXECUTED	7:3caf3ef12f18466b4869ef065b55d268	addNotNullConstraint		\N	3.1.1
 2012012401	Maxim Valyanskiy	sql/updates/2012-01-24-delscore.xml	2022-05-21 15:09:17.738283+02	6	EXECUTED	7:9d10979591324ab37b324a664287ef2e	addColumn		\N	3.1.1
 2012020201	hizel	sql/updates/2012-02-02-grant-wiki.xml	2022-05-21 15:09:17.758223+02	7	EXECUTED	7:5746794d9a1891dd8371d75f90feb4eb	sql		\N	3.1.1
-2012021601	maxcom	sql/updates/2012-02-16-topic-perm-fix.xml	2022-05-21 15:09:17.775519+02	8	EXECUTED	7:54bb1052bf1530b7801f843800b95091	update		\N	3.1.1
+2012021601	linuxtalks	sql/updates/2012-02-16-topic-perm-fix.xml	2022-05-21 15:09:17.775519+02	8	EXECUTED	7:54bb1052bf1530b7801f843800b95091	update		\N	3.1.1
 2012021701	Maxim Valyanskiy	sql/updates/2012-02-17-section-score.xml	2022-05-21 15:09:17.794836+02	9	EXECUTED	7:06967ea819930347e7bd74cf947f9e79	addColumn		\N	3.1.1
 2012022801	Slava Zanko	sql/updates/2012-02-28-tags-first-letter-index.xml	2022-05-21 15:09:17.815655+02	10	EXECUTED	7:b1e7876f82944d50e7a47cec6b487618	sql		\N	3.1.1
 2012031901	Slava Zanko	sql/updates/2012-03-19-tags_values-grant-delete.xml	2022-05-21 15:09:17.831742+02	11	EXECUTED	7:278a879628587d303c5dc34c280be543	sql		\N	3.1.1
@@ -1354,9 +1354,9 @@ COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted
 2021032101	Maxim Valyanskiy	sql/updates/2021-03-10-telegram.xml	2022-05-21 15:09:19.906194+02	123	EXECUTED	7:6734914d81f1411213fbccda6736d442	sql		\N	3.1.1
 2021081101	Konstantin Ivanov	sql/updates/2021-08-11-frozen-users.xml	2022-05-21 15:09:19.921259+02	124	EXECUTED	7:ddd98e52e2079e5022099de0e41c8868	addColumn		\N	3.1.1
 2021081102	Konstantin Ivanov	sql/updates/2021-08-11-frozen-users.xml	2022-05-21 15:09:19.938763+02	125	EXECUTED	7:131da469660609877386dd5d4d03b347	sql		\N	3.1.1
-2021120801	maxcom	sql/updates/2021-12-09-missing-index.xml	2022-05-21 15:09:19.983859+02	126	EXECUTED	7:38ca5c40a2907a193cdce6106ccd301b	createIndex (x7)		\N	3.1.1
-2021121405	maxcom	sql/updates/2021-12-14-email-normalize.xml	2022-05-21 15:09:19.998507+02	127	EXECUTED	7:6384d7ba6afa5e1f180dcadcea955840	sql		\N	3.1.1
-2021121451	maxcom	sql/updates/2021-12-14-email-normalize.xml	2022-05-21 15:09:20.026883+02	128	EXECUTED	7:55c08d0ea6f9c88eef3366fc0ce74dcb	sql		\N	3.1.1
+2021120801	linuxtalks	sql/updates/2021-12-09-missing-index.xml	2022-05-21 15:09:19.983859+02	126	EXECUTED	7:38ca5c40a2907a193cdce6106ccd301b	createIndex (x7)		\N	3.1.1
+2021121405	linuxtalks	sql/updates/2021-12-14-email-normalize.xml	2022-05-21 15:09:19.998507+02	127	EXECUTED	7:6384d7ba6afa5e1f180dcadcea955840	sql		\N	3.1.1
+2021121451	linuxtalks	sql/updates/2021-12-14-email-normalize.xml	2022-05-21 15:09:20.026883+02	128	EXECUTED	7:55c08d0ea6f9c88eef3366fc0ce74dcb	sql		\N	3.1.1
 2021121701	Maxim Valynskiy	sql/updates/2021-12-17-fix-user-delete.xml	2022-05-21 15:09:20.039676+02	129	EXECUTED	7:04933fb4f4b4a59100dc123b3af607c9	sql		\N	3.1.1
 2022032601	Maxim Valyanskiy	sql/updates/2022-03-26-trigger-to-code.xml	2022-05-21 15:09:20.052925+02	130	EXECUTED	7:6c70caeb19c0cb89eaea5ab2b3897649	sql		\N	3.1.1
 2022040301	Maxim Valyanskiy	sql/updates/2022-04-03-invites.xml	2022-05-21 15:09:20.076869+02	131	EXECUTED	7:a6de51b5c7e62e29122848d4109dd68b	createTable		\N	3.1.1
@@ -1367,7 +1367,7 @@ COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted
 
 
 --
--- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin;
@@ -1376,7 +1376,7 @@ COPY public.databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin
 
 
 --
--- Data for Name: del_info; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: del_info; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.del_info (msgid, delby, reason, deldate, bonus) FROM stdin;
@@ -1384,7 +1384,7 @@ COPY public.del_info (msgid, delby, reason, deldate, bonus) FROM stdin;
 
 
 --
--- Data for Name: edit_info; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: edit_info; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.edit_info (id, msgid, editor, oldmessage, editdate, oldtitle, oldtags, oldlinktext, oldurl, object_type, oldminor, oldimage, oldpoll) FROM stdin;
@@ -1392,7 +1392,7 @@ COPY public.edit_info (id, msgid, editor, oldmessage, editdate, oldtitle, oldtag
 
 
 --
--- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.groups (id, title, image, section, stat3, restrict_topics, info, restrict_comments, longinfo, resolvable, urlname) FROM stdin;
@@ -1406,7 +1406,7 @@ COPY public.groups (id, title, image, section, stat3, restrict_topics, info, res
 
 
 --
--- Data for Name: ignore_list; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: ignore_list; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.ignore_list (userid, ignored) FROM stdin;
@@ -1414,7 +1414,7 @@ COPY public.ignore_list (userid, ignored) FROM stdin;
 
 
 --
--- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: images; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.images (id, topic, deleted, extension) FROM stdin;
@@ -1422,7 +1422,7 @@ COPY public.images (id, topic, deleted, extension) FROM stdin;
 
 
 --
--- Data for Name: memories; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: memories; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.memories (id, userid, topic, add_date, watch) FROM stdin;
@@ -1430,7 +1430,7 @@ COPY public.memories (id, userid, topic, add_date, watch) FROM stdin;
 
 
 --
--- Data for Name: monthly_stats; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: monthly_stats; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.monthly_stats (section, year, month, c, groupid) FROM stdin;
@@ -1438,7 +1438,7 @@ COPY public.monthly_stats (section, year, month, c, groupid) FROM stdin;
 
 
 --
--- Data for Name: msgbase; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: msgbase; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.msgbase (id, message, markup) FROM stdin;
@@ -1446,7 +1446,7 @@ COPY public.msgbase (id, message, markup) FROM stdin;
 
 
 --
--- Data for Name: polls; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: polls; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.polls (id, topic, multiselect) FROM stdin;
@@ -1454,7 +1454,7 @@ COPY public.polls (id, topic, multiselect) FROM stdin;
 
 
 --
--- Data for Name: polls_variants; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: polls_variants; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.polls_variants (id, vote, label, votes) FROM stdin;
@@ -1462,7 +1462,7 @@ COPY public.polls_variants (id, vote, label, votes) FROM stdin;
 
 
 --
--- Data for Name: sections; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: sections; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.sections (id, name, moderate, imagepost, linktext, havelink, expire, vote, add_info, scroll_mode, restrict_topics, imageallowed) FROM stdin;
@@ -1474,7 +1474,7 @@ COPY public.sections (id, name, moderate, imagepost, linktext, havelink, expire,
 
 
 --
--- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.tags (msgid, tagid) FROM stdin;
@@ -1482,7 +1482,7 @@ COPY public.tags (msgid, tagid) FROM stdin;
 
 
 --
--- Data for Name: tags_values; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: tags_values; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.tags_values (id, counter, value) FROM stdin;
@@ -1490,7 +1490,7 @@ COPY public.tags_values (id, counter, value) FROM stdin;
 
 
 --
--- Data for Name: telegram_posts; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: telegram_posts; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.telegram_posts (topic_id, telegram_id, postdate) FROM stdin;
@@ -1498,7 +1498,7 @@ COPY public.telegram_posts (topic_id, telegram_id, postdate) FROM stdin;
 
 
 --
--- Data for Name: topic_users_notified; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: topic_users_notified; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.topic_users_notified (topic, userid) FROM stdin;
@@ -1506,7 +1506,7 @@ COPY public.topic_users_notified (topic, userid) FROM stdin;
 
 
 --
--- Data for Name: topics; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: topics; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.topics (id, groupid, userid, title, url, moderate, postdate, linktext, deleted, stat1, stat3, lastmod, commitby, notop, commitdate, postscore, postip, sticky, ua_id, resolved, minor, draft, allow_anonymous) FROM stdin;
@@ -1514,7 +1514,7 @@ COPY public.topics (id, groupid, userid, title, url, moderate, postdate, linktex
 
 
 --
--- Data for Name: user_agents; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_agents; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_agents (id, name) FROM stdin;
@@ -1522,7 +1522,7 @@ COPY public.user_agents (id, name) FROM stdin;
 
 
 --
--- Data for Name: user_events; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_events; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_events (userid, type, private, event_date, message_id, comment_id, message, unread, id) FROM stdin;
@@ -1530,7 +1530,7 @@ COPY public.user_events (userid, type, private, event_date, message_id, comment_
 
 
 --
--- Data for Name: user_invites; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_invites; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_invites (invite_code, owner, issue_date, invited_user, email, valid_until) FROM stdin;
@@ -1538,7 +1538,7 @@ COPY public.user_invites (invite_code, owner, issue_date, invited_user, email, v
 
 
 --
--- Data for Name: user_log; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_log; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_log (id, userid, action_userid, action_date, action, info) FROM stdin;
@@ -1546,7 +1546,7 @@ COPY public.user_log (id, userid, action_userid, action_date, action, info) FROM
 
 
 --
--- Data for Name: user_remarks; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_remarks; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_remarks (id, user_id, ref_user_id, remark_text) FROM stdin;
@@ -1554,7 +1554,7 @@ COPY public.user_remarks (id, user_id, ref_user_id, remark_text) FROM stdin;
 
 
 --
--- Data for Name: user_settings; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_settings; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_settings (id, settings, main) FROM stdin;
@@ -1562,7 +1562,7 @@ COPY public.user_settings (id, settings, main) FROM stdin;
 
 
 --
--- Data for Name: user_tags; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: user_tags; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.user_tags (user_id, tag_id, is_favorite) FROM stdin;
@@ -1570,7 +1570,7 @@ COPY public.user_tags (user_id, tag_id, is_favorite) FROM stdin;
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.users (id, name, nick, passwd, url, email, canmod, photo, town, candel, lostpwd, blocked, score, max_score, lastlogin, regdate, activated, corrector, userinfo, unread_events, new_email, style, token_generation, frozen_until, frozen_by, freezing_reason) FROM stdin;
@@ -1581,7 +1581,7 @@ COPY public.users (id, name, nick, passwd, url, email, canmod, photo, town, cand
 
 
 --
--- Data for Name: vote_users; Type: TABLE DATA; Schema: public; Owner: maxcom
+-- Data for Name: vote_users; Type: TABLE DATA; Schema: public; Owner: linuxtalks
 --
 
 COPY public.vote_users (vote, userid, variant_id) FROM stdin;
@@ -1589,105 +1589,105 @@ COPY public.vote_users (vote, userid, variant_id) FROM stdin;
 
 
 --
--- Name: edit_info_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: edit_info_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.edit_info_id_seq', 1, false);
 
 
 --
--- Name: images_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: images_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.images_id_seq', 1, false);
 
 
 --
--- Name: memories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: memories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.memories_id_seq', 1, false);
 
 
 --
--- Name: s_guid; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: s_guid; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.s_guid', 1, false);
 
 
 --
--- Name: s_msg; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: s_msg; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.s_msg', 1, false);
 
 
 --
--- Name: s_msgid; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: s_msgid; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.s_msgid', 1, false);
 
 
 --
--- Name: s_uid; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: s_uid; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.s_uid', 1, false);
 
 
 --
--- Name: tags_values_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: tags_values_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.tags_values_id_seq', 1, false);
 
 
 --
--- Name: user_agents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: user_agents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.user_agents_id_seq', 1, false);
 
 
 --
--- Name: user_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: user_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.user_events_id_seq', 1, false);
 
 
 --
--- Name: user_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: user_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.user_log_id_seq', 1, false);
 
 
 --
--- Name: user_remarks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: user_remarks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.user_remarks_id_seq', 1, false);
 
 
 --
--- Name: vote_id; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: vote_id; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.vote_id', 1, false);
 
 
 --
--- Name: votes_id; Type: SEQUENCE SET; Schema: public; Owner: maxcom
+-- Name: votes_id; Type: SEQUENCE SET; Schema: public; Owner: linuxtalks
 --
 
 SELECT pg_catalog.setval('public.votes_id', 1, false);
 
 
 --
--- Name: ban_info ban_info_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: ban_info ban_info_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.ban_info
@@ -1695,7 +1695,7 @@ ALTER TABLE ONLY public.ban_info
 
 
 --
--- Name: comments comments_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: comments comments_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.comments
@@ -1705,7 +1705,7 @@ ALTER TABLE public.comments CLUSTER ON comments_pkey;
 
 
 --
--- Name: del_info del_info_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: del_info del_info_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.del_info
@@ -1713,7 +1713,7 @@ ALTER TABLE ONLY public.del_info
 
 
 --
--- Name: edit_info edit_info_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: edit_info edit_info_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.edit_info
@@ -1721,7 +1721,7 @@ ALTER TABLE ONLY public.edit_info
 
 
 --
--- Name: groups groups_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: groups groups_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.groups
@@ -1729,7 +1729,7 @@ ALTER TABLE ONLY public.groups
 
 
 --
--- Name: ignore_list ignore_list_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: ignore_list ignore_list_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.ignore_list
@@ -1737,7 +1737,7 @@ ALTER TABLE ONLY public.ignore_list
 
 
 --
--- Name: memories memories_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: memories memories_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.memories
@@ -1745,7 +1745,7 @@ ALTER TABLE ONLY public.memories
 
 
 --
--- Name: msgbase msgbase_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: msgbase msgbase_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.msgbase
@@ -1753,7 +1753,7 @@ ALTER TABLE ONLY public.msgbase
 
 
 --
--- Name: databasechangeloglock pk_databasechangeloglock; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: databasechangeloglock pk_databasechangeloglock; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.databasechangeloglock
@@ -1761,7 +1761,7 @@ ALTER TABLE ONLY public.databasechangeloglock
 
 
 --
--- Name: images pk_images; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: images pk_images; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.images
@@ -1769,7 +1769,7 @@ ALTER TABLE ONLY public.images
 
 
 --
--- Name: telegram_posts pk_telegram_posts; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: telegram_posts pk_telegram_posts; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.telegram_posts
@@ -1777,7 +1777,7 @@ ALTER TABLE ONLY public.telegram_posts
 
 
 --
--- Name: user_invites pk_user_invites; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_invites pk_user_invites; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_invites
@@ -1785,7 +1785,7 @@ ALTER TABLE ONLY public.user_invites
 
 
 --
--- Name: user_remarks pk_user_remarks; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_remarks pk_user_remarks; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_remarks
@@ -1793,7 +1793,7 @@ ALTER TABLE ONLY public.user_remarks
 
 
 --
--- Name: sections sections_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: sections sections_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.sections
@@ -1801,7 +1801,7 @@ ALTER TABLE ONLY public.sections
 
 
 --
--- Name: tags tags_msgid_key; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: tags tags_msgid_key; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.tags
@@ -1809,7 +1809,7 @@ ALTER TABLE ONLY public.tags
 
 
 --
--- Name: tags_values tags_values_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: tags_values tags_values_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.tags_values
@@ -1817,7 +1817,7 @@ ALTER TABLE ONLY public.tags_values
 
 
 --
--- Name: tags_values tags_values_value_key; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: tags_values tags_values_value_key; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.tags_values
@@ -1825,7 +1825,7 @@ ALTER TABLE ONLY public.tags_values
 
 
 --
--- Name: user_agents user_agents_name_key; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_agents user_agents_name_key; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_agents
@@ -1833,7 +1833,7 @@ ALTER TABLE ONLY public.user_agents
 
 
 --
--- Name: user_agents user_agents_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_agents user_agents_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_agents
@@ -1841,7 +1841,7 @@ ALTER TABLE ONLY public.user_agents
 
 
 --
--- Name: user_events user_events_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_events user_events_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_events
@@ -1849,7 +1849,7 @@ ALTER TABLE ONLY public.user_events
 
 
 --
--- Name: user_log user_log_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_log user_log_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_log
@@ -1857,7 +1857,7 @@ ALTER TABLE ONLY public.user_log
 
 
 --
--- Name: user_settings user_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_settings user_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_settings
@@ -1865,7 +1865,7 @@ ALTER TABLE ONLY public.user_settings
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.users
@@ -1873,7 +1873,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: polls votenames_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: polls votenames_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.polls
@@ -1881,7 +1881,7 @@ ALTER TABLE ONLY public.polls
 
 
 --
--- Name: polls_variants votes_pkey; Type: CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: polls_variants votes_pkey; Type: CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.polls_variants
@@ -1889,427 +1889,427 @@ ALTER TABLE ONLY public.polls_variants
 
 
 --
--- Name: bips_ip; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: bips_ip; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX bips_ip ON public.b_ips USING btree (ip);
 
 
 --
--- Name: comment_authordate; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: comment_authordate; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX comment_authordate ON public.comments USING btree (userid, postdate);
 
 
 --
--- Name: comment_reply2; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: comment_reply2; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX comment_reply2 ON public.comments USING btree (replyto) WHERE (replyto IS NOT NULL);
 
 
 --
--- Name: comment_topic; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: comment_topic; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX comment_topic ON public.comments USING btree (topic);
 
 
 --
--- Name: comment_tracker; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: comment_tracker; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX comment_tracker ON public.comments USING btree (topic, postdate DESC) WHERE (NOT deleted);
 
 
 --
--- Name: comments_editor_id_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: comments_editor_id_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX comments_editor_id_idx ON public.comments USING btree (editor_id);
 
 
 --
--- Name: comments_postip; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: comments_postip; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX comments_postip ON public.comments USING btree (postip);
 
 
 --
--- Name: commit_order2; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: commit_order2; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX commit_order2 ON public.topics USING btree (commitdate DESC) WHERE (commitdate IS NOT NULL);
 
 
 --
--- Name: commit_order3; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: commit_order3; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX commit_order3 ON public.topics USING btree (groupid, commitdate DESC) WHERE (commitdate IS NOT NULL);
 
 
 --
--- Name: del_info_date; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: del_info_date; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX del_info_date ON public.del_info USING btree (deldate DESC) WHERE (deldate IS NOT NULL);
 
 
 --
--- Name: del_info_delby; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: del_info_delby; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX del_info_delby ON public.del_info USING btree (delby);
 
 
 --
--- Name: edit_info_editor_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: edit_info_editor_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX edit_info_editor_idx ON public.edit_info USING btree (editor);
 
 
 --
--- Name: edit_info_msgid; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: edit_info_msgid; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX edit_info_msgid ON public.edit_info USING btree (msgid);
 
 
 --
--- Name: group_section; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: group_section; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX group_section ON public.groups USING btree (section);
 
 
 --
--- Name: groups_urlname; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: groups_urlname; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX groups_urlname ON public.groups USING btree (urlname);
 
 
 --
--- Name: groups_urlname_u; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: groups_urlname_u; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX groups_urlname_u ON public.groups USING btree (urlname, section);
 
 
 --
--- Name: i_nick; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: i_nick; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX i_nick ON public.users USING btree (nick);
 
 
 --
--- Name: i_votes_vote; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: i_votes_vote; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX i_votes_vote ON public.polls_variants USING btree (vote);
 
 
 --
--- Name: ignore_list_ignored_key; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: ignore_list_ignored_key; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX ignore_list_ignored_key ON public.ignore_list USING btree (ignored);
 
 
 --
--- Name: image_topic_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: image_topic_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX image_topic_idx ON public.images USING btree (topic);
 
 
 --
--- Name: memories_topic_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: memories_topic_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX memories_topic_idx ON public.memories USING btree (topic);
 
 
 --
--- Name: memories_un; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: memories_un; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX memories_un ON public.memories USING btree (userid, topic, watch);
 
 
 --
--- Name: refuser_remarks_tagid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: refuser_remarks_tagid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX refuser_remarks_tagid_idx ON public.user_remarks USING btree (ref_user_id);
 
 
 --
--- Name: tags_msgid; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: tags_msgid; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX tags_msgid ON public.tags USING btree (msgid);
 
 
 --
--- Name: tags_tagid; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: tags_tagid; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX tags_tagid ON public.tags USING btree (tagid);
 
 
 --
--- Name: tags_values_prefix_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: tags_values_prefix_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX tags_values_prefix_idx ON public.tags_values USING btree (value text_pattern_ops);
 
 
 --
--- Name: tags_values_top; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: tags_values_top; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX tags_values_top ON public.tags_values USING btree (id) WHERE (counter >= 10);
 
 
 --
--- Name: telegram_topic_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: telegram_topic_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX telegram_topic_idx ON public.telegram_posts USING btree (topic_id);
 
 
 --
--- Name: topic_author; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topic_author; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topic_author ON public.topics USING btree (userid);
 
 
 --
--- Name: topic_deleted; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topic_deleted; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topic_deleted ON public.topics USING btree (id) WHERE deleted;
 
 
 --
--- Name: topic_group; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topic_group; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topic_group ON public.topics USING btree (groupid);
 
 
 --
--- Name: topic_postip; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topic_postip; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topic_postip ON public.topics USING btree (postip);
 
 
 --
--- Name: topic_users_notified_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topic_users_notified_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX topic_users_notified_idx ON public.topic_users_notified USING btree (topic, userid);
 
 
 --
--- Name: topic_users_notified_userid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topic_users_notified_userid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topic_users_notified_userid_idx ON public.topic_users_notified USING btree (userid);
 
 
 --
--- Name: topics_commitby_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topics_commitby_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topics_commitby_idx ON public.topics USING btree (commitby);
 
 
 --
--- Name: topics_date; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topics_date; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topics_date ON public.topics USING btree (postdate);
 
 
 --
--- Name: topics_lastmod; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topics_lastmod; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topics_lastmod ON public.topics USING btree (lastmod DESC) WHERE (NOT deleted);
 
 
 --
--- Name: topics_pkey; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topics_pkey; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX topics_pkey ON public.topics USING btree (id);
 
 
 --
--- Name: topics_sticky_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: topics_sticky_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX topics_sticky_idx ON public.topics USING btree (groupid, id DESC) WHERE (sticky AND (NOT deleted));
 
 
 --
--- Name: user_events_comment; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_events_comment; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_events_comment ON public.user_events USING btree (comment_id);
 
 
 --
--- Name: user_events_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_events_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_events_idx ON public.user_events USING btree (userid);
 
 
 --
--- Name: user_events_topic; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_events_topic; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_events_topic ON public.user_events USING btree (message_id);
 
 
 --
--- Name: user_log_action_userid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_log_action_userid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_log_action_userid_idx ON public.user_log USING btree (action_userid);
 
 
 --
--- Name: user_log_userid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_log_userid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_log_userid_idx ON public.user_log USING btree (userid);
 
 
 --
--- Name: user_remarks_userid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_remarks_userid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_remarks_userid_idx ON public.user_remarks USING btree (user_id);
 
 
 --
--- Name: user_tags_tagid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_tags_tagid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_tags_tagid_idx ON public.user_tags USING btree (tag_id);
 
 
 --
--- Name: user_tags_uniq_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_tags_uniq_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX user_tags_uniq_idx ON public.user_tags USING btree (user_id, tag_id, is_favorite);
 
 
 --
--- Name: user_tags_userid_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: user_tags_userid_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX user_tags_userid_idx ON public.user_tags USING btree (user_id);
 
 
 --
--- Name: users_email_normalized_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: users_email_normalized_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX users_email_normalized_idx ON public.users USING btree (public.normalize_email((email)::text));
 
 
 --
--- Name: users_frozen_by_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: users_frozen_by_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX users_frozen_by_idx ON public.users USING btree (frozen_by);
 
 
 --
--- Name: users_unactivated_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: users_unactivated_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX users_unactivated_idx ON public.users USING btree (id) WHERE (NOT activated);
 
 
 --
--- Name: vote_users_idx; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: vote_users_idx; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX vote_users_idx ON public.vote_users USING btree (vote, userid, variant_id);
 
 
 --
--- Name: vote_users_user; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: vote_users_user; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE INDEX vote_users_user ON public.vote_users USING btree (userid);
 
 
 --
--- Name: votenames_topic_key; Type: INDEX; Schema: public; Owner: maxcom
+-- Name: votenames_topic_key; Type: INDEX; Schema: public; Owner: linuxtalks
 --
 
 CREATE UNIQUE INDEX votenames_topic_key ON public.polls USING btree (topic);
 
 
 --
--- Name: comments comins_t; Type: TRIGGER; Schema: public; Owner: maxcom
+-- Name: comments comins_t; Type: TRIGGER; Schema: public; Owner: linuxtalks
 --
 
 CREATE TRIGGER comins_t AFTER INSERT ON public.comments FOR EACH ROW EXECUTE FUNCTION public.comins();
 
 
 --
--- Name: del_info event_delete_t; Type: TRIGGER; Schema: public; Owner: maxcom
+-- Name: del_info event_delete_t; Type: TRIGGER; Schema: public; Owner: linuxtalks
 --
 
 CREATE TRIGGER event_delete_t AFTER INSERT ON public.del_info FOR EACH ROW EXECUTE FUNCTION public.event_delete();
 
 
 --
--- Name: del_info msgdel_t; Type: TRIGGER; Schema: public; Owner: maxcom
+-- Name: del_info msgdel_t; Type: TRIGGER; Schema: public; Owner: linuxtalks
 --
 
 CREATE TRIGGER msgdel_t AFTER INSERT ON public.del_info FOR EACH ROW EXECUTE FUNCTION public.msgdel();
 
 
 --
--- Name: del_info msgundel_t; Type: TRIGGER; Schema: public; Owner: maxcom
+-- Name: del_info msgundel_t; Type: TRIGGER; Schema: public; Owner: linuxtalks
 --
 
 CREATE TRIGGER msgundel_t AFTER DELETE ON public.del_info FOR EACH ROW EXECUTE FUNCTION public.msgundel();
 
 
 --
--- Name: user_events new_event_t; Type: TRIGGER; Schema: public; Owner: maxcom
+-- Name: user_events new_event_t; Type: TRIGGER; Schema: public; Owner: linuxtalks
 --
 
 CREATE TRIGGER new_event_t AFTER INSERT ON public.user_events FOR EACH ROW EXECUTE FUNCTION public.new_event();
 
 
 --
--- Name: topics topins_t; Type: TRIGGER; Schema: public; Owner: maxcom
+-- Name: topics topins_t; Type: TRIGGER; Schema: public; Owner: linuxtalks
 --
 
 CREATE TRIGGER topins_t AFTER INSERT ON public.topics FOR EACH ROW EXECUTE FUNCTION public.topins();
 
 
 --
--- Name: ban_info ban_info_ban_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: ban_info ban_info_ban_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.ban_info
@@ -2317,7 +2317,7 @@ ALTER TABLE ONLY public.ban_info
 
 
 --
--- Name: ban_info ban_info_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: ban_info ban_info_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.ban_info
@@ -2325,7 +2325,7 @@ ALTER TABLE ONLY public.ban_info
 
 
 --
--- Name: comments comments_editor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: comments comments_editor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.comments
@@ -2333,7 +2333,7 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: comments comments_replyto_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: comments comments_replyto_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.comments
@@ -2341,7 +2341,7 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: comments comments_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: comments comments_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.comments
@@ -2349,7 +2349,7 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: comments comments_ua_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: comments comments_ua_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.comments
@@ -2357,7 +2357,7 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: comments comments_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: comments comments_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.comments
@@ -2365,7 +2365,7 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: del_info del_info_delby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: del_info del_info_delby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.del_info
@@ -2373,7 +2373,7 @@ ALTER TABLE ONLY public.del_info
 
 
 --
--- Name: edit_info edit_info_editor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: edit_info edit_info_editor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.edit_info
@@ -2381,7 +2381,7 @@ ALTER TABLE ONLY public.edit_info
 
 
 --
--- Name: edit_info edit_info_msgid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: edit_info edit_info_msgid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.edit_info
@@ -2389,7 +2389,7 @@ ALTER TABLE ONLY public.edit_info
 
 
 --
--- Name: groups groups_section_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: groups groups_section_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.groups
@@ -2397,7 +2397,7 @@ ALTER TABLE ONLY public.groups
 
 
 --
--- Name: ignore_list ignore_list_ignored_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: ignore_list ignore_list_ignored_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.ignore_list
@@ -2405,7 +2405,7 @@ ALTER TABLE ONLY public.ignore_list
 
 
 --
--- Name: ignore_list ignore_list_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: ignore_list ignore_list_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.ignore_list
@@ -2413,7 +2413,7 @@ ALTER TABLE ONLY public.ignore_list
 
 
 --
--- Name: images images_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: images images_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.images
@@ -2421,7 +2421,7 @@ ALTER TABLE ONLY public.images
 
 
 --
--- Name: memories memories_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: memories memories_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.memories
@@ -2429,7 +2429,7 @@ ALTER TABLE ONLY public.memories
 
 
 --
--- Name: memories memories_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: memories memories_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.memories
@@ -2437,7 +2437,7 @@ ALTER TABLE ONLY public.memories
 
 
 --
--- Name: monthly_stats monthly_stats_section_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: monthly_stats monthly_stats_section_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.monthly_stats
@@ -2445,7 +2445,7 @@ ALTER TABLE ONLY public.monthly_stats
 
 
 --
--- Name: user_remarks refuser_remarks_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_remarks refuser_remarks_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_remarks
@@ -2453,7 +2453,7 @@ ALTER TABLE ONLY public.user_remarks
 
 
 --
--- Name: tags tags_msgid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: tags tags_msgid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.tags
@@ -2461,7 +2461,7 @@ ALTER TABLE ONLY public.tags
 
 
 --
--- Name: tags tags_tagid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: tags tags_tagid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.tags
@@ -2469,7 +2469,7 @@ ALTER TABLE ONLY public.tags
 
 
 --
--- Name: telegram_posts telegram_posts_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: telegram_posts telegram_posts_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.telegram_posts
@@ -2477,7 +2477,7 @@ ALTER TABLE ONLY public.telegram_posts
 
 
 --
--- Name: topic_users_notified topic_users_notified_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: topic_users_notified topic_users_notified_topic_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.topic_users_notified
@@ -2485,7 +2485,7 @@ ALTER TABLE ONLY public.topic_users_notified
 
 
 --
--- Name: topic_users_notified topic_users_notified_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: topic_users_notified topic_users_notified_user_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.topic_users_notified
@@ -2493,7 +2493,7 @@ ALTER TABLE ONLY public.topic_users_notified
 
 
 --
--- Name: topics topics_commitby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: topics topics_commitby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.topics
@@ -2501,7 +2501,7 @@ ALTER TABLE ONLY public.topics
 
 
 --
--- Name: topics topics_groupid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: topics topics_groupid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.topics
@@ -2509,7 +2509,7 @@ ALTER TABLE ONLY public.topics
 
 
 --
--- Name: topics topics_ua_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: topics topics_ua_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.topics
@@ -2517,7 +2517,7 @@ ALTER TABLE ONLY public.topics
 
 
 --
--- Name: topics topics_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: topics topics_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.topics
@@ -2525,7 +2525,7 @@ ALTER TABLE ONLY public.topics
 
 
 --
--- Name: user_events user_events_comment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_events user_events_comment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_events
@@ -2533,7 +2533,7 @@ ALTER TABLE ONLY public.user_events
 
 
 --
--- Name: user_events user_events_message_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_events user_events_message_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_events
@@ -2541,7 +2541,7 @@ ALTER TABLE ONLY public.user_events
 
 
 --
--- Name: user_events user_events_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_events user_events_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_events
@@ -2549,7 +2549,7 @@ ALTER TABLE ONLY public.user_events
 
 
 --
--- Name: user_invites user_invites_invited_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_invites user_invites_invited_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_invites
@@ -2557,7 +2557,7 @@ ALTER TABLE ONLY public.user_invites
 
 
 --
--- Name: user_invites user_invites_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_invites user_invites_owner_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_invites
@@ -2565,7 +2565,7 @@ ALTER TABLE ONLY public.user_invites
 
 
 --
--- Name: user_log user_log_action_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_log user_log_action_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_log
@@ -2573,7 +2573,7 @@ ALTER TABLE ONLY public.user_log
 
 
 --
--- Name: user_log user_log_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_log user_log_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_log
@@ -2581,7 +2581,7 @@ ALTER TABLE ONLY public.user_log
 
 
 --
--- Name: user_remarks user_remarks_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_remarks user_remarks_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_remarks
@@ -2589,7 +2589,7 @@ ALTER TABLE ONLY public.user_remarks
 
 
 --
--- Name: user_settings user_settings_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_settings user_settings_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_settings
@@ -2597,7 +2597,7 @@ ALTER TABLE ONLY public.user_settings
 
 
 --
--- Name: user_tags user_tags_tagid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_tags user_tags_tagid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_tags
@@ -2605,7 +2605,7 @@ ALTER TABLE ONLY public.user_tags
 
 
 --
--- Name: user_tags user_tags_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: user_tags user_tags_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.user_tags
@@ -2613,7 +2613,7 @@ ALTER TABLE ONLY public.user_tags
 
 
 --
--- Name: users users_frozen_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: users users_frozen_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.users
@@ -2621,7 +2621,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: vote_users vote_users_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: vote_users vote_users_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.vote_users
@@ -2629,7 +2629,7 @@ ALTER TABLE ONLY public.vote_users
 
 
 --
--- Name: vote_users vote_users_variant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: vote_users vote_users_variant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.vote_users
@@ -2637,7 +2637,7 @@ ALTER TABLE ONLY public.vote_users
 
 
 --
--- Name: vote_users vote_users_vote_fkey; Type: FK CONSTRAINT; Schema: public; Owner: maxcom
+-- Name: vote_users vote_users_vote_fkey; Type: FK CONSTRAINT; Schema: public; Owner: linuxtalks
 --
 
 ALTER TABLE ONLY public.vote_users
@@ -2645,290 +2645,290 @@ ALTER TABLE ONLY public.vote_users
 
 
 --
--- Name: TABLE b_ips; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE b_ips; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.b_ips TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.b_ips TO linuxtalks;
 
 
 --
--- Name: TABLE ban_info; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE ban_info; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.ban_info TO linuxweb;
+GRANT ALL ON TABLE public.ban_info TO linuxtalks;
 
 
 --
--- Name: TABLE comments; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE comments; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.comments TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.comments TO linuxtalks;
 
 
 --
--- Name: TABLE del_info; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE del_info; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.del_info TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.del_info TO linuxtalks;
 
 
 --
--- Name: TABLE edit_info; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE edit_info; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.edit_info TO linuxweb;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.edit_info TO linuxtalks;
 
 
 --
--- Name: SEQUENCE edit_info_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE edit_info_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,UPDATE ON SEQUENCE public.edit_info_id_seq TO linuxweb;
+GRANT SELECT,UPDATE ON SEQUENCE public.edit_info_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE groups; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE groups; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.groups TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.groups TO linuxtalks;
 
 
 --
--- Name: TABLE ignore_list; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE ignore_list; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.ignore_list TO linuxweb;
+GRANT ALL ON TABLE public.ignore_list TO linuxtalks;
 
 
 --
--- Name: TABLE images; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE images; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.images TO linuxweb;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.images TO linuxtalks;
 
 
 --
--- Name: SEQUENCE images_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE images_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT UPDATE ON SEQUENCE public.images_id_seq TO linuxweb;
+GRANT UPDATE ON SEQUENCE public.images_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE memories; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE memories; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.memories TO linuxweb;
+GRANT ALL ON TABLE public.memories TO linuxtalks;
 
 
 --
--- Name: SEQUENCE memories_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE memories_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,UPDATE ON SEQUENCE public.memories_id_seq TO linuxweb;
+GRANT SELECT,UPDATE ON SEQUENCE public.memories_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE monthly_stats; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE monthly_stats; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.monthly_stats TO linuxweb;
+GRANT ALL ON TABLE public.monthly_stats TO linuxtalks;
 
 
 --
--- Name: TABLE msgbase; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE msgbase; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.msgbase TO linuxweb;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.msgbase TO linuxtalks;
 
 
 --
--- Name: TABLE polls; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE polls; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.polls TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.polls TO linuxtalks;
 
 
 --
--- Name: TABLE polls_variants; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE polls_variants; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.polls_variants TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.polls_variants TO linuxtalks;
 
 
 --
--- Name: SEQUENCE s_guid; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE s_guid; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,UPDATE ON SEQUENCE public.s_guid TO linuxweb;
+GRANT SELECT,UPDATE ON SEQUENCE public.s_guid TO linuxtalks;
 
 
 --
--- Name: SEQUENCE s_msgid; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE s_msgid; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON SEQUENCE public.s_msgid TO linuxweb;
+GRANT ALL ON SEQUENCE public.s_msgid TO linuxtalks;
 
 
 --
--- Name: SEQUENCE s_uid; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE s_uid; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,UPDATE ON SEQUENCE public.s_uid TO linuxweb;
+GRANT SELECT,UPDATE ON SEQUENCE public.s_uid TO linuxtalks;
 
 
 --
--- Name: TABLE sections; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE sections; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,DELETE,UPDATE ON TABLE public.sections TO linuxweb;
+GRANT SELECT,DELETE,UPDATE ON TABLE public.sections TO linuxtalks;
 
 
 --
--- Name: TABLE tags; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE tags; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.tags TO linuxweb;
+GRANT ALL ON TABLE public.tags TO linuxtalks;
 
 
 --
--- Name: TABLE tags_values; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE tags_values; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.tags_values TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.tags_values TO linuxtalks;
 
 
 --
--- Name: SEQUENCE tags_values_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE tags_values_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT UPDATE ON SEQUENCE public.tags_values_id_seq TO linuxweb;
+GRANT UPDATE ON SEQUENCE public.tags_values_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE telegram_posts; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE telegram_posts; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE ON TABLE public.telegram_posts TO linuxweb;
+GRANT SELECT,INSERT,DELETE ON TABLE public.telegram_posts TO linuxtalks;
 
 
 --
--- Name: TABLE topic_users_notified; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE topic_users_notified; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE ON TABLE public.topic_users_notified TO linuxweb;
+GRANT SELECT,INSERT,DELETE ON TABLE public.topic_users_notified TO linuxtalks;
 
 
 --
--- Name: TABLE topics; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE topics; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.topics TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.topics TO linuxtalks;
 
 
 --
--- Name: TABLE user_agents; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_agents; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT ON TABLE public.user_agents TO linuxweb;
+GRANT SELECT,INSERT ON TABLE public.user_agents TO linuxtalks;
 
 
 --
--- Name: SEQUENCE user_agents_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE user_agents_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT UPDATE ON SEQUENCE public.user_agents_id_seq TO linuxweb;
+GRANT UPDATE ON SEQUENCE public.user_agents_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE user_events; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_events; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_events TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_events TO linuxtalks;
 
 
 --
--- Name: SEQUENCE user_events_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE user_events_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON SEQUENCE public.user_events_id_seq TO linuxweb;
+GRANT ALL ON SEQUENCE public.user_events_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE user_invites; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_invites; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.user_invites TO linuxweb;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.user_invites TO linuxtalks;
 
 
 --
--- Name: TABLE user_log; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_log; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT ON TABLE public.user_log TO linuxweb;
+GRANT SELECT,INSERT ON TABLE public.user_log TO linuxtalks;
 
 
 --
--- Name: SEQUENCE user_log_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE user_log_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT USAGE ON SEQUENCE public.user_log_id_seq TO linuxweb;
+GRANT USAGE ON SEQUENCE public.user_log_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE user_remarks; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_remarks; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.user_remarks TO linuxweb;
+GRANT ALL ON TABLE public.user_remarks TO linuxtalks;
 
 
 --
--- Name: SEQUENCE user_remarks_id_seq; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE user_remarks_id_seq; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT UPDATE ON SEQUENCE public.user_remarks_id_seq TO linuxweb;
+GRANT UPDATE ON SEQUENCE public.user_remarks_id_seq TO linuxtalks;
 
 
 --
--- Name: TABLE user_settings; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_settings; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.user_settings TO linuxweb;
+GRANT ALL ON TABLE public.user_settings TO linuxtalks;
 
 
 --
--- Name: TABLE user_tags; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE user_tags; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT ALL ON TABLE public.user_tags TO linuxweb;
+GRANT ALL ON TABLE public.user_tags TO linuxtalks;
 
 
 --
--- Name: TABLE users; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE users; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO linuxweb;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.users TO linuxtalks;
 
 
 --
--- Name: SEQUENCE vote_id; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE vote_id; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT UPDATE ON SEQUENCE public.vote_id TO linuxweb;
+GRANT UPDATE ON SEQUENCE public.vote_id TO linuxtalks;
 
 
 --
--- Name: TABLE vote_users; Type: ACL; Schema: public; Owner: maxcom
+-- Name: TABLE vote_users; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT SELECT,INSERT ON TABLE public.vote_users TO linuxweb;
+GRANT SELECT,INSERT ON TABLE public.vote_users TO linuxtalks;
 
 
 --
--- Name: SEQUENCE votes_id; Type: ACL; Schema: public; Owner: maxcom
+-- Name: SEQUENCE votes_id; Type: ACL; Schema: public; Owner: linuxtalks
 --
 
-GRANT UPDATE ON SEQUENCE public.votes_id TO linuxweb;
+GRANT UPDATE ON SEQUENCE public.votes_id TO linuxtalks;
 
 
 --
