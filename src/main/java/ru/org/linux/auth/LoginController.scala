@@ -70,7 +70,7 @@ class LoginController(userDao: UserDao, userDetailsService: UserDetailsService,
       }
     } catch {
       case e@(_: LockedException | _: BadCredentialsException | _: UsernameNotFoundException) =>
-        logger.warn("Login of " + username + " failed; remote IP: " + request.getRemoteAddr + "; " + e.toString)
+        logger.warn("Login of " + username + " failed; remote IP: " + request.getHeader("X-Forwarded-For") + "; " + e.toString)
 
         delayResponse {
           new ModelAndView(new RedirectView("/login.jsp?error=true"))
@@ -102,7 +102,7 @@ class LoginController(userDao: UserDao, userDetailsService: UserDetailsService,
       }
     } catch {
       case e@(_: LockedException | _: BadCredentialsException | _: UsernameNotFoundException) =>
-        logger.warn("Login of " + username + " failed; remote IP: " + request.getRemoteAddr + "; " + e.toString)
+        logger.warn("Login of " + username + " failed; remote IP: " + request.getHeader("X-Forwarded-For") + "; " + e.toString)
         delayResponse { LoginStatus(success = false, "Bad credentials") }
     }
   }

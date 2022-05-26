@@ -46,7 +46,7 @@ class EditCommentController(commentService: CommentCreateService, msgbaseDao: Ms
   def initBinder(binder: WebDataBinder): Unit = commentService.initBinder(binder)
 
   @ModelAttribute("ipBlockInfo")
-  def loadIPBlock(request: HttpServletRequest): IPBlockInfo = ipBlockDao.getBlockInfo(request.getRemoteAddr)
+  def loadIPBlock(request: HttpServletRequest): IPBlockInfo = ipBlockDao.getBlockInfo(request)
 
   @ModelAttribute("modes")
   def getModes: util.Map[String, String] = Map.empty[String, String].asJava

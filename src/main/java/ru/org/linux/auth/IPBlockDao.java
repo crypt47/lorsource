@@ -23,6 +23,7 @@ import ru.org.linux.user.User;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.List;
@@ -36,6 +37,9 @@ public class IPBlockDao {
     jdbcTemplate = new JdbcTemplate(ds);
   }
 
+  public IPBlockInfo getBlockInfo(HttpServletRequest request) {
+    return getBlockInfo(request.getHeader("X-Forwarded-For"));
+  }
   public IPBlockInfo getBlockInfo(String addr) {
     List<IPBlockInfo> list = jdbcTemplate.query(
             "SELECT ip, reason, ban_date, date, mod_id, allow_posting, captcha_required FROM b_ips WHERE ip = ?::inet",

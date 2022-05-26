@@ -393,7 +393,7 @@ public class TopicController {
       params.put("lastCommentId", comments.getList().get(comments.getList().size() - 1).getId());
     }
 
-    IPBlockInfo ipBlockInfo = ipBlockDao.getBlockInfo(request.getRemoteAddr());
+    IPBlockInfo ipBlockInfo = ipBlockDao.getBlockInfo(request);
     params.put("ipBlockInfo", ipBlockInfo);
 
     params.put("modes", MessageTextService.postingModeSelector(tmpl.getCurrentUser(), tmpl.getFormatMode()));

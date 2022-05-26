@@ -122,7 +122,7 @@ public class AddTopicController {
 
   @ModelAttribute("ipBlockInfo")
   private IPBlockInfo loadIPBlock(HttpServletRequest request) {
-    return ipBlockDao.getBlockInfo(request.getRemoteAddr());
+    return ipBlockDao.getBlockInfo(request);
   }
 
   @RequestMapping(value = "/add.jsp", method = RequestMethod.GET)
@@ -272,7 +272,7 @@ public class AddTopicController {
     Topic previewMsg = null;
 
     if (group!=null) {
-      previewMsg = new Topic(form, user, request.getRemoteAddr());
+      previewMsg = new Topic(form, user, request.getHeader("X-Forwarded-For"));
 
       Image imageObject = null;
 

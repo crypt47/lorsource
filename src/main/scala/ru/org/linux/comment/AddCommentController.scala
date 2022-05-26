@@ -47,7 +47,7 @@ class AddCommentController(ipBlockDao: IPBlockDao, commentPrepareService: Commen
                            @Qualifier("realtimeHubWS") realtimeHubWS: ActorRef, textService: MessageTextService) {
 
   @ModelAttribute("ipBlockInfo")
-  def loadIPBlock(request: HttpServletRequest): IPBlockInfo = ipBlockDao.getBlockInfo(request.getRemoteAddr)
+  def loadIPBlock(request: HttpServletRequest): IPBlockInfo = ipBlockDao.getBlockInfo(request)
 
   @ModelAttribute("modes")
   def getModes(request: HttpServletRequest): util.Map[String, String] = {

@@ -250,7 +250,7 @@ public class EditTopicController {
 
   @ModelAttribute("ipBlockInfo")
   private IPBlockInfo loadIPBlock(HttpServletRequest request) {
-    return ipBlockDao.getBlockInfo(request.getRemoteAddr());
+    return ipBlockDao.getBlockInfo(request);
   }
 
   @RequestMapping(value = "/edit.jsp", method = RequestMethod.POST)
