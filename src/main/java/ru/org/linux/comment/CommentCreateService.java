@@ -233,7 +233,7 @@ public class CommentCreateService {
         commentRequest.getTopic().getId(),
         commentId,
         user.getId(),
-        request.getRemoteAddr()
+        request.getHeader("X-Forwarded-For")
       );
     }
     return comment;
