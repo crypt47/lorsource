@@ -12,15 +12,3 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   --%>
-
-<script type="text/javascript"><!--
-google_ad_client = "pub-6069094673001350";
-/* 728x90, view-message.jsp */
-google_ad_slot = "0977795537";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
-</script>
-<script type="text/javascript"
-src="//pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>

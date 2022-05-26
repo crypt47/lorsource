@@ -27,7 +27,7 @@
 <% Template tmpl = Template.getTemplate(request); %>
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
 
-<title>LINUX.ORG.RU — Русская информация об ОС Linux</title>
+<title>LINUXTALKS.CO — русскоязычное сообщество Linux</title>
 <meta name="Keywords" content="linux линукс операционная система документация gnu бесплатное свободное програмное обеспечение софт unix юникс software free documentation operating system новости news">
 <meta name="Description" content="Все о Linux на русском языке">
 <link rel="alternate" title="L.O.R RSS" href="section-rss.jsp?section=1" type="application/rss+xml">
@@ -35,62 +35,6 @@
 
 <div id="mainpage">
 <div id="news">
-
-<c:if test="${showAdsense}">
-  <div align="center" width="100%">
-  <style>
-    @media screen and (max-width: 480px) {
-      .yandex-adaptive {
-        min-height: 250px;
-        width: 100%;
-      }
-    }
-
-    @media screen and (min-width: 481px) {
-      .yandex-adaptive { min-height: 90px; width: 100% }
-    }
-  </style>
-
-  <!-- Yandex.RTB R-A-337082-3 -->
-  <div id="yandex_rtb_R-A-337082-3" class="yandex-adaptive"></div>
-  <script type="text/javascript">
-      (function(w, d, n, s, t) {
-          w[n] = w[n] || [];
-          w[n].push(function() {
-              Ya.Context.AdvManager.render({
-                  blockId: "R-A-337082-3",
-                  renderTo: "yandex_rtb_R-A-337082-3",
-                  async: true
-              });
-          });
-          t = d.getElementsByTagName("script")[0];
-          s = d.createElement("script");
-          s.type = "text/javascript";
-          s.src = "//an.yandex.ru/system/context.js";
-          s.async = true;
-          t.parentNode.insertBefore(s, t);
-      })(this, this.document, "yandexContextAsyncCallbacks");
-  </script>
-  </div>
-</c:if>
-<%--
-  <div style="text-align: center; margin-top: 0.5em; height: 105px" id="interpage">
-  </div>
-  <script type="text/javascript">
-    $script.ready('lorjs', function () {
-      var ads = [
-        {
-          type: 'rimg',
-          img730: '/adv/devops-banner-730x90.png',
-          img320: '/adv/devops-banner-320x100.png',
-          href: 'https://otus.ru/lessons/devops-praktiki-i-instrumenty/?utm_source=partners&utm_medium=cpm&utm_campaign=devops&utm_content=mops-test&utm_term=linux-org-ru'
-        }
-      ];
-
-      init_interpage_adv(ads);
-    });
-  </script>
---%>
 
   <c:if test="${template.moderatorSession or template.correctorSession}">
 <div class="nav"   style="border-bottom: none">
@@ -157,12 +101,6 @@
     </a>
   </p>
 
-  <p>
-    <i class="icon-telegram"></i>
-    <a href="https://t.me/best_of_lor">
-      Канал в Telegram
-    </a>
-  </p>
 </div>
 
 <aside id=boxlets>
@@ -194,12 +132,6 @@
   </c:if>
 
   <% out.flush(); %>
-
-  <div align="center" style="margin-bottom: 0.5em">
-    <a href="http://qrator.net/" rel="nofollow" target="_blank">
-      <img src="/adv/qrator-box.png" width="250" style="max-width: 100%; height: auto" alt="Protected by Qrator">
-    </a>
-  </div>
 
   <lor:boxlets var="boxes">
       <c:forEach var="boxlet" items="${boxes}">

@@ -22,7 +22,7 @@
 <% out.flush(); %>
 <body>
 <div id="hd">
-  <a id="sitetitle" href="/">LINUX.ORG.RU</a>
+  <a id="sitetitle" href="/">LINUXTALKS.CO</a>
 
   <div class="menu">
     <div id="loginGreating">
