@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2022 Linux.org.ru
+ * Copyright 1998-2022 linuxtalks.co
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -40,17 +40,17 @@ import static ru.org.linux.util.bbcode.tags.QuoteTag.citeFooter;
 import static ru.org.linux.util.bbcode.tags.QuoteTag.citeHeader;
 
 public class HTMLFormatterTest {
-  private static final String TEXT1 = "Here is www.linux.org.ru, have fun! :-)";
-  private static final String RESULT1 = "Here is <a href=\"https://www.linux.org.ru\">www.linux.org.ru</a>, have fun! :-)";
+  private static final String TEXT1 = "Here is www.linuxtalks.co, have fun! :-)";
+  private static final String RESULT1 = "Here is <a href=\"https://www.linuxtalks.co\">www.linuxtalks.co</a>, have fun! :-)";
 
-  private static final String TEXT2 = "Here is http://linux.org.ru, have fun! :-)";
-  private static final String RESULT2 = "Here is <a href=\"http://linux.org.ru\">http://linux.org.ru</a>, have fun! :-)";
+  private static final String TEXT2 = "Here is http://linuxtalks.co, have fun! :-)";
+  private static final String RESULT2 = "Here is <a href=\"http://linuxtalks.co\">http://linuxtalks.co</a>, have fun! :-)";
 
-  private static final String TEXT3 = "Long url: http://www.linux.org.ru/profile/maxcom/view-message.jsp?msgid=1993651";
-  private static final String RESULT3 = "Long url: <a href=\"https://www.linux.org.ru/profile/maxcom/view-message.jsp?msgid=1993651\">www.linux.org.ru/...</a>";
+  private static final String TEXT3 = "Long url: http://www.linuxtalks.co/profile/maxcom/view-message.jsp?msgid=1993651";
+  private static final String RESULT3 = "Long url: <a href=\"https://linuxtalks.co/profile/maxcom/view-message.jsp?msgid=1993651\">www.linuxtalks.co/...</a>";
 
-  private static final String TEXT8 = "Long url: http://www.linux.org.ru/profile/maxcom/view-message.jsp?msgid=1993651&a=b";
-  private static final String RESULT8 = "Long url: <a href=\"https://www.linux.org.ru/profile/maxcom/view-message.jsp?msgid=1993651&amp;a=b\">www.linux.org.ru/...</a>";
+  private static final String TEXT8 = "Long url: http://www.linuxtalks.co/profile/maxcom/view-message.jsp?msgid=1993651&a=b";
+  private static final String RESULT8 = "Long url: <a href=\"https://linuxtalks.co/profile/maxcom/view-message.jsp?msgid=1993651&amp;a=b\">www.linuxtalks.co/...</a>";
 
   private static final String TEXT9 = "(http://ru.wikipedia.org/wiki/Blah_(blah))";
   private static final String RESULT9 = "(<a href=\"http://ru.wikipedia.org/wiki/Blah_(blah)\">http://ru.wikipedia.org/wiki/Blah_(blah)</a>)";
@@ -112,8 +112,8 @@ public class HTMLFormatterTest {
   @Before
   public void init() throws Exception {
 
-    URI mainURI = new URI("http://www.linux.org.ru/", true, "UTF-8");
-    URI secureURI = new URI("https://www.linux.org.ru/", true, "UTF-8");
+    URI mainURI = new URI("http://www.linuxtalks.co/", true, "UTF-8");
+    URI secureURI = new URI("https://linuxtalks.co/", true, "UTF-8");
 
     TopicDao topicDao = mock(TopicDao.class);
     Topic message1 = mock(Topic.class);
@@ -225,20 +225,20 @@ public class HTMLFormatterTest {
 
   @Test
   public void testURLs() {
-    String url1 = "http://www.linux.org.ru/forum/general/6890857/page2?lastmod=1319022386177#comment-6892917";
-    assertEquals("<a href=\"https://www.linux.org.ru/forum/general/6890857?cid=6892917\" title=\"привет3\">привет3 (комментарий)</a>",
+    String url1 = "http://www.linuxtalks.co/forum/general/6890857/page2?lastmod=1319022386177#comment-6892917";
+    assertEquals("<a href=\"https://linuxtalks.co/forum/general/6890857?cid=6892917\" title=\"привет3\">привет3 (комментарий)</a>",
         toHtmlFormatter.format(url1,false));
-    String url3 = "http://www.linux.org.ru/jump-message.jsp?msgid=1948661&cid=1948675";
-    assertEquals("<a href=\"https://www.linux.org.ru/forum/security/1948661?cid=1948675\" title=\"привет12\">привет12 (комментарий)</a>",
+    String url3 = "http://www.linuxtalks.co/jump-message.jsp?msgid=1948661&cid=1948675";
+    assertEquals("<a href=\"https://linuxtalks.co/forum/security/1948661?cid=1948675\" title=\"привет12\">привет12 (комментарий)</a>",
         toHtmlFormatter.format(url3,false));
-    String url15 = "https://www.linux.org.ru/forum/linux-org-ru/6944260/page4?lastmod=1320084656912#comment-6944831";
-    assertEquals("<a href=\"https://www.linux.org.ru/forum/linux-org-ru/6944260?cid=6944831\" title=\"привет15\">привет15 (комментарий)</a>",
+    String url15 = "https://linuxtalks.co/forum/linux-org-ru/6944260/page4?lastmod=1320084656912#comment-6944831";
+    assertEquals("<a href=\"https://linuxtalks.co/forum/linux-org-ru/6944260?cid=6944831\" title=\"привет15\">привет15 (комментарий)</a>",
         toHtmlFormatter.format(url15, false));
-    String urlHistory = "http://www.linux.org.ru/news/kernel/6992532/history";
-    assertEquals("<a href=\"https://www.linux.org.ru/news/kernel/6992532/history\">www.linux.org.ru/news/kernel/6992532/history</a>",
+    String urlHistory = "http://www.linuxtalks.co/news/kernel/6992532/history";
+    assertEquals("<a href=\"https://linuxtalks.co/news/kernel/6992532/history\">www.linuxtalks.co/news/kernel/6992532/history</a>",
         toHtmlFormatter.format(urlHistory, true));
-    assertEquals("<a href=\"https://www.linux.org.ru/forum/lor-source/6992532/comments\">www.linux.org.ru/forum/lor-source/6992532/comments</a>",
-        toHtmlFormatter.format("www.linux.org.ru/forum/lor-source/6992532/comments", true));
+    assertEquals("<a href=\"https://linuxtalks.co/forum/lor-source/6992532/comments\">www.linuxtalks.co/forum/lor-source/6992532/comments</a>",
+        toHtmlFormatter.format("www.linuxtalks.co/forum/lor-source/6992532/comments", true));
   }
 
 
@@ -532,8 +532,8 @@ public class HTMLFormatterTest {
         toHtmlFormatter.format("Ссылка: http://www.opera.com/browser/download/?os=linux-x86-64&ver=12.00&local=y", false)
     );
     assertEquals(
-        "<a href=\"https://www.linux.org.ru/test/tost/holokoust/12345678/?parameter=unknown&amp;option=true\">www.linux.org.ru/test/tost/holokoust/12345678/?parameter=unknown&amp;option=true</a>",
-        toHtmlFormatter.format("http://www.linux.org.ru/test/tost/holokoust/12345678/?parameter=unknown&option=true", true));
+        "<a href=\"https://linuxtalks.co/test/tost/holokoust/12345678/?parameter=unknown&amp;option=true\">www.linuxtalks.co/test/tost/holokoust/12345678/?parameter=unknown&amp;option=true</a>",
+        toHtmlFormatter.format("http://www.linuxtalks.co/test/tost/holokoust/12345678/?parameter=unknown&option=true", true));
   }
 
   @Test
@@ -562,8 +562,8 @@ public class HTMLFormatterTest {
 
   @Test
   public void testUrlQuotes() {
-    assertEquals("<p><a href=\"https://www.linux.org.ru/search.jsp?q=&quot;100%25&quot;\">www.linux.org.ru/search.jsp?q=&quot;100%&quot;</a></p>",
-        lorCodeService.parseComment("www.linux.org.ru/search.jsp?q=\"100%\"", false));
+    assertEquals("<p><a href=\"https://linuxtalks.co/search.jsp?q=&quot;100%25&quot;\">www.linuxtalks.co/search.jsp?q=&quot;100%&quot;</a></p>",
+        lorCodeService.parseComment("www.linuxtalks.co/search.jsp?q=\"100%\"", false));
     assertEquals("<p><a href=\"http://www.olo.org.ru/search.jsp?q=&quot;privet&quot;\">http://www.olo.org.ru/search.jsp?q=&quot;privet&quot;</a></p>",
         lorCodeService.parseComment("http://www.olo.org.ru/search.jsp?q=&quot;privet&quot;", false));
     assertEquals("<p><a href=\"http://127.0.0.1:8080/search.jsp?q=%22%D1%82%D0%B5%D1%81%D1%82-%D1%82%D0%BE%D1%81%D1%82-%D1%85%D0%BE%D0%BB%D0%BE%D0%BA%D0%BE%D1%81%D1%82%22&amp;oldQ=&amp;range=ALL&amp;interval=ALL&amp;user=&amp;_usertopic=on&amp;csrf=TccXeqgBc10MvJ786lZFQQ%3D%3D\">http://127.0.0.1:8080/search.jsp?q=&quot;тест-тост-холокост&quot;&amp;oldQ=&amp;range=A...</a></p>",
@@ -592,8 +592,8 @@ public class HTMLFormatterTest {
   @Test
   public void encodeLorUrl() {
     assertEquals(
-            "<p><a href=\"https://www.linux.org.ru/forum/linux%3C%3E-org-ru/\">www.linux.org.ru/forum/linux&lt;&gt;-org-ru/</a></p>",
-            lorCodeService.parseComment("www.linux.org.ru/forum/linux%3C%3E-org-ru/", false));
+            "<p><a href=\"https://linuxtalks.co/forum/linux%3C%3E-org-ru/\">www.linuxtalks.co/forum/linux&lt;&gt;-org-ru/</a></p>",
+            lorCodeService.parseComment("www.linuxtalks.co/forum/linux%3C%3E-org-ru/", false));
   }
 
 

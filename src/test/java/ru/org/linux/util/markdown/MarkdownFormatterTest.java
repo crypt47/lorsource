@@ -56,8 +56,8 @@ public class MarkdownFormatterTest {
   @Before
   public void init() throws Exception {
     SiteConfig siteConfig = mock(SiteConfig.class);
-    URI mainURI = new URI("http://www.linux.org.ru/", true, "UTF-8");
-    URI secureURI = new URI("https://www.linux.org.ru/", true, "UTF-8");
+    URI mainURI = new URI("http://linuxtalks.co/", true, "UTF-8");
+    URI secureURI = new URI("https://linuxtalks.co/", true, "UTF-8");
 
     TopicDao topicDao = mock(TopicDao.class);
     CommentDao commentDao = mock(CommentDao.class);

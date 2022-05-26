@@ -49,9 +49,9 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
       """.stripMargin)
 
     if (isNew) {
-      text.append("На форуме по адресу https://www.linux.org.ru/ появилась регистрационная запись,\n")
+      text.append("На форуме по адресу https://linuxtalks.co/ появилась регистрационная запись,\n")
     } else {
-      text.append("На форуме по адресу https://www.linux.org.ru/ была изменена регистрационная запись,\n")
+      text.append("На форуме по адресу https://linuxtalks.co/ была изменена регистрационная запись,\n")
     }
 
     text.append(
@@ -67,14 +67,14 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
     if (isNew) {
       text.append(
         """
-          |Если же именно вы решили зарегистрироваться на форуме по адресу https://www.linux.org.ru/,
+          |Если же именно вы решили зарегистрироваться на форуме по адресу https://linuxtalks.co/,
           |то вам следует подтвердить свою регистрацию и тем самым активировать вашу учетную запись.
           |
         """.stripMargin)
     } else {
       text.append(
         """
-          |Если же именно вы решили изменить свою регистрационную запись https://www.linux.org.ru/,
+          |Если же именно вы решили изменить свою регистрационную запись https://linuxtalks.co/,
           |то вам следует подтвердить свое изменение.
           |
         """.stripMargin)
@@ -84,7 +84,7 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
       s"""
          |Для активации перейдите по ссылке:
          |
-         |https://www.linux.org.ru/activate?nick=$nick&activation=${URLEncoder.encode(regcode, "utf-8")}
+         |https://linuxtalks.co/activate?nick=$nick&activation=${URLEncoder.encode(regcode, "utf-8")}
          |
          |(код активации: $regcode)
          |
@@ -100,14 +100,14 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
       s"""
          |Здравствуйте!
          |
-         |Участник https://www.linux.org.ru/, ${inviteUser.getNick} (https://www.linux.org.ru/people/${inviteUser.getNick}/profile),
+         |Участник https://linuxtalks.co/, ${inviteUser.getNick} (https://linuxtalks.co/people/${inviteUser.getNick}/profile),
          |пригласил вас зарегистрироваться на форуме.\n
          |
          |Если вы не понимаете, о чем идет речь - просто проигнорируйте это сообщение!
          |
          |Для регистрации перейдите по ссылке:
          |
-         |https://www.linux.org.ru/register.jsp?invite=${URLEncoder.encode(inviteCode, "utf-8")}
+         |https://linuxtalks.co/register.jsp?invite=${URLEncoder.encode(inviteCode, "utf-8")}
          |
          |Эта ссылка позволяет зарегистрировать только одну учетную запись. Ссылка действует
          |до ${DateFormats.getDefault.print(validUntil)}.
@@ -121,9 +121,9 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
 
   private def sendRegistrationMail(email: String, text: String): Unit = {
     val emailMessage = EmailService.createMessage
-    emailMessage.setFrom(new InternetAddress("no-reply@linux.org.ru"))
+    emailMessage.setFrom(new InternetAddress("no-reply@linuxtalks.co"))
     emailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email))
-    emailMessage.setSubject("Регистрация на Linux.org.ru")
+    emailMessage.setSubject("Регистрация на linuxtalks.co")
     emailMessage.setSentDate(new Date)
     emailMessage.setText(text, "UTF-8")
     Transport.send(emailMessage)

@@ -257,7 +257,7 @@ public class LorURITest {
 
   @Test
   public void test14() throws Exception {
-    String url14_1 = "https://www.linux.org.ru/jump-message.jsp?msgid=6890857&amp;cid=6892917";
+    String url14_1 = "https://linuxtalks.co/jump-message.jsp?msgid=6890857&amp;cid=6892917";
     String url14_2 = "https://127.0.0.1:8080/jump-message.jsp?msgid=6890857&amp;cid=6892917";
     LorURL lorURI1 = new LorURL(mainLORURI, url14_1);
     LorURL lorURI2 = new LorURL(mainURI, url14_2);
@@ -281,7 +281,7 @@ public class LorURITest {
 
   @Test
   public void test15() throws Exception {
-    String url15_1 = "https://www.linux.org.ru/forum/linux-org-ru/6944260/page4?lastmod=1320084656912#comment-6944831";
+    String url15_1 = "https://linuxtalks.co/forum/linux-org-ru/6944260/page4?lastmod=1320084656912#comment-6944831";
     String url15_2 = "https://127.0.0.1:8080/forum/linux-org-ru/6944260/page4?lastmod=1320084656912#comment-6944831";
     LorURL lorURI1 = new LorURL(mainLORURI, url15_1);
     LorURL lorURI2 = new LorURL(mainURI, url15_2);
@@ -313,14 +313,14 @@ public class LorURITest {
     assertEquals(20, uri1.formatUrlBody(20).length());
     assertEquals("127.0.0.1:8080/forum/security/1948661?cid=1948668", uri1.formatUrlBody(80));
     // url == mainURL и mainURL host
-    LorURL uri2 = new LorURL(mainLORURI, "https://www.linux.org.ru/search.jsp?q=%D0%B1%D0%BB%D1%8F&oldQ=&range=ALL&interval=ALL&user=&_usertopic=on");
+    LorURL uri2 = new LorURL(mainLORURI, "https://linuxtalks.co/search.jsp?q=%D0%B1%D0%BB%D1%8F&oldQ=&range=ALL&interval=ALL&user=&_usertopic=on");
     assertEquals("www.linux.org.ru/...", uri2.formatUrlBody(10));
     assertEquals("www.linux.org.ru/...", uri2.formatUrlBody(20));
     assertEquals(20, uri2.formatUrlBody(20).length());
     assertEquals("www.linux.org.ru/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertop...", uri2.formatUrlBody(80));
     assertEquals(80, uri2.formatUrlBody(80).length());
     // unescaped url == mainURL и mainURL host
-    LorURL uri3 = new LorURL(mainLORURI, "https://www.linux.org.ru/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertopic=on");
+    LorURL uri3 = new LorURL(mainLORURI, "https://linuxtalks.co/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertopic=on");
     assertEquals("www.linux.org.ru/...", uri3.formatUrlBody(10));
     assertEquals("www.linux.org.ru/...", uri3.formatUrlBody(20));
     assertEquals(20, uri3.formatUrlBody(20).length());

@@ -61,7 +61,7 @@ class ExceptionMailingActor(siteConfig: SiteConfig) extends Actor with ActorLogg
     try {
       val mail = new InternetAddress(adminEmailAddress, true)
 
-      emailMessage.setFrom(new InternetAddress("no-reply@linux.org.ru"))
+      emailMessage.setFrom(new InternetAddress("no-reply@linuxtalks.co"))
       emailMessage.addRecipient(Message.RecipientType.TO, mail)
       emailMessage.setSubject(subject)
       emailMessage.setSentDate(new Date)

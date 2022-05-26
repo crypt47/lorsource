@@ -31,7 +31,7 @@ class CodeTagSpec extends Specification {
         """<div class="code"><pre class="no-highlight"><code>[list][*]one[*]two[*]three[/list]</code></pre></div>"""
     }
 
-    // https://www.linux.org.ru/forum/lor-source/11611691
+    // https://linuxtalks.co/forum/lor-source/11611691
     "preserve lorcode in case of extra braces" in {
       parse("[code][i]][/code]") must be equalTo
         """<div class="code"><pre class="no-highlight"><code>[i]]</code></pre></div>"""

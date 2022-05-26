@@ -95,7 +95,7 @@ public class LostPasswordController {
     Session mailSession = Session.getDefaultInstance(props, null);
 
     MimeMessage msg = new MimeMessage(mailSession);
-    msg.setFrom(new InternetAddress("no-reply@linux.org.ru"));
+    msg.setFrom(new InternetAddress("no-reply@linuxtalks.co"));
 
     String resetCode = userService.getResetCode(user.getNick(), user.getEmail(), resetDate);
 
@@ -104,7 +104,7 @@ public class LostPasswordController {
     msg.setSentDate(new Date());
     msg.setText(
       "Здравствуйте!\n\n" +
-      "Для сброса вашего пароля перейдите по ссылке https://www.linux.org.ru/reset-password\n\n" +
+      "Для сброса вашего пароля перейдите по ссылке https://linuxtalks.co/reset-password\n\n" +
       "Ваш ник "+user.getNick()+", код подтверждения: " + resetCode + "\n\n" +
       "Удачи!"
     );
