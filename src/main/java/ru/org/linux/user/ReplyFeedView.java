@@ -32,8 +32,8 @@ public class ReplyFeedView extends AbstractRomeView {
     List<PreparedUserEvent> list = (List<PreparedUserEvent>) model.get("topicsList");
     String s = "Ответы на комментарии пользователя " + model.get("nick");
     feed.setTitle(s);
-    feed.setLink("http://www.linux.org.ru");
-    feed.setUri("http://www.linux.org.ru");
+    feed.setLink("http://linuxtalks.co");
+    feed.setUri("http://linuxtalks.co");
     feed.setAuthor("");
     feed.setDescription(s);
 
@@ -60,13 +60,13 @@ public class ReplyFeedView extends AbstractRomeView {
         feedEntry.setAuthor(preparedUserEvent.getAuthor().getNick());
 
         link = String.format(
-          "http://www.linux.org.ru/jump-message.jsp?msgid=%s&cid=%s",
+          "http://linuxtalks.co/jump-message.jsp?msgid=%s&cid=%s",
           String.valueOf(item.getTopicId()),
           String.valueOf(item.getCid())
         );
       } else {
         link = String.format(
-          "http://www.linux.org.ru/view-message.jsp?msgid=%s",
+          "http://linuxtalks.co/view-message.jsp?msgid=%s",
           String.valueOf(item.getTopicId())
         );
       }

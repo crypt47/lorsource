@@ -100,7 +100,7 @@ public class LostPasswordController {
     String resetCode = userService.getResetCode(user.getNick(), user.getEmail(), resetDate);
 
     msg.addRecipient(RecipientType.TO, new InternetAddress(user.getEmail()));
-    msg.setSubject("Your password @linux.org.ru");
+    msg.setSubject("Your password @linuxtalks.co");
     msg.setSentDate(new Date());
     msg.setText(
       "Здравствуйте!\n\n" +
