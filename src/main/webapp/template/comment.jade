@@ -88,8 +88,9 @@ mixin comment(comment, enableSchema, topic, showMenu)
                         br
                         span.sign_more
                             | #{comment.userAgent} #{' '}
-                            a(href='sameip.jsp?ua=#{comment.userAgentId}&ip=#{comment.postIP}&mask=0')
-                                | &#x1f50d;
+                            if comment.postIP
+                                a(href='sameip.jsp?ua=#{comment.userAgentId}&ip=#{comment.postIP}&mask=0')
+                                    | &#x1f50d;
 
 
                 if !comment.deleted && showMenu

@@ -171,8 +171,9 @@ public class CommentPrepareService {
 
     if (tmpl!=null && tmpl.isModeratorSession()) {
       postIP = comment.getPostIP();
-      userAgent = userAgentDao.getUserAgentById(comment.getUserAgentId());
     }
+
+    userAgent = userAgentDao.getUserAgentById(comment.getUserAgentId());
 
     boolean undeletable = false;
     if (tmpl!=null) {
