@@ -101,7 +101,7 @@ public class GroupController {
     HttpServletRequest request,
     HttpServletResponse response
   ) throws Exception {
-    return forum(groupName, offset, false, request, response, year, month);
+    return group(Section.SECTION_FORUM, groupName, offset, false, request, response, year, month);
   }
 
   @RequestMapping("/forum/{group}")
@@ -112,17 +112,40 @@ public class GroupController {
     HttpServletRequest request,
     HttpServletResponse response
   ) throws Exception {
-    return forum(groupName, offset, lastmod, request, response, null, null);
+    return group(Section.SECTION_FORUM, groupName, offset, lastmod, request, response, null, null);
   }
 
-  private ModelAndView forum(
-    @PathVariable("group") String groupName,
-    @RequestParam(defaultValue = "0", value="offset") int offset,
-    @RequestParam(defaultValue = "false") boolean lastmod,
-    HttpServletRequest request,
-    HttpServletResponse response,
-    Integer year,
-    Integer month
+  @RequestMapping("/talks/{group}")
+  public ModelAndView talks(
+          @PathVariable("group") String groupName,
+          @RequestParam(defaultValue = "0", value="offset") int offset,
+          @RequestParam(defaultValue = "false") boolean lastmod,
+          HttpServletRequest request,
+          HttpServletResponse response
+  ) throws Exception {
+    return group(Section.SECTION_TALKS, groupName, offset, lastmod, request, response, null, null);
+  }
+
+  @RequestMapping("/club/{group}")
+  public ModelAndView club(
+          @PathVariable("group") String groupName,
+          @RequestParam(defaultValue = "0", value="offset") int offset,
+          @RequestParam(defaultValue = "false") boolean lastmod,
+          HttpServletRequest request,
+          HttpServletResponse response
+  ) throws Exception {
+    return group(Section.SECTION_CLUB, groupName, offset, lastmod, request, response, null, null);
+  }
+
+  private ModelAndView group(
+          int sectionId,
+          @PathVariable("group") String groupName,
+          @RequestParam(defaultValue = "0", value="offset") int offset,
+          @RequestParam(defaultValue = "false") boolean lastmod,
+          HttpServletRequest request,
+          HttpServletResponse response,
+          Integer year,
+          Integer month
   ) throws Exception {
     Map<String, Object> params = new HashMap<>();
     Template tmpl = Template.getTemplate(request);
@@ -130,7 +153,7 @@ public class GroupController {
     boolean showDeleted = request.getParameter("deleted") != null;
     params.put("showDeleted", showDeleted);
 
-    Section section = sectionService.getSection(Section.SECTION_FORUM);
+    Section section = sectionService.getSection(sectionId);
     params.put("groupList", groupDao.getGroups(section));
 
     Group group = groupDao.getGroup(section, groupName);

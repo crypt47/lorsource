@@ -60,6 +60,16 @@ public class SectionController {
     return handleRequestInternal(Section.SECTION_FORUM, response);
   }
 
+  @RequestMapping("/talks")
+  public ModelAndView talks(HttpServletResponse response) {
+    return handleRequestInternal(Section.SECTION_TALKS, response);
+  }
+
+  @RequestMapping("/club")
+  public ModelAndView club(HttpServletResponse response) {
+    return handleRequestInternal(Section.SECTION_CLUB, response);
+  }
+
   @RequestMapping(value="/view-section.jsp", params = {"section=2"})
   public View forumOld() {
     return new RedirectView("/forum/");
