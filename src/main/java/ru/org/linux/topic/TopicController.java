@@ -121,7 +121,7 @@ public class TopicController {
   @Autowired
   private GroupDao groupDao;
 
-  @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)}/{group}/{id}")
+  @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)|(?:talks)|(?:club)}/{group}/{id}")
   public ModelAndView getMessageNewMain(
           WebRequest webRequest,
           HttpServletRequest request,
@@ -148,7 +148,7 @@ public class TopicController {
     }
   }
 
-  @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)}/{group}/{id}/page{page}")
+  @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)|(?:talks)|(?:club)}/{group}/{id}/page{page}")
   public ModelAndView getMessageNewPage(
           WebRequest webRequest,
           HttpServletRequest request,
@@ -164,7 +164,7 @@ public class TopicController {
     return getMessage(section, webRequest, request, response, page, filter, groupName, msgid, 0);
   }
 
-  @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)}/{group}/{id}/thread/{threadRoot}")
+  @RequestMapping("/{section:(?:forum)|(?:news)|(?:polls)|(?:gallery)|(?:talks)|(?:club)}/{group}/{id}/thread/{threadRoot}")
   public ModelAndView getMessageThread(
           WebRequest webRequest,
           HttpServletRequest request,
