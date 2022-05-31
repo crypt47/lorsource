@@ -17,7 +17,9 @@ package ru.org.linux.user;
 
 import com.sun.syndication.feed.synd.*;
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.org.linux.spring.AbstractRomeView;
+import ru.org.linux.spring.SiteConfig;
 import ru.org.linux.util.StringUtil;
 
 import java.util.ArrayList;
@@ -26,61 +28,71 @@ import java.util.List;
 import java.util.Map;
 
 public class ReplyFeedView extends AbstractRomeView {
-  @Override
-  protected void createFeed(SyndFeed feed, Map model) {
-    @SuppressWarnings("unchecked")
-    List<PreparedUserEvent> list = (List<PreparedUserEvent>) model.get("topicsList");
-    String s = "Ответы на комментарии пользователя " + model.get("nick");
-    feed.setTitle(s);
-    feed.setLink("http://linuxtalks.co");
-    feed.setUri("http://linuxtalks.co");
-    feed.setAuthor("");
-    feed.setDescription(s);
 
-    Date lastModified;
-    if (!list.isEmpty()) {
-      lastModified = list.get(0).getEvent().getEventDate();
-    } else {
-      lastModified = new Date();
+    private final String secureUrl;
+
+    @Autowired
+    public ReplyFeedView(SiteConfig siteConfig) {
+        secureUrl = siteConfig.getSecureUrlWithoutSlash();
     }
-    feed.setPublishedDate(lastModified);
 
-    List<SyndEntry> entries = new ArrayList<>();
-    feed.setEntries(entries);
-    for (PreparedUserEvent preparedUserEvent : list) {
-      UserEvent item = preparedUserEvent.getEvent();
-      
-      SyndEntry feedEntry = new SyndEntryImpl();
-      feedEntry.setPublishedDate(item.getEventDate());
-      feedEntry.setTitle(StringEscapeUtils.unescapeHtml4(item.getSubj()));
+    @Override
+    protected void createFeed(SyndFeed feed, Map model) {
+        @SuppressWarnings("unchecked")
+        List<PreparedUserEvent> list = (List<PreparedUserEvent>) model.get("topicsList");
+        String s = "Ответы на комментарии пользователя " + model.get("nick");
+        feed.setTitle(s);
+        feed.setLink(secureUrl);
+        feed.setUri(secureUrl);
+        feed.setAuthor("");
+        feed.setDescription(s);
 
-      String link;
+        Date lastModified;
+        if (!list.isEmpty()) {
+            lastModified = list.get(0).getEvent().getEventDate();
+        } else {
+            lastModified = new Date();
+        }
+        feed.setPublishedDate(lastModified);
 
-      if (item.getCid()!=0) {
-        feedEntry.setAuthor(preparedUserEvent.getAuthor().getNick());
+        List<SyndEntry> entries = new ArrayList<>();
+        feed.setEntries(entries);
+        for (PreparedUserEvent preparedUserEvent : list) {
+            UserEvent item = preparedUserEvent.getEvent();
 
-        link = String.format(
-          "http://linuxtalks.co/jump-message.jsp?msgid=%s&cid=%s",
-          String.valueOf(item.getTopicId()),
-          String.valueOf(item.getCid())
-        );
-      } else {
-        link = String.format(
-          "http://linuxtalks.co/view-message.jsp?msgid=%s",
-          String.valueOf(item.getTopicId())
-        );
-      }
+            SyndEntry feedEntry = new SyndEntryImpl();
+            feedEntry.setPublishedDate(item.getEventDate());
+            feedEntry.setTitle(StringEscapeUtils.unescapeHtml4(item.getSubj()));
 
-      feedEntry.setLink(link);
-      feedEntry.setUri(link);
+            String link;
 
-      if (preparedUserEvent.getMessageText() != null){
-        SyndContent message = new SyndContentImpl();
-        message.setValue(StringUtil.removeInvalidXmlChars(preparedUserEvent.getMessageText()));
-        message.setType("text/html");
-        feedEntry.setDescription(message);
-      }
-      entries.add(feedEntry);
+            if (item.getCid() != 0) {
+                feedEntry.setAuthor(preparedUserEvent.getAuthor().getNick());
+
+                link = String.format(
+                        "%s/jump-message.jsp?msgid=%s&cid=%s",
+                        secureUrl,
+                        item.getTopicId(),
+                        item.getCid()
+                );
+            } else {
+                link = String.format(
+                        "%s/view-message.jsp?msgid=%s",
+                        secureUrl,
+                        item.getTopicId()
+                );
+            }
+
+            feedEntry.setLink(link);
+            feedEntry.setUri(link);
+
+            if (preparedUserEvent.getMessageText() != null) {
+                SyndContent message = new SyndContentImpl();
+                message.setValue(StringUtil.removeInvalidXmlChars(preparedUserEvent.getMessageText()));
+                message.setType("text/html");
+                feedEntry.setDescription(message);
+            }
+            entries.add(feedEntry);
+        }
     }
-  }
 }
