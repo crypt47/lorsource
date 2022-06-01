@@ -42,7 +42,7 @@ class FlexmarkMarkdownFormatter(siteConfig: SiteConfig, topicDao: TopicDao, comm
     val options = new MutableDataSet
 
     val extensions = Seq(TablesExtension.create, StrikethroughExtension.create, AutolinkExtension.create(),
-      TypographicExtension.create(), new SuppressImagesExtension,
+      TypographicExtension.create(), new InlineImagesExtension,
       new LorLinkExtension(siteConfig, topicDao, commentDao), new LorUserExtension(userService, toHtmlFormatter),
       new CutExtension, new FencedCodeExtension/*, YouTubeLinkExtension.create()*/)
 

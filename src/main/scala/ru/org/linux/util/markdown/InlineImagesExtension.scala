@@ -23,28 +23,27 @@ import com.vladsch.flexmark.util.options.MutableDataHolder
 
 import scala.jdk.CollectionConverters._
 
-class SuppressImagesExtension extends HtmlRenderer.HtmlRendererExtension {
+class InlineImagesExtension extends HtmlRenderer.HtmlRendererExtension {
   override def rendererOptions(options: MutableDataHolder): Unit = {}
 
   override def extend(rendererBuilder: HtmlRenderer.Builder, rendererType: String): Unit = {
     if (rendererBuilder.isRendererType("HTML")) {
-      rendererBuilder.nodeRendererFactory(_ => new SuppressImagesRenderer)
+      rendererBuilder.nodeRendererFactory(_ => new InlineImagesRenderer)
     }
   }
 }
 
-class SuppressImagesRenderer extends NodeRenderer {
+class InlineImagesRenderer extends NodeRenderer {
   override def getNodeRenderingHandlers = {
     Set(new NodeRenderingHandler[Image](classOf[Image], (node, _, html) => {
       val altText = new TextCollectingVisitor().collectAndGetText(node)
 
       html
         .withAttr()
-        .attr("href", node.getUrl)
-        .attr("rel", "nofollow")
-        .tag("a")
-        .text(altText)
-        .closeTag("a")
+        .attr("src", node.getUrl)
+        .attr("alt", altText)
+        .attr("style", "width:85%;height:85%;object-fit: cover;")
+        .tagVoid("img")
     }), new NodeRenderingHandler[ImageRef](classOf[ImageRef], (node, _, html) => {
       val altText = new TextCollectingVisitor().collectAndGetText(node)
 
