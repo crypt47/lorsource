@@ -30,7 +30,7 @@ import ru.org.linux.user.User
 object GroupPermissionService {
   private val DeletePeriod = Duration.standardDays(3)
   private val EditPeriod = Duration.standardDays(14)
-  private val CreateTagScore = 400
+  private val CreateTagScore = 50
 }
 
 @Service
