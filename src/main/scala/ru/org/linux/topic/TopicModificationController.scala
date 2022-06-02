@@ -160,11 +160,12 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
     }
 
     val topic = messageDao.getById(msgid)
-    val section = sectionService.getSection(Section.SECTION_FORUM)
+
 
     new ModelAndView("mtn", Map (
       "message" -> topic,
-      "groups" -> groupDao.getGroups(section),
+      "groups" -> groupDao.getAllForumGroups,
+      "sections" -> sectionService.idToSection.asJava,
       "author" -> userDao.getUserCached(topic.getAuthorUserId)
     ).asJava)
   }

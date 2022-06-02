@@ -16,6 +16,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
 <%--@elvariable id="message" type="ru.org.linux.topic.Topic"--%>
 <%--@elvariable id="groups" type="java.util.List<Group>"--%>
+<%--@elvariable id="sections" type="java.util.Map<Integer, ru.org.linux.section.Section>"--%>
 <%--@elvariable id="author" type="ru.org.linux.user.User"--%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -33,7 +34,7 @@
     </c:if>
     <c:if test="${group.urlName != \"club\"}">
       <c:if test="${group.id != message.groupId}">
-        <option value="${group.id}">${group.title}</option>
+        <option value="${group.id}">${group.title} (${sections.get(group.sectionId).name}) </option>
       </c:if>
     </c:if>
   </c:forEach>

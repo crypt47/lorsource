@@ -78,6 +78,13 @@ public class GroupDao {
   }
 
 
+  public List<Group> getAllForumGroups() {
+    return jdbcTemplate.query(
+            "SELECT sections.moderate, vote, section, havelink, linktext, title, urlname, image, groups.restrict_topics, restrict_comments, stat3,groups.id,groups.info,groups.longinfo,groups.resolvable FROM groups, sections WHERE groups.section=sections.id and sections.scroll_mode = 'GROUP' ORDER BY id",
+            (rs, rowNum) -> Group.buildGroup(rs)
+    );
+  }
+
   /**
    * Получить объект группы в указанной секции по имени группы.
    *
