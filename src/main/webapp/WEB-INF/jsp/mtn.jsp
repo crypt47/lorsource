@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page contentType="text/html; charset=utf-8" %>
 <%--
   ~ Copyright 1998-2015 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,21 +25,19 @@
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 перенос <strong>${message.id}</strong> в группу:
 <form method="post" action="/mt.jsp">
-<lor:csrf/>
-<input type=hidden name="msgid" value="${message.id}">
-<select name="moveto">
-  <c:forEach var="group" items="${groups}">
-    <c:if test="${group.id == message.groupId}">
-      <option value="${group.id}" selected="selected">${group.title}</option>
-    </c:if>
-    <c:if test="${group.urlName != \"club\"}">
-      <c:if test="${group.id != message.groupId}">
-        <option value="${group.id}">${group.title} (${sections.get(group.sectionId).name}) </option>
-      </c:if>
-    </c:if>
-  </c:forEach>
-</select>
-<input type='submit' name='move' value='move'>
+    <lor:csrf/>
+    <input type=hidden name="msgid" value="${message.id}">
+    <select name="moveto">
+        <c:forEach var="group" items="${groups}">
+            <c:if test="${group.id == message.groupId}">
+                <option value="${group.id}" selected="selected">${group.title}</option>
+            </c:if>
+            <c:if test="${group.id != message.groupId}">
+                <option value="${group.id}">${group.title} (${sections.get(group.sectionId).name})</option>
+            </c:if>
+        </c:forEach>
+    </select>
+    <input type='submit' name='move' value='move'>
 </form>
 
 сообщение написано
