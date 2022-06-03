@@ -211,29 +211,6 @@
 
 <div class="comment" id="comments" style="padding-top: 0.5em">
 
-<c:if test="${showAdsense}">
-<style>
-@media screen and (max-width: 480px) {
-  .yandex-adaptive {
-    min-height: 250px;
-    width: 100%;
-  }
-}
-
-@media screen and (min-width: 481px) {
-  .yandex-adaptive { min-height: 90px; width: 100% }
-}
-
-@media screen and (min-width: 1024px) {
-  .yandex-adaptive { min-height: 120px; width: 100% }
-}
-
-</style>
-
-  <p>
-</c:if>
-
-
 <c:if test="${threadMode}">
   <div class=nav>
     Показаны ответы на комментарий. <a href="${message.link}?cid=${threadRoot}">Показать</a> все комментарии.
