@@ -59,7 +59,7 @@
 		</div>
 
 		<div class="nav-buttons">
-			<select name=group onchange="goto(this);" title="Быстрый переход">
+			<select name=group onchange="goto(this);" title="Быстрый переход" class="btn btn-selected">
 				<c:forEach items="${groupList}" var="item">
 				<c:if test="${item.id == group.id}">
 				<c:if test="${lastmod}">
