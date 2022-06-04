@@ -68,3 +68,4 @@
   </div>
 </div>
 <div style="clear: both"></div>
+<!-- tango/head-main.jsp end -->

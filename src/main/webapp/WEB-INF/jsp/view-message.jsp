@@ -231,8 +231,7 @@
 		</c:if>
 		</c:if>
 		<c:forEach var="comment" items="${commentsPrepared}">
-		<l:comment enableSchema="true" commentsAllowed="${messageMenu.commentsAllowed}" topic="${message}"
-												showMenu="true" comment="${comment}"/>
+		<l:comment enableSchema="true" commentsAllowed="${messageMenu.commentsAllowed}" topic="${message}" showMenu="true" comment="${comment}"/>
 		</c:forEach>
 	</div>
 
@@ -271,30 +270,43 @@
 </div>
 </c:if>
 
-
+<script>
+											     function showMore() {
+											     var divToShow = document.getElementById("related-topics-list");
+											     if ( divToShow.style.display === "none" ) {
+											     divToShow.style.display = "block";
+											     } else {
+											     divToShow.style.display = "none";
+											     }
+											     }
+</script>
 <hr>
 <div id="hd">
 	<c:if test="${showDeletedButton}">
 	<form action="${message.link}" method=POST style="float: left; margin: 1rem;">
 		<lor:csrf/>
 		<input type=hidden name=deleted value=1>
-		<button class="btn btn-small btn-default" type=submit>Показать удаленные комментарии</button>
+		<button class="btn btn-small btn-default" type=submit>Удаленные комментарии</button>
 	</form>
 	</c:if>
-	<ul class="menu" style="float: right; margin: 0px; padding: 0px;">
-		<li><a href="/news/">Новости</a></li>
-		<li><a href="/gallery/">Галерея</a></li>
-
-		<li><a href="/forum/">Форум</a></li>
-		<li><a href="/talks/">Talks</a></li>
-		<c:if test="${template.sessionAuthorized}">
-		<li><a href="/club/">Клуб</a></li>
-		</c:if>
-		<li><a href="/tracker/">Трекер</a></li>
+	<!-- more like this shit -->
+	<c:set var="moreLikeThis" value="${moreLikeThisGetter.call()}"/>
+	<c:if test="${not empty moreLikeThis}">
+	<button type="button" class="btn btn-small btn-default" onclick="showMore()" style="float: left; margin: 1rem; width="100%";">Похожие темы</button>
+	</c:if>
+	<!-- end of more shit -->
+	<ul class="menu" style="float: right; margin: 0px; padding: 0px; list-style-type: none;">
 		<c:if test="${template.sessionAuthorized}">
 		<li>
 			<lor:events/>
 		</li>
+		</c:if>
+		<li><a href="/news/">Новости</a></li>
+		<li><a href="/gallery/">Галерея</a></li>
+		<li><a href="/forum/">Форум</a></li>
+		<li><a href="/talks/">Talks</a></li>
+		<c:if test="${template.sessionAuthorized}">
+		<li><a href="/club/">Клуб</a></li>
 		</c:if>
 	</ul>
 </div>
@@ -303,7 +315,25 @@
 
 <% out.flush(); %>
 
+<!-- more like this shit -->
 <c:set var="moreLikeThis" value="${moreLikeThisGetter.call()}"/>
+<c:if test="${not empty moreLikeThis}">
+<!--section id="related-topics"-->
+<div id="related-topics-list" style="display:none">
+	<c:forEach var="sublist" items="${moreLikeThis}">
+	<ul>
+		<c:forEach var="topic" items="${sublist}">
+		<li>
+			<span class="group-label">${topic.section}</span>
+			<a href="${topic.link}">${topic.title}</a> (${topic.year})
+		</li>
+		</c:forEach>
+	</ul>
+	</c:forEach>
+</div>
+<!--/section-->
+</c:if>
+<!-- end of more shit -->
 
 <c:if test="${not message.expired and template.sessionAuthorized}">
 <div style="display: none">

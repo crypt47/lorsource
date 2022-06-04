@@ -15,7 +15,7 @@
   ~    limitations under the License.
   --%>
 <%--@elvariable id="template" type="ru.org.linux.site.Template"--%>
-</div>
+
 <footer id="ft">
 
 <p id="ft-info">

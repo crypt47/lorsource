@@ -17,7 +17,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%--@elvariable id="template" type="ru.org.linux.site.Template"--%>
 
-<link rel="search" title="Search L.O.R." href="/search.jsp">
+<link rel="search" title="Search" href="/search.jsp">
 <meta name="referrer" content="always">
 
 <base href="${fn:escapeXml(template.secureMainUrl)}">
