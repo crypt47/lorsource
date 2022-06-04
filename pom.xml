@@ -565,7 +565,7 @@
           <resources>
             <resource>
               <source>
-                <directory>${basedir}/src/main/webapp/sass</directory>
+                <directory>${basedir}/static/sass</directory>
                 <includes>
                   <include>**/scss</include>
                 </includes>
