@@ -86,21 +86,29 @@
 
 <nav>
 	<c:if test="${year!=null}">
-	<a class="btn btn-default" href="${group.url}">Новые темы</a>
+	
+	<c:if test="${addable}">
+	<a href="add.jsp?group=${group.id}" class="btn btn-primary">Создать новую тему</a>
+	</c:if>
+
+<%--	<a class="btn btn-default" href="${group.url}">Новые темы</a>--%>
 	<a href="${group.url}archive/" class="btn btn-default">Архив</a>
 	</c:if>
 	<c:if test="${year==null}">
-	<a class="btn btn-selected" href="${group.url}">Новые темы</a>
+	
+	<c:if test="${addable}">
+	<a href="add.jsp?group=${group.id}" class="btn btn-primary">Создать новую тему</a>
+	</c:if>
+
+<%--	<a class="btn btn-selected" href="${group.url}">Новые темы</a>--%>
 	<a href="${group.url}archive/" class="btn btn-default">Архив</a>
 	<c:if test="${template.moderatorSession}">
 	<a href="groupmod.jsp?group=${group.id}" class="btn btn-default">Править группу</a>
 	</c:if>
-	<c:if test="${addable}">
-	<a href="add.jsp?group=${group.id}" class="btn btn-primary">Добавить</a>
-	</c:if>
 	</c:if>
 
-	<c:if test="${not lastmod and year==null and template.sessionAuthorized}">
+<%--	<c:if test="${not lastmod and year==null and template.sessionAuthorized}">--%>
+	<c:if test="${year==null}">
 	<form action="${url}" method=POST style="float: right;">
 		<lor:csrf/>
 		<input type=hidden name=deleted value=1>
