@@ -23,6 +23,7 @@
 $total_width: 100%;
 $gutter_width: 2%;
 $container_margin: 0;
+$amber: #fcaf3e;
 
 @import "clearfix";
 
@@ -318,7 +319,7 @@ div[itemprop="articleBody"] {
 }
 
 .messages .msg:target {
-    border: red solid 1px;
+    border: $amber solid 1px;
 }
 
 .cloud0 { font-size: 0.5em; }
@@ -581,7 +582,7 @@ table.poll-result img {
 }
 
 .difference-delete, .difference-delete * {
-  background-color: red;
+  background-color: $amber;
 }
 
 #warning-body { margin: 5em auto; width:50%; }

@@ -42,11 +42,6 @@ p {
 	margin-bottom: 1em;
 }
 
-a {
-  color: $link_color;
-}
-
-
 #hd {
   margin-bottom: 0.5em;
 
@@ -54,19 +49,6 @@ a {
     color: $main_menu_color;
   }
 }
-
-#bd {
-  margin-bottom: 0.5em;
-
-  .menu a {
-    color: $main_menu_color;
-  }
-}
-
-.menu {
-    color: $main_menu_color;
-}
-
 
 #sitetitle {
   font-weight: 600;
@@ -141,9 +123,9 @@ a {
 }
 
 .boxlet {
-  padding-bottom: 1em;
-  margin-bottom: 1em;
-  border-radius: 1em;
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+  border-radius: 0.2em;
   background-color: $article_background;
 
   h2 {
@@ -208,7 +190,7 @@ a {
 }
 
 .msg {
-  border-radius: 1em;
+  border-radius: 0.2em;
 
   .code .title {
     margin-left: inherit;
@@ -258,15 +240,15 @@ input[type="checkbox"] {
 }
 
 #whois_userpic {
-  border-radius: 1em;
+  border-radius: 0.2em;
   padding: 1em;
   background: $article_background;
 }
 
 .infoblock {
-  border-radius: 1em;
+  border-radius: 0.2em;
   border: 0;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
   background-color: $article_background;
 }
 
@@ -328,6 +310,9 @@ html, body {
   background-color: $main_background;
 }
 
+a {
+  color: $link_color;
+}
 
 #bd h2 * {
   color: $text_color;
