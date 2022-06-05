@@ -176,7 +176,7 @@
 					<i class="icon-pin icon-pin-color" title="Прикрепленная тема"></i>
 					</c:if>
 					<c:if test="${topic.resolved}">
-					<img src="/img/solved.png" width="15" height="15" alt="Решено" title="Решено"/>
+					 <i class="icon-pin-color" style="font-style:normal;">&#9745;</i>
 					</c:if>
 
 					<c:set var="topic_tags">
