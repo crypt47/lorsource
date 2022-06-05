@@ -75,7 +75,7 @@ replyto = onComment.getId();
 </c:if>
 
 <form:form modelAttribute="add">
-	<form:errors path="*" cssClass="error" element="div"></form>
+	<form:errors path="*" cssClass="error" element="div"/>
 </form:form>
 
 <c:if test="${error!=null}">
@@ -95,5 +95,6 @@ replyto = onComment.getId();
 			     postscoreInfo="${postscoreInfo}"
 			     modes="${modes}"/>
 
-			     <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+
+<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
 
