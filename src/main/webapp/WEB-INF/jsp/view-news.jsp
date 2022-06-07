@@ -32,6 +32,7 @@
 <h1>${navtitle}</h1>
 
 <nav>
+<%--
   <c:if test="${section!=null and section.premoderated}">
     <c:if test="${offsetNavigation}">
       <a class="btn btn-selected" href="${section.sectionLink}">Новые темы</a>
@@ -39,6 +40,21 @@
     <c:if test="${not offsetNavigation}">
       <a class="btn btn-default" href="${section.sectionLink}">Новые темы</a>
     </c:if>
+  </c:if>
+  --%>
+
+  <c:if test="${section != null}">
+    <c:choose>
+      <c:when test="${section.pollPostAllowed}">
+        <a class="btn btn-primary" href="add.jsp?group=19387">Добавить</a>
+      </c:when>
+      <c:when test="${group == null}">
+        <a class="btn btn-primary" href="add-section.jsp?section=${section.id}">Добавить</a>
+      </c:when>
+      <c:otherwise>
+        <a class="btn btn-primary" href="add.jsp?group=${group.id}">Добавить</a>
+      </c:otherwise>
+    </c:choose>
   </c:if>
 
   <c:if test="${sectionList == null and template.moderatorSession and group!=null}">
@@ -67,20 +83,6 @@
     <c:if test="${not offsetNavigation}">
       <a class="btn btn-selected" href="${archiveLink}">Архив</a>
     </c:if>
-  </c:if>
-
-  <c:if test="${section != null}">
-    <c:choose>
-      <c:when test="${section.pollPostAllowed}">
-        <a class="btn btn-primary" href="add.jsp?group=19387">Добавить</a>
-      </c:when>
-      <c:when test="${group == null}">
-        <a class="btn btn-primary" href="add-section.jsp?section=${section.id}">Добавить</a>
-      </c:when>
-      <c:otherwise>
-        <a class="btn btn-primary" href="add.jsp?group=${group.id}">Добавить</a>
-      </c:otherwise>
-    </c:choose>
   </c:if>
 </nav>
 

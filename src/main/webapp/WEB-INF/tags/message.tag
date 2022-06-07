@@ -50,7 +50,9 @@
 
   <header>
     <div class="msg-top-header">
-    <c:if test="${message.resolved}"><img src="/img/solved.png" alt="решено" title="решено"></c:if>
+    <c:if test="${message.resolved}">
+    <i class="icon-pin-color" style="font-style:normal;">&#9745;</i>
+    </c:if>
 
     <span <c:if test="${enableSchema}">itemprop="articleSection"</c:if>>
       <a href="${preparedMessage.section.sectionLink}">${preparedMessage.section.title}</a> —

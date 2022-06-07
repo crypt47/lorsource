@@ -24,7 +24,7 @@
   	    <div id="hdtux">
   	        <img src="/img/Tux.svg" height="100%" />
   	    </div>
-        <a id="sitetitle" href="/">LINUX.ORG.RU</a>
+        <a id="sitetitle" href="/">LINUXTALKS.CO</a>
         <ul class="menu">
           <li id="loginGreating">
             <c:if test="${template.sessionAuthorized}">

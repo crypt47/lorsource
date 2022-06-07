@@ -272,7 +272,8 @@ public class GroupController {
     response.setDateHeader("Expires", System.currentTimeMillis() + 90 * 1000);
 
     if (!tmpl.getProf().isOldTracker()) {
-      return new ModelAndView("group-new", params);
+/*      return new ModelAndView("group-new", params);*/
+      return new ModelAndView("group", params);
     } else {
       return new ModelAndView("group", params);
     }

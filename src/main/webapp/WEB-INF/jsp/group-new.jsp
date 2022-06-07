@@ -148,7 +148,7 @@
               &#128274;
             </c:if>
             <c:if test="${msg.resolved}">
-              <img src="/img/solved.png" alt="решено" title="решено" width=15 height=15>
+              <i class="icon-pin-color" style="font-style:normal;">&#9745;</i>
             </c:if>
 
             <l:title>${msg.title}</l:title>

@@ -113,17 +113,25 @@ class ImageService(imageDao: ImageDao, editHistoryDao: EditHistoryDao,
     }
 
     if (file.length > Image.MaxFileSize) {
-      errors.reject(null, "Сбой загрузки изображения: слишком большой файл")
+      errors.reject(null, "Сбой загрузки изображения: размер: " + file.length + " > " + Image.MaxFileSize)
     }
 
     val imageParam = ImageUtil.imageCheck(file)
 
-    if (imageParam.getHeight < Image.MinDimension || imageParam.getHeight > Image.MaxDimension) {
-      errors.reject(null, "Сбой загрузки изображения: недопустимые размеры изображения")
+    if (imageParam.getHeight > Image.MaxDimension) {
+      errors.reject(null, "Сбой загрузки изображения: высота: " + imageParam.getHeight + " > макс. разрешенной " + Image.MaxDimension)
     }
 
-    if (imageParam.getWidth < Image.MinDimension || imageParam.getWidth > Image.MaxDimension) {
-      errors.reject(null, "Сбой загрузки изображения: недопустимые размеры изображения")
+    if (imageParam.getHeight < Image.MinDimension) {
+      errors.reject(null, "Сбой загрузки изображения: высота: " + imageParam.getHeight + " < мин. разрешенной " + Image.MinDimension)
+    }
+
+    if (imageParam.getWidth < Image.MinDimension) {
+      errors.reject(null, "Сбой загрузки изображения: ширина: " + imageParam.getWidth + " < мин. разрешенной " + Image.MinDimension)
+    }
+
+    if (imageParam.getWidth > Image.MaxDimension) {
+      errors.reject(null, "Сбой загрузки изображения: ширина: " + imageParam.getWidth + " > макс. разрешенной " + Image.MaxDimension)
     }
 
     if (imageParam.getHeight / (imageParam.getWidth+1d) > 2) {
