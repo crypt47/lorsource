@@ -53,6 +53,7 @@ public class User implements Serializable {
   private final int frozenBy;
   private final String freezingReason;
 
+  private final boolean clubAccess;
   private final boolean activated;
   public static final int CORRECTOR_SCORE = 200;
 
@@ -85,6 +86,7 @@ public class User implements Serializable {
     frozenUntil = rs.getTimestamp("frozen_until");
     frozenBy = rs.getInt("frozen_by");
     freezingReason = rs.getString("freezing_reason");
+    clubAccess = rs.getBoolean("club_member");
   }
 
   public int getId() {
@@ -202,6 +204,13 @@ public class User implements Serializable {
     return freezingReason;
   }
 
+  public boolean hasClubAccess() {
+    return clubAccess;
+  }
+
+  public boolean isClubVisible() {
+    return score >= 200; //TODO configurable
+  }
   /**
    * Check if use is super-moderator
    *

@@ -222,6 +222,9 @@ public class TopicController {
           int msgid,
           int threadRoot) throws Exception {
 
+    if(section.getId() == Section.SECTION_CLUB && !AuthUtil.getCurrentUser().hasClubAccess()) {
+      return new ModelAndView("errors/code403");
+    }
     Deadline deadline = MoreLikeThisTimeout.fromNow();
 
     Topic topic = messageDao.getById(msgid);

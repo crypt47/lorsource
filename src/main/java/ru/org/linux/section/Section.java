@@ -51,7 +51,8 @@ public class Section implements Serializable {
           SECTION_GALLERY, "gallery",
           SECTION_POLLS, "polls",
           SECTION_TALKS, "talks",
-          SECTION_CLUB, "club"
+          SECTION_CLUB, "club",
+          8, "blogs"
   );
 
   public Section(ResultSet rs) throws SQLException {
