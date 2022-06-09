@@ -29,6 +29,7 @@ import ru.org.linux.auth.AuthUtil;
 import ru.org.linux.group.GroupDao;
 import ru.org.linux.user.User;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,8 +70,8 @@ public class SectionController {
 
     @RequestMapping("/club")
     public ModelAndView club(HttpServletResponse response) {
-        User currentUser = AuthUtil.getCurrentUser();
-        if (currentUser.isClubVisible()) {
+        @Nullable User currentUser = AuthUtil.getCurrentUser();
+        if (currentUser != null && currentUser.isClubVisible()) {
             if (currentUser.hasClubAccess()) {
                 return handleRequestInternal(Section.SECTION_CLUB, response);
             } else {
