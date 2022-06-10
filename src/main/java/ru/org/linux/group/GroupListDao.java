@@ -117,6 +117,7 @@ public class GroupListDao {
           "except select tags.msgid from tags, user_tags where " +
           "tags.tagid=user_tags.tag_id and user_tags.is_favorite = true and user_id=:userid) ";
   private static final String queryPartNoTalks = " AND not t.groupid in (8404, 19390) ";
+  private static final String queryPartNoClub = " AND g.section != 7 ";
   private static final String queryPartTech = " AND not t.groupid in (8404, 4068, 19392, 19390, 9326, 19405) AND section=2 ";
   private static final String queryPartMain = " AND not t.groupid in (8404, 4068, 19392, 19390, 19405) ";
 
@@ -221,6 +222,9 @@ public class GroupListDao {
       commentIgnored = "";
       tagIgnored = "";
     }
+    if (currentUser == null || !currentUser.hasClubAccess()) {
+      partFilter += queryPartNoClub;
+    }
 
     boolean showUncommited = currentUser!=null && (currentUser.isModerator() || currentUser.isCorrector());
 
@@ -235,7 +239,7 @@ public class GroupListDao {
     SqlRowSet resultSet = jdbcTemplate.queryForRowSet(query, parameter);
 
     List<TopicsListItem> res = new ArrayList<>(topics);
-    
+
     while (resultSet.next()) {
       User author = userDao.getUserCached(resultSet.getInt("author"));
       int msgid = resultSet.getInt("id");
@@ -278,7 +282,7 @@ public class GroupListDao {
               section, groupUrlName, postdate, uncommited, pages, tags, resultSet.getBoolean("deleted"),
               sticky, topicPostscore));
     }
-    
+
     return res;
   }
 }
