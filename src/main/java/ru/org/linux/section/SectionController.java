@@ -25,8 +25,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
+import ru.org.linux.auth.AuthUtil;
 import ru.org.linux.group.GroupDao;
+import ru.org.linux.user.User;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,50 +37,59 @@ import java.util.Map;
 
 @Controller
 public class SectionController {
-  @Autowired
-  private SectionService sectionService;
+    @Autowired
+    private SectionService sectionService;
 
-  @Autowired
-  private GroupDao groupDao;
+    @Autowired
+    private GroupDao groupDao;
 
-  @RequestMapping("/view-section.jsp")
-  public ModelAndView handleRequestInternal(@RequestParam("section") int sectionid, HttpServletResponse response) {
-    Section section = sectionService.getSection(sectionid);
+    @RequestMapping("/view-section.jsp")
+    public ModelAndView handleRequestInternal(@RequestParam("section") int sectionid, HttpServletResponse response) {
+        Section section = sectionService.getSection(sectionid);
 
-    Map<String, Object> params = new HashMap<>();
-    params.put("section", section);
+        Map<String, Object> params = new HashMap<>();
+        params.put("section", section);
 
-    params.put("groups", groupDao.getGroups(section));
+        params.put("groups", groupDao.getGroups(section));
 
-    response.setDateHeader("Expires", new Date(System.currentTimeMillis() - 20 * 3600 * 1000).getTime());
-    response.setDateHeader("Last-Modified", new Date(System.currentTimeMillis() - 2 * 1000).getTime());
+        response.setDateHeader("Expires", new Date(System.currentTimeMillis() - 20 * 3600 * 1000).getTime());
+        response.setDateHeader("Last-Modified", new Date(System.currentTimeMillis() - 2 * 1000).getTime());
 
-    return new ModelAndView("section", params);
-  }
+        return new ModelAndView("section", params);
+    }
 
-  @RequestMapping("/forum")
-  public ModelAndView forum(HttpServletResponse response) {
-    return handleRequestInternal(Section.SECTION_FORUM, response);
-  }
+    @RequestMapping("/forum")
+    public ModelAndView forum(HttpServletResponse response) {
+        return handleRequestInternal(Section.SECTION_FORUM, response);
+    }
 
-  @RequestMapping("/talks")
-  public ModelAndView talks(HttpServletResponse response) {
-    return handleRequestInternal(Section.SECTION_TALKS, response);
-  }
+    @RequestMapping("/talks")
+    public ModelAndView talks(HttpServletResponse response) {
+        return handleRequestInternal(Section.SECTION_TALKS, response);
+    }
 
-  @RequestMapping("/club")
-  public ModelAndView club(HttpServletResponse response) {
-    return handleRequestInternal(Section.SECTION_CLUB, response);
-  }
+    @RequestMapping("/club")
+    public ModelAndView club(HttpServletResponse response) {
+        @Nullable User currentUser = AuthUtil.getCurrentUser();
+        if (currentUser != null && currentUser.isClubVisible()) {
+            if (currentUser.hasClubAccess()) {
+                return handleRequestInternal(Section.SECTION_CLUB, response);
+            } else {
+                return new ModelAndView("errors/good-penguin", Map.of("msgHeader", "Закрытый клуб", "msgMessage", "Для вступления обратитесь к администрации."));
+            }
+        } else {
+            return new ModelAndView("errors/code403");
+        }
+    }
 
-  @RequestMapping(value="/view-section.jsp", params = {"section=2"})
-  public View forumOld() {
-    return new RedirectView("/forum/");
-  }
+    @RequestMapping(value = "/view-section.jsp", params = {"section=2"})
+    public View forumOld() {
+        return new RedirectView("/forum/");
+    }
 
-  @ExceptionHandler(SectionNotFoundException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ModelAndView handleNotFoundException() {
-    return new ModelAndView("errors/code404");
-  }
+    @ExceptionHandler(SectionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView handleNotFoundException() {
+        return new ModelAndView("errors/code404");
+    }
 }

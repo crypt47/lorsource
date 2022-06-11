@@ -53,7 +53,7 @@
 
       <li><a href="/forum/">Форум</a></li>
       <li><a href="/talks/">Talks</a></li>
-      <c:if test="${template.sessionAuthorized}">
+      <c:if test="${template.currentUser.clubVisible}">
           <li><a href="/club/">Клуб</a></li>
       </c:if>
       <li><a href="/tracker/">Трекер</a></li>

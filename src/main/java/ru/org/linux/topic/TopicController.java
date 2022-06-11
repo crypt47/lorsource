@@ -58,6 +58,7 @@ import scala.concurrent.duration.Deadline;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -222,6 +223,10 @@ public class TopicController {
           int msgid,
           int threadRoot) throws Exception {
 
+    @Nullable User currentUser = AuthUtil.getCurrentUser();
+    if(cannotViewSection(section, currentUser)) {
+      return new ModelAndView("errors/code403");
+    }
     Deadline deadline = MoreLikeThisTimeout.fromNow();
 
     Topic topic = messageDao.getById(msgid);
@@ -261,8 +266,6 @@ public class TopicController {
     if (showDeleted) {
       page = -1;
     }
-
-    User currentUser = AuthUtil.getCurrentUser();
 
     permissionService.checkView(group, topic, currentUser, preparedMessage.getAuthor(), showDeleted);
 
@@ -413,6 +416,10 @@ public class TopicController {
     params.put("showDeletedButton", permissionService.allowViewDeletedComments(topic, currentUser) && !showDeleted);
 
     return new ModelAndView("view-message", params);
+  }
+
+  private static boolean cannotViewSection(Section section, @Nullable User currentUser) {
+    return section.getId() == Section.SECTION_CLUB && (currentUser== null || !currentUser.hasClubAccess());
   }
 
   private CommentList getCommentList(Topic topic, Group group, boolean showDeleted) {

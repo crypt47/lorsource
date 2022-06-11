@@ -123,7 +123,7 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
     val emailMessage = EmailService.createMessage
     emailMessage.setFrom(new InternetAddress("no-reply@linuxtalks.co"))
     emailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email))
-    emailMessage.setSubject("Регистрация на linuxtalks.co")
+    emailMessage.setSubject("Регистрация на linuxtalks.co", "UTF-8")
     emailMessage.setSentDate(new Date)
     emailMessage.setText(text, "UTF-8")
     Transport.send(emailMessage)
