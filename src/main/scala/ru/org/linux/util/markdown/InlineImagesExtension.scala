@@ -42,7 +42,7 @@ class InlineImagesRenderer extends NodeRenderer {
         .withAttr()
         .attr("src", node.getUrl)
         .attr("alt", altText)
-        .attr("style", "max-width:85%;")
+        .attr("style", "max-width:85%; max-height: 800px;")
         .tagVoid("img")
     }), new NodeRenderingHandler[ImageRef](classOf[ImageRef], (node, _, html) => {
       val altText = new TextCollectingVisitor().collectAndGetText(node)
