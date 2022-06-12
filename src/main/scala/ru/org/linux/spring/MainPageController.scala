@@ -75,12 +75,12 @@ class MainPageController(
       mv.getModel.put("favPresent", Boolean.box(memoriesDao.isFavPresetForUser(tmpl.getCurrentUser)))
     }
 
-    if (tmpl.isModeratorSession || tmpl.isCorrectorSession) {
+//    if (tmpl.isModeratorSession || tmpl.isCorrectorSession) {
       val uncommited = topicDao.getUncommitedCount
 
       mv.getModel.put("uncommited", Int.box(uncommited))
 
-      val uncommitedNews = if (uncommited > 0) {
+/*      val uncommitedNews = if (uncommited > 0) {
         topicDao.getUncommitedCount(Section.SECTION_NEWS)
       } else {
         0
@@ -90,7 +90,7 @@ class MainPageController(
     }
 
     mv.getModel.put("showAdsense", Boolean.box(!tmpl.isSessionAuthorized || !tmpl.getProf.isHideAdsense))
-
+*/
     mv
   }
 }
