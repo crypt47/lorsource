@@ -35,15 +35,18 @@ import java.util.List;
 @RequestMapping(value = "/view-all.jsp", method = {RequestMethod.GET, RequestMethod.HEAD})
 public class UncommitedTopicsController {
   private final SectionService sectionService;
+  
+  private final TopicListDao topicListDao;
 
   private final TopicListService topicListService;
 
   private final TopicPrepareService prepareService;
 
-  public UncommitedTopicsController(SectionService sectionService, TopicListService topicListService, TopicPrepareService prepareService) {
+  public UncommitedTopicsController(SectionService sectionService, TopicListService topicListService, TopicPrepareService prepareService, TopicListDao topicListDao) {
     this.sectionService = sectionService;
     this.topicListService = topicListService;
     this.prepareService = prepareService;
+    this.topicListDao = topicListDao;
   }
 
   @RequestMapping
@@ -68,18 +71,27 @@ public class UncommitedTopicsController {
 
     String title;
 
+    int UncommitedNewsCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_NEWS);
+    int UncommitedPollsCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_POLLS);
+    int UncommitedGalleryCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_GALLERY);
+    int UncommitedSum = UncommitedNewsCount + UncommitedPollsCount + UncommitedGalleryCount;
+    modelAndView.addObject("UncommitedNewsCount", UncommitedNewsCount);
+    modelAndView.addObject("UncommitedGalleryCount", UncommitedGalleryCount);
+    modelAndView.addObject("UncommitedPollsCount", UncommitedPollsCount);
+    modelAndView.addObject("UncommitedSum", UncommitedSum);
+
     switch (sectionId) {
       case Section.SECTION_NEWS:
-        title = "Неподтвержденные новости";
+        title = "Неподтвержденные новости "+UncommitedNewsCount;
         break;
       case Section.SECTION_POLLS:
-        title = "Неподтвержденные опросы";
+        title = "Неподтвержденные опросы "+UncommitedPollsCount;
         break;
       case Section.SECTION_GALLERY:
-        title = "Неподтвержденные изображения";
+        title = "Неподтвержденные изображения "+UncommitedGalleryCount;
         break;
       case 0:
-        title = "Просмотр неподтвержденных сообщений";
+        title = "Все неподтвержденные "+UncommitedSum;
         break;
       default:
         title = "Неподтвержденные: "+section.getName();
@@ -91,6 +103,8 @@ public class UncommitedTopicsController {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date());
     calendar.add(Calendar.MONTH, -3);
+
+
 
     List<Topic> messages = topicListService.getUncommitedTopic(section, calendar.getTime(),
             tmpl.isModeratorSession() || tmpl.isCorrectorSession());
