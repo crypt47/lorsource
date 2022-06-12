@@ -143,7 +143,7 @@
 			<tr>
 				<th>Тема
 				</th>
-				<th>Последнее сообщение<br>
+				<th>
 					<c:if test="${year==null}">
 					<c:if test="${lastmod}">
 					<span style="font-weight: normal">[<a href="${url}" style="text-decoration: underline">отменить</a>]</span>
