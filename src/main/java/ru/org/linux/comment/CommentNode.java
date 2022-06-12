@@ -75,10 +75,6 @@ public class CommentNode implements Serializable {
     if (comment!=null) {
       consumer.accept(comment);
     }
-
-    for (CommentNode child : childs) {
-      child.foreach(consumer);
-    }
   }
 
   private void hideNode(Set<Integer> hideSet) {

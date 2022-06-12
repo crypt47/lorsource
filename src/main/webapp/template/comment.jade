@@ -33,6 +33,8 @@ mixin comment(comment, enableSchema, topic, showMenu)
             if comment.reply!=null
                 if comment.reply.deleted
                     | Ответ на: удаленный комментарий
+                else if comment.reply.replyToIgnored
+                    | Ответ на: скрытый комментарий от #{comment.reply.author}
                 else
                     if comment.reply.samePage
                         samePage = "samePage"
