@@ -82,16 +82,16 @@ public class UncommitedTopicsController {
 
     switch (sectionId) {
       case Section.SECTION_NEWS:
-        title = "Неподтвержденные новости "+UncommitedNewsCount;
+        title = "Неподтвержденные новости: "+UncommitedNewsCount;
         break;
       case Section.SECTION_POLLS:
-        title = "Неподтвержденные опросы "+UncommitedPollsCount;
+        title = "Неподтвержденные опросы: "+UncommitedPollsCount;
         break;
       case Section.SECTION_GALLERY:
-        title = "Неподтвержденные изображения "+UncommitedGalleryCount;
+        title = "Неподтвержденные изображения: "+UncommitedGalleryCount;
         break;
       case 0:
-        title = "Все неподтвержденные "+UncommitedSum;
+        title = "Все неподтвержденные: "+UncommitedSum;
         break;
       default:
         title = "Неподтвержденные: "+section.getName();
