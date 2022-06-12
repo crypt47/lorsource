@@ -306,7 +306,7 @@
 		<li><a href="/forum/">Форум</a></li>
 		<li><a href="/talks/">Talks</a></li>
 		<c:if test="${template.currentUser.clubVisible}">
-			<li><a href="/club/">Клуб</a></li>
+			<li><a href="/club/tox/">Клуб</a></li>
 		</c:if>
 	</ul>
 </div>
