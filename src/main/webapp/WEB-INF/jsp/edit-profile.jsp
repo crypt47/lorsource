@@ -50,6 +50,8 @@ $script.ready('plugins', function() {
 <td><input type="checkbox" <c:if test="${template.currentUser.score<100 && !template.prof.hideAdsense}">disabled</c:if> name="hideAdsense" <c:if test="${template.prof.hideAdsense}">checked</c:if> ></td></tr>
 <tr><td>Показывать галерею в ленте на главной</td>
 <td><input type="checkbox" name="mainGallery" <c:if test="${template.prof.showGalleryOnMain}">checked</c:if> ></td></tr>
+<tr><td>Показывать блоги в ленте на главной</td>
+<td><input type="checkbox" name="mainBlogs" <c:if test="${template.prof.showBlogsOnMain}">checked</c:if> ></td></tr>
   <tr>
     <td>Старый вид трекера и форума</td>
     <td><input type="checkbox" name="oldTracker"

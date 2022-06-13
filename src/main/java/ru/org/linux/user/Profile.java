@@ -41,6 +41,8 @@ public class Profile {
   public static final String TRACKER_MODE = "trackerMode";
   public static final String OLD_TRACKER = "oldTracker";
 
+  public static final String MAIN_BLOGS_PROPERTY = "mainBlogs";
+
   private String style;
   private String formatMode;
   private int messages;
@@ -48,6 +50,8 @@ public class Profile {
   private boolean showPhotos;
   private boolean hideAdsense;
   private boolean showGalleryOnMain;
+
+  private boolean showBlogsOnMain;
   private String avatarMode;
   private boolean showAnonymous;
   private boolean oldTracker;
@@ -63,6 +67,7 @@ public class Profile {
     showPhotos = p.getBoolean(PHOTOS_PROPERTY);
     hideAdsense = p.getBoolean(HIDE_ADSENSE_PROPERTY);
     showGalleryOnMain = p.getBoolean(MAIN_GALLERY_PROPERTY);
+    showBlogsOnMain = p.getBoolean(MAIN_BLOGS_PROPERTY);
     avatarMode = p.getString(AVATAR_PROPERTY);
     showAnonymous = p.getBoolean(SHOW_ANONYMOUS_PROPERTY);
 
@@ -85,6 +90,7 @@ public class Profile {
     p.setBoolean(PHOTOS_PROPERTY, showPhotos);
     p.setBoolean(HIDE_ADSENSE_PROPERTY, hideAdsense);
     p.setBoolean(MAIN_GALLERY_PROPERTY, showGalleryOnMain);
+    p.setBoolean(MAIN_BLOGS_PROPERTY, showBlogsOnMain);
     p.setString(AVATAR_PROPERTY, avatarMode);
     p.setBoolean(SHOW_ANONYMOUS_PROPERTY, showAnonymous);
     p.setString(TRACKER_MODE, trackerMode.getValue());
@@ -147,6 +153,14 @@ public class Profile {
 
   public void setShowGalleryOnMain(boolean showGalleryOnMain) {
     this.showGalleryOnMain = showGalleryOnMain;
+  }
+
+  public boolean isShowBlogsOnMain() {
+    return showBlogsOnMain;
+  }
+
+  public void setShowBlogsOnMain(boolean showBlogsOnMain) {
+    this.showBlogsOnMain = showBlogsOnMain;
   }
 
   public String getAvatarMode() {

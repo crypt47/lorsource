@@ -26,9 +26,7 @@ import ru.org.linux.user.User;
 import ru.org.linux.user.UserErrorException;
 
 import javax.annotation.Nullable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TopicListService {
@@ -252,7 +250,7 @@ public class TopicListService {
     return topicListDao.getDeletedTopics(sectionId, skipEmptyReason, includeAnonymous);
   }
 
-  public List<Topic> getMainPageFeed(boolean showGalleryOnMain, int count, boolean hideMinor) {
+  public List<Topic> getMainPageFeed(boolean showGalleryOnMain, boolean showBlogsOnMain, int count, boolean hideMinor) {
     TopicListDto topicListDto = new TopicListDto();
 
     topicListDto.setLimit(count);
@@ -267,11 +265,15 @@ public class TopicListService {
 
     topicListDto.setCommitMode(TopicListDao.CommitMode.COMMITED_ONLY);
 
+    Set<Integer> sectionOnMain = new HashSet<>();
+    sectionOnMain.add(Section.SECTION_NEWS);
     if (showGalleryOnMain) {
-      topicListDto.setSection(Section.SECTION_NEWS, Section.SECTION_GALLERY);
-    } else {
-      topicListDto.setSection(Section.SECTION_NEWS);
+      sectionOnMain.add(Section.SECTION_GALLERY);
     }
+    if (showBlogsOnMain) {
+      sectionOnMain.add(Section.SECTION_BLOGS);
+    }
+    topicListDto.setSection(sectionOnMain);
 
     return topicListDao.getTopics(topicListDto, null);
   }

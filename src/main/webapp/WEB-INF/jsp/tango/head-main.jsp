@@ -56,6 +56,7 @@
       <c:if test="${template.currentUser.clubVisible}">
           <li><a href="/club/">Клуб</a></li>
       </c:if>
+      <li><a href="/blogs/">Блоги</a></li>
       <li><a href="/tracker/">Трекер</a></li>
       <c:if test="${template.sessionAuthorized}">
         <li>

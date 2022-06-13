@@ -103,6 +103,7 @@ class EditProfileController(
     tmpl.getProf.setShowPhotos("on" == request.getParameter("photos"))
     tmpl.getProf.setHideAdsense("on" == request.getParameter("hideAdsense"))
     tmpl.getProf.setShowGalleryOnMain("on" == request.getParameter("mainGallery"))
+    tmpl.getProf.setShowBlogsOnMain("on" == request.getParameter("mainBlogs"))
     tmpl.getProf.setFormatMode(formatMode)
     tmpl.getProf.setStyle(request.getParameter("style"))
     userDao.setStyle(tmpl.getCurrentUser, request.getParameter("style"))
