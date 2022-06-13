@@ -24,6 +24,7 @@ $total_width: 100%;
 $gutter_width: 2%;
 $container_margin: 0;
 $amber: #fcaf3e;
+$system_blue: #2A62B3;
 
 @import "clearfix";
 
@@ -319,7 +320,7 @@ div[itemprop="articleBody"] {
 }
 
 .messages .msg:target {
-    border: $amber solid 1px;
+    border: $system_blue solid 1px;
 }
 
 .cloud0 { font-size: 0.5em; }
@@ -796,3 +797,13 @@ figure.medium-image {
 @import "topic_page";
 
 @import "spoilers";
+
+@font-face {
+        font-family: 'EmoSymbols';
+        src: url('/font/EmojiSymbols.Regular.woff') format('woff');
+}
+
+.emoji {
+    font-style: normal !important;
+    font-family: "EmoSymbols" !important;
+}

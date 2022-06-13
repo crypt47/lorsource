@@ -13,6 +13,8 @@
  *    limitations under the License.
  */
 
+$amber: #fcaf3e;
+$navi_blue: #204A87;
 $main_background: #2e3436;
 $text_color: #babdb6;
 $link_color: #729fcf;
@@ -24,7 +26,7 @@ $table_border_color: #555753;
 $table_header_background: $table_border_color;
 $table_header_color: $text_color;
 $table_link_color: #eeeeec;
-$table_hover_background: #5c3566;
+$table_hover_background: $navi_blue;
 $table_background_color: $main_background;
 
 $tag_color: #fcaf3e;
