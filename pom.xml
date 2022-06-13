@@ -668,15 +668,6 @@
                 <include>${project.build.directory}/${project.build.finalName}/black/ir_black.css</include>
               </includes>
             </aggregation>
-            <aggregation>
-              <removeIncluded>false</removeIncluded>
-              <insertNewLine>true</insertNewLine>
-              <output>${project.build.directory}/${project.build.finalName}/white2/combined.css</output>
-              <includes>
-                <include>${project.build.directory}/${project.build.finalName}/white2/style.css</include>
-                <include>${project.build.directory}/${project.build.finalName}/white2/idea.css</include>
-              </includes>
-            </aggregation>
           </aggregations>
         </configuration>
       </plugin>
