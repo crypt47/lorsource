@@ -25,37 +25,41 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class CSRFHandlerInterceptor extends HandlerInterceptorAdapter {
-  private static final Logger logger = LoggerFactory.getLogger(CSRFHandlerInterceptor.class);
+	private static final Logger logger = LoggerFactory.getLogger(CSRFHandlerInterceptor.class);
 
-  @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    if (!request.getMethod().equalsIgnoreCase("POST")) {
-      // Not a POST - allow the request
-      return true;
-    } else {
-      // This is a POST request - need to check the CSRF token
-      //CSRFProtectionService.checkCSRF(request);
+	@Override
+		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+			if (!request.getMethod().equalsIgnoreCase("POST")) {
+				// Not a POST - allow the request
+				return true;
+			} else {
+				// This is a POST request - need to check the CSRF token
+				//CSRFProtectionService.checkCSRF(request);
 
-      if ((handler instanceof HandlerMethod) && (((HandlerMethod) handler).getMethodAnnotation(CSRFNoAuto.class)!=null)) {
-        logger.debug("Auto CSRF disabled for "+((HandlerMethod) handler).getBeanType().getName());
-        return true;
-      }
+				if ((handler instanceof HandlerMethod) && (((HandlerMethod) handler).getMethodAnnotation(CSRFNoAuto.class)!=null)) {
+					logger.debug("Auto CSRF disabled for "+((HandlerMethod) handler).getBeanType().getName());
+					return true;
+				}
 
-      String csrfInput = request.getParameter(CSRFProtectionService.CSRF_INPUT_NAME);
+				String csrfInput = request.getParameter(CSRFProtectionService.CSRF_INPUT_NAME);
 
-      if (Strings.isNullOrEmpty(csrfInput)) {
-        if ((handler instanceof HandlerMethod)) {
-          logger.warn("Missing CSRF field for " + request.getRequestURI()+ ' ' +((HandlerMethod) handler).getBeanType().getName()+ '.' +((HandlerMethod) handler).getMethod().getName());
-        } else {
-          logger.warn("Missing CSRF field for " + request.getRequestURI()+" handler="+handler.getClass().toString()+" ip="+request.getRemoteAddr());
-        }
-      }
+				if (Strings.isNullOrEmpty(csrfInput)) {
+					if ((handler instanceof HandlerMethod)) {
+						logger.warn("Missing CSRF field for " + request.getRequestURI()+ ' ' +((HandlerMethod) handler).getBeanType().getName()+ '.' +((HandlerMethod) handler).getMethod().getName());
+					} else {
+						String ipAddress = request.getHeader("X-FORWARDED-FOR");
+						if (ipAddress == null) {
+							ipAddress = request.getRemoteAddr();
+						}
+						logger.warn("Missing CSRF field for " + request.getRequestURI()+" handler="+handler.getClass().toString()+" ip="+ipAddress);
+					}
+				}
 
-      if (!CSRFProtectionService.checkCSRF(request)) {
-        throw new AccessViolationException("Неправильный код защиты CSRF. Возможно сессия устарела");
-      }
+				if (!CSRFProtectionService.checkCSRF(request)) {
+					throw new AccessViolationException("Неправильный код защиты CSRF. Возможно сессия устарела");
+				}
 
-      return true;
-    }
-  }
+				return true;
+			}
+		}
 }

@@ -25,34 +25,38 @@ import java.util.Collections;
 import java.util.Properties;
 
 public final class LorHttpUtils {
-  private LorHttpUtils() {
-  }
+	private LorHttpUtils() {
+	}
 
-  public static Properties getCookies(Cookie[] cookies) {
-    Properties c = new Properties();
+	public static Properties getCookies(Cookie[] cookies) {
+		Properties c = new Properties();
 
-    if (cookies == null) {
-      return c;
-    }
+		if (cookies == null) {
+			return c;
+		}
 
-    for (Cookie cooky : cookies) {
-      String n = cooky.getName();
-      if (n != null) {
-        c.put(n, cooky.getValue());
-      }
-    }
+		for (Cookie cooky : cookies) {
+			String n = cooky.getName();
+			if (n != null) {
+				c.put(n, cooky.getValue());
+			}
+		}
 
-    return c;
-  }
+		return c;
+	}
 
-  public static String getRequestIP(HttpServletRequest request) {
-    String logmessage = "ip:" + request.getRemoteAddr();
-    ArrayList<String> xff = Collections.list(request.getHeaders(HttpHeaders.X_FORWARDED_FOR));
+	public static String getRequestIP(HttpServletRequest request) {
+		String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+		if (ipAddress == null) {  
+			ipAddress = request.getRemoteAddr();  
+		}
+		String logmessage = "ip:" + ipAddress;
+		ArrayList<String> xff = Collections.list(request.getHeaders(HttpHeaders.X_FORWARDED_FOR));
 
-    if (!xff.isEmpty()) {
-      logmessage = logmessage + " XFF:" + Joiner.on(", ").join(xff);
-    }
+		if (!xff.isEmpty()) {
+			logmessage = logmessage + " XFF:" + Joiner.on(", ").join(xff);
+		}
 
-    return logmessage;
-  }
+		return logmessage;
+	}
 }
