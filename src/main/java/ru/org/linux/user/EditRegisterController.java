@@ -51,192 +51,195 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/people/{nick}/edit")
 public class EditRegisterController {
-  private static final Logger logger = LoggerFactory.getLogger(EditRegisterController.class);
+	private static final Logger logger = LoggerFactory.getLogger(EditRegisterController.class);
 
-  private final RememberMeServices rememberMeServices;
-  private final AuthenticationManager authenticationManager;
-  private final UserDetailsServiceImpl userDetailsService;
-  private final IPBlockDao ipBlockDao;
-  private final UserDao userDao;
-  private final UserService userService;
-  private final EmailService emailService;
-  private final ResourceLoader resourceLoader;
-  private final EditRegisterRequestValidator validator;
+	private final RememberMeServices rememberMeServices;
+	private final AuthenticationManager authenticationManager;
+	private final UserDetailsServiceImpl userDetailsService;
+	private final IPBlockDao ipBlockDao;
+	private final UserDao userDao;
+	private final UserService userService;
+	private final EmailService emailService;
+	private final ResourceLoader resourceLoader;
+	private final EditRegisterRequestValidator validator;
 
-  public EditRegisterController(RememberMeServices rememberMeServices,
-                                @Qualifier("authenticationManager") AuthenticationManager authenticationManager,
-                                UserDetailsServiceImpl userDetailsService, IPBlockDao ipBlockDao, UserDao userDao,
-                                UserService userService, EmailService emailService, ResourceLoader resourceLoader) {
-    this.rememberMeServices = rememberMeServices;
-    this.authenticationManager = authenticationManager;
-    this.userDetailsService = userDetailsService;
-    this.ipBlockDao = ipBlockDao;
-    this.userDao = userDao;
-    this.userService = userService;
-    this.emailService = emailService;
-    this.resourceLoader = resourceLoader;
+	public EditRegisterController(RememberMeServices rememberMeServices,
+			@Qualifier("authenticationManager") AuthenticationManager authenticationManager,
+			UserDetailsServiceImpl userDetailsService, IPBlockDao ipBlockDao, UserDao userDao,
+			UserService userService, EmailService emailService, ResourceLoader resourceLoader) {
+		this.rememberMeServices = rememberMeServices;
+		this.authenticationManager = authenticationManager;
+		this.userDetailsService = userDetailsService;
+		this.ipBlockDao = ipBlockDao;
+		this.userDao = userDao;
+		this.userService = userService;
+		this.emailService = emailService;
+		this.resourceLoader = resourceLoader;
 
-    validator = new EditRegisterRequestValidator(resourceLoader);
-  }
+		validator = new EditRegisterRequestValidator(resourceLoader);
+	}
 
-  @RequestMapping(method = RequestMethod.GET)
-  public ModelAndView show(
-      @ModelAttribute("form") EditRegisterRequest form,
-      @PathVariable String nick,
-      HttpServletRequest request,
-      HttpServletResponse response
-  ) {
-    Template tmpl = Template.getTemplate(request);
-    if (!tmpl.isSessionAuthorized()) {
-      throw new AccessViolationException("Not authorized");
-    }
-    if(!tmpl.getNick().equals(nick)) {
-      throw new AccessViolationException("Not authorized");
-    }
-    User user = tmpl.getCurrentUser();
-    UserInfo userInfo = userDao.getUserInfoClass(user);
+	@RequestMapping(method = RequestMethod.GET)
+		public ModelAndView show(
+				@ModelAttribute("form") EditRegisterRequest form,
+				@PathVariable String nick,
+				HttpServletRequest request,
+				HttpServletResponse response
+				) {
+			Template tmpl = Template.getTemplate(request);
+			if (!tmpl.isSessionAuthorized()) {
+				throw new AccessViolationException("Not authorized");
+			}
+			if(!tmpl.getNick().equals(nick)) {
+				throw new AccessViolationException("Not authorized");
+			}
+			User user = tmpl.getCurrentUser();
+			UserInfo userInfo = userDao.getUserInfoClass(user);
 
-    ModelAndView mv = new ModelAndView("edit-reg");
+			ModelAndView mv = new ModelAndView("edit-reg");
 
-    form.setEmail(user.getEmail());
-    form.setUrl(userInfo.getUrl());
-    form.setTown(userInfo.getTown());
-    form.setName(user.getName());
-    form.setInfo(StringEscapeUtils.unescapeHtml4(userDao.getUserInfo(user)));
+			form.setEmail(user.getEmail());
+			form.setUrl(userInfo.getUrl());
+			form.setTown(userInfo.getTown());
+			form.setName(user.getName());
+			form.setInfo(StringEscapeUtils.unescapeHtml4(userDao.getUserInfo(user)));
 
-    response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+			response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
-    return mv;
-  }
+			return mv;
+		}
 
-  @RequestMapping(method = RequestMethod.POST)
-  public ModelAndView edit(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      @Valid @ModelAttribute("form") EditRegisterRequest form,
-      Errors errors
-  ) {
-    Template tmpl = Template.getTemplate(request);
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView edit(
+				HttpServletRequest request,
+				HttpServletResponse response,
+				@Valid @ModelAttribute("form") EditRegisterRequest form,
+				Errors errors
+				) {
+			Template tmpl = Template.getTemplate(request);
 
-    if (!tmpl.isSessionAuthorized()) {
-      throw new AccessViolationException("Not authorized");
-    }
+			if (!tmpl.isSessionAuthorized()) {
+				throw new AccessViolationException("Not authorized");
+			}
 
-    String nick = tmpl.getNick();
-    String password = Strings.emptyToNull(form.getPassword());
+			String nick = tmpl.getNick();
+			String password = Strings.emptyToNull(form.getPassword());
 
-    if (password!=null && password.equalsIgnoreCase(nick)) {
-      errors.reject(null, "пароль не может совпадать с логином");
-    }
+			if (password!=null && password.equalsIgnoreCase(nick)) {
+				errors.reject(null, "пароль не может совпадать с логином");
+			}
 
-    InternetAddress mail = null;
+			InternetAddress mail = null;
 
-    if (!Strings.isNullOrEmpty(form.getEmail())) {
-      try {
-        mail = new InternetAddress(form.getEmail());
-      } catch (AddressException e) {
-        errors.rejectValue("email", null, "Некорректный e-mail: " + e.getMessage());
-      }
-    }
+			if (!Strings.isNullOrEmpty(form.getEmail())) {
+				try {
+					mail = new InternetAddress(form.getEmail());
+				} catch (AddressException e) {
+					errors.rejectValue("email", null, "Некорректный e-mail: " + e.getMessage());
+				}
+			}
 
-    String url = null;
+			String url = null;
 
-    if (!Strings.isNullOrEmpty(form.getUrl())) {
-      url = URLUtil.fixURL(form.getUrl());
-    }
+			if (!Strings.isNullOrEmpty(form.getUrl())) {
+				url = URLUtil.fixURL(form.getUrl());
+			}
 
-    String name = Strings.emptyToNull(form.getName());
+			String name = Strings.emptyToNull(form.getName());
 
-    if (name != null) {
-      name = StringUtil.escapeHtml(name);
-    }
+			if (name != null) {
+				name = StringUtil.escapeHtml(name);
+			}
 
-    String town = null;
+			String town = null;
 
-    if (!Strings.isNullOrEmpty(form.getTown())) {
-      town = StringUtil.escapeHtml(form.getTown());
-    }
+			if (!Strings.isNullOrEmpty(form.getTown())) {
+				town = StringUtil.escapeHtml(form.getTown());
+			}
 
-    String info = null;
+			String info = null;
 
-    if (!Strings.isNullOrEmpty(form.getInfo())) {
-      info = StringUtil.escapeHtml(form.getInfo());
-    }
+			if (!Strings.isNullOrEmpty(form.getInfo())) {
+				info = StringUtil.escapeHtml(form.getInfo());
+			}
+			String ipAddress = request.getHeader("X-FORWARDED-FOR");
+			if (ipAddress == null) {
+				ipAddress = request.getRemoteAddr();
+			}
+			ipBlockDao.checkBlockIP(ipAddress, errors, tmpl.getCurrentUser());
 
-    ipBlockDao.checkBlockIP(request.getRemoteAddr(), errors, tmpl.getCurrentUser());
+			boolean emailChanged = false;
 
-    boolean emailChanged = false;
+			User user = userService.getUser(nick);
 
-    User user = userService.getUser(nick);
+			if (Strings.isNullOrEmpty(form.getOldpass())) {
+				errors.rejectValue("oldpass", null, "Для изменения регистрации нужен ваш пароль");
+			} else if (!user.matchPassword(form.getOldpass())) {
+				errors.rejectValue("oldpass", null, "Неверный пароль");
+			}
 
-    if (Strings.isNullOrEmpty(form.getOldpass())) {
-      errors.rejectValue("oldpass", null, "Для изменения регистрации нужен ваш пароль");
-    } else if (!user.matchPassword(form.getOldpass())) {
-      errors.rejectValue("oldpass", null, "Неверный пароль");
-    }
+			user.checkAnonymous();
 
-    user.checkAnonymous();
+			String newEmail = null;
 
-    String newEmail = null;
+			if (mail != null) {
+				if (user.getEmail()!=null && user.getEmail().equals(form.getEmail())) {
+					newEmail = null;
+				} else {
+					if (userDao.getByEmail(mail.getAddress().toLowerCase(), false) != null) {
+						errors.rejectValue("email", null, "такой email уже используется");
+					}
 
-    if (mail != null) {
-      if (user.getEmail()!=null && user.getEmail().equals(form.getEmail())) {
-        newEmail = null;
-      } else {
-        if (userDao.getByEmail(mail.getAddress().toLowerCase(), false) != null) {
-          errors.rejectValue("email", null, "такой email уже используется");
-        }
+					newEmail = mail.getAddress().toLowerCase();
 
-        newEmail = mail.getAddress().toLowerCase();
+					emailChanged = true;
+				}
+			}
 
-        emailChanged = true;
-      }
-    }
+			if (!errors.hasErrors()) {
+				userDao.updateUser(
+						user,
+						name,
+						url,
+						newEmail,
+						town,
+						password,
+						info
+						);
+				// Обновление token-а аудетификации после смены пароля
+				if(password != null) {
+					try {
+						UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getNick(), password);
+						UserDetailsImpl details = (UserDetailsImpl) userDetailsService.loadUserByUsername(user.getNick());
+						token.setDetails(details);
+						Authentication auth = authenticationManager.authenticate(token);
+						SecurityContextHolder.getContext().setAuthentication(auth);
+						rememberMeServices.loginSuccess(request, response, auth);
+					} catch (Exception ex) {
+						logger.error("В этом месте не должно быть исключительных ситуаций. ", ex);
+					}
+				}
 
-    if (!errors.hasErrors()) {
-      userDao.updateUser(
-          user,
-          name,
-          url,
-          newEmail,
-          town,
-          password,
-          info
-      );
-      // Обновление token-а аудетификации после смены пароля
-      if(password != null) {
-        try {
-          UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getNick(), password);
-          UserDetailsImpl details = (UserDetailsImpl) userDetailsService.loadUserByUsername(user.getNick());
-          token.setDetails(details);
-          Authentication auth = authenticationManager.authenticate(token);
-          SecurityContextHolder.getContext().setAuthentication(auth);
-          rememberMeServices.loginSuccess(request, response, auth);
-        } catch (Exception ex) {
-          logger.error("В этом месте не должно быть исключительных ситуаций. ", ex);
-        }
-      }
+				if (emailChanged) {
+					emailService.sendRegistrationEmail(user.getNick(), newEmail, false);
+				}
+			} else {
+				return new ModelAndView("edit-reg");
+			}
 
-      if (emailChanged) {
-        emailService.sendRegistrationEmail(user.getNick(), newEmail, false);
-      }
-    } else {
-      return new ModelAndView("edit-reg");
-    }
+			if (emailChanged) {
+				String msg = "Обновление регистрации прошло успешно. " +
+					"Ожидайте письма на "+StringUtil.escapeHtml(newEmail)+" с кодом активации смены email.";
 
-    if (emailChanged) {
-      String msg = "Обновление регистрации прошло успешно. " +
-              "Ожидайте письма на "+StringUtil.escapeHtml(newEmail)+" с кодом активации смены email.";
+				return new ModelAndView("action-done", "message", msg);
+			} else {
+				return new ModelAndView(new RedirectView("/people/" + tmpl.getNick() + "/profile"));
+			}
+		}
 
-      return new ModelAndView("action-done", "message", msg);
-    } else {
-      return new ModelAndView(new RedirectView("/people/" + tmpl.getNick() + "/profile"));
-    }
-  }
-
-  @InitBinder("form")
-  public void requestValidator(WebDataBinder binder) {
-    binder.setValidator(validator);
-    binder.setBindingErrorProcessor(new ExceptionBindingErrorProcessor());
-  }
+	@InitBinder("form")
+		public void requestValidator(WebDataBinder binder) {
+			binder.setValidator(validator);
+			binder.setBindingErrorProcessor(new ExceptionBindingErrorProcessor());
+		}
 }

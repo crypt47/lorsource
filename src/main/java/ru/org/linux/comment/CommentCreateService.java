@@ -56,437 +56,444 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommentCreateService {
-  private static final Logger logger = LoggerFactory.getLogger(CommentCreateService.class);
-
-  private final CommentDao commentDao;
-  private final TopicDao topicDao;
-  private final UserDao userDao;
-  private final UserService userService;
-  private final CaptchaService captcha;
-  private final CommentPrepareService commentPrepareService;
-  private final FloodProtector floodProtector;
-  private final MessageTextService textService;
-  private final UserEventService userEventService;
-  private final MsgbaseDao msgbaseDao;
-  private final IgnoreListDao ignoreListDao;
-  private final EditHistoryService editHistoryService;
-  private final TopicPermissionService permissionService;
-
-  public CommentCreateService(UserDao userDao, CommentDao commentDao, TopicDao topicDao, UserService userService,
-                              CaptchaService captcha, CommentPrepareService commentPrepareService,
-                              FloodProtector floodProtector, EditHistoryService editHistoryService,
-                              MessageTextService textService, UserEventService userEventService, MsgbaseDao msgbaseDao,
-                              IgnoreListDao ignoreListDao, TopicPermissionService permissionService) {
-    this.userDao = userDao;
-    this.commentDao = commentDao;
-    this.topicDao = topicDao;
-    this.userService = userService;
-    this.captcha = captcha;
-    this.commentPrepareService = commentPrepareService;
-    this.floodProtector = floodProtector;
-    this.editHistoryService = editHistoryService;
-    this.textService = textService;
-    this.userEventService = userEventService;
-    this.msgbaseDao = msgbaseDao;
-    this.ignoreListDao = ignoreListDao;
-    this.permissionService = permissionService;
-  }
-
-  public void requestValidator(WebDataBinder binder) {
-    binder.setValidator(new CommentRequestValidator());
-    binder.setBindingErrorProcessor(new ExceptionBindingErrorProcessor());
-  }
-
-  public void initBinder(WebDataBinder binder) {
-    binder.registerCustomEditor(Topic.class, new PropertyEditorSupport() {
-      @Override
-      public void setAsText(String text) throws IllegalArgumentException {
-        try {
-          setValue(topicDao.getById(Integer.parseInt(text.split(",")[0])));
-        } catch (MessageNotFoundException e) {
-          throw new IllegalArgumentException(e);
-        }
-      }
-    });
-
-    binder.registerCustomEditor(Comment.class, new PropertyEditorSupport() {
-      @Override
-      public void setAsText(String text) throws IllegalArgumentException {
-        if (text.isEmpty() || "0".equals(text)) {
-          setValue(null);
-          return;
-        }
-
-        try {
-          setValue(commentDao.getById(Integer.parseInt(text)));
-        } catch (MessageNotFoundException e) {
-          throw new IllegalArgumentException(e);
-        }
-      }
-    });
-
-    binder.registerCustomEditor(User.class, new UserPropertyEditor(userService));
-  }
-
-  /**
-   * Проверка валидности данных запроса.
-   *
-   * @param commentRequest  WEB-форма, содержащая данные
-   * @param user            пользователь, добавляющий или изменяющий комментарий
-   * @param ipBlockInfo     информация о банах
-   * @param request         данные запроса от web-клиента
-   * @param errors          обработчик ошибок ввода для формы
-   */
-  public void checkPostData(
-    CommentRequest commentRequest,
-    User user,
-    IPBlockInfo ipBlockInfo,
-    HttpServletRequest request,
-    Errors errors,
-    boolean editMode
-  )  {
-    if (commentRequest.getMsg() == null) {
-      errors.rejectValue("msg", null, "комментарий не задан");
-      commentRequest.setMsg("");
-    }
-
-    Template tmpl = Template.getTemplate(request);
-
-    if (commentRequest.getMode() == null) {
-      commentRequest.setMode(tmpl.getFormatMode());
-    }
-
-    if (!commentRequest.isPreviewMode() &&
-      (!tmpl.isSessionAuthorized() || ipBlockInfo.isCaptchaRequired())) {
-      captcha.checkCaptcha(request, errors);
-    }
-
-    if (!commentRequest.isPreviewMode() && !errors.hasErrors()) {
-      CSRFProtectionService.checkCSRF(request, errors);
-    }
-
-    user.checkBlocked(errors);
-    user.checkFrozen(errors);
-
-    IPBlockDao.checkBlockIP(ipBlockInfo, errors, user);
-
-    if (!commentRequest.isPreviewMode() && !errors.hasErrors()) {
-      floodProtector.checkDuplication(FloodProtector.Action.ADD_COMMENT, request.getRemoteAddr(), editMode || user.getScore() >= 100, errors);
-    }
-  }
-
-  /**
-   * Получить текст комментария.
-   *
-   * @param commentRequest  WEB-форма, содержащая данные
-   * @param user            пользователь, добавляющий или изменяющий комментарий
-   * @param errors          обработчик ошибок ввода для формы
-   * @return текст комментария
-   */
-  public MessageText getCommentBody(
-    CommentRequest commentRequest,
-    User user,
-    Errors errors
-  ) {
-    MessageText messageText = MessageTextService.processPostingText(commentRequest.getMsg(), commentRequest.getMode());
-    String commentBody = (messageText.text());
-
-    if (user.isAnonymous()) {
-      if (commentBody.length() > 4096) {
-        errors.rejectValue("msg", null, "Слишком большое сообщение");
-      }
-    } else {
-      if (commentBody.length() > 8192) {
-        errors.rejectValue("msg", null, "Слишком большое сообщение");
-      }
-    }
-
-    return messageText;
-  }
-
-  /**
-   * Получить объект комментария из WEB-запроса.
-   *
-   * @param commentRequest  WEB-форма, содержащая данные
-   * @param user            пользователь, добавляющий или изменяющий комментарий
-   * @param request         данные запроса от web-клиента
-   * @return объект комментария из WEB-запроса
-   */
-  public Comment getComment(
-    CommentRequest commentRequest,
-    User user,
-    HttpServletRequest request
-  ) {
-    Comment comment = null;
-
-    if (commentRequest.getTopic() != null) {
-
-      Integer replyto = commentRequest.getReplyto() != null ? commentRequest.getReplyto().getId() : null;
-
-      int commentId = commentRequest.getOriginal() == null
-        ? 0
-        : commentRequest.getOriginal().getId();
-
-      comment = new Comment(
-        replyto,
-        "",
-        commentRequest.getTopic().getId(),
-        commentId,
-        user.getId(),
-        request.getHeader("X-Forwarded-For")
-      );
-    }
-    return comment;
-  }
-
-  /**
-   * Получить объект пользователя, добавляющего или изменяющего комментарий
-   *
-   * @param commentRequest  WEB-форма, содержащая данные
-   * @param request         данные запроса от web-клиента
-   * @param errors          обработчик ошибок ввода для формы
-   * @return объект пользователя
-   */
-  @Nonnull
-  public User getCommentUser(
-    CommentRequest commentRequest,
-    HttpServletRequest request,
-    Errors errors
-  ) {
-    Template tmpl = Template.getTemplate(request);
-
-    User currentUser = tmpl.getCurrentUser();
-
-    if (currentUser!=null) {
-      return currentUser;
-    }
-
-    if (commentRequest.getNick() != null) {
-      if (commentRequest.getPassword() == null) {
-        errors.reject(null, "Требуется авторизация");
-      }
-
-      return commentRequest.getNick();
-    } else {
-      return userService.getAnonymous();
-    }
-  }
-
-  public ImmutableMap<String, Object> prepareReplyto(CommentRequest add) throws UserNotFoundException {
-    if (add.getReplyto() != null) {
-      return ImmutableMap.of("onComment", commentPrepareService.prepareCommentForReplyto(add.getReplyto()));
-    } else {
-      return ImmutableMap.of();
-    }
-  }
-
-   /**
-   * Создание нового комментария.
-   *
-   *
-   * @param comment        объект комментария
-   * @param commentBody    текст комментария
-   * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
-   * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
-   * @param userAgent      заголовок User-Agent запроса
-   * @return идентификационный номер нового комментария + список пользователей у которых появились события
-   */
-  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-  public Tuple2<Integer, List<Integer>> create(
-          @Nonnull User author,
-          @Nonnull Comment comment,
-          MessageText commentBody,
-          String remoteAddress,
-          String xForwardedFor,
-          Optional<String> userAgent) throws MessageNotFoundException {
-    Preconditions.checkArgument(comment.getUserid() == author.getId());
-
-    ImmutableList.Builder<Integer> notifyUsers = ImmutableList.builder();
-
-    int commentId = commentDao.saveNewMessage(comment, userAgent);
-    msgbaseDao.saveNewMessage(commentBody, commentId);
-
-    if (permissionService.isUserCastAllowed(author)) {
-      Set<User> mentions = notifyMentions(author, comment, commentBody, commentId);
-
-      notifyUsers.addAll(mentions.stream().map(User::getId).iterator());
-    }
-
-    Optional<Comment> parentCommentOpt;
-
-    if (comment.getReplyTo() != 0) {
-      Comment parentComment = commentDao.getById(comment.getReplyTo());
-
-      Optional<User> mention = notifyReply(comment, commentId, parentComment);
-
-      mention.ifPresent(user -> notifyUsers.add(user.getId()));
-
-      parentCommentOpt = Optional.of(parentComment);
-    } else {
-      parentCommentOpt = Optional.empty();
-    }
-
-    List<Integer> commentNotified = userEventService.insertCommentWatchNotification(comment, parentCommentOpt, commentId);
-    notifyUsers.addAll(commentNotified);
-
-    String logMessage = makeLogString("Написан комментарий " + commentId, remoteAddress, xForwardedFor);
-    logger.info(logMessage);
-
-    return Tuple2.apply(commentId, notifyUsers.build());
-  }
-
-  /* оповещение об ответе на коммент */
-  private Optional<User> notifyReply(Comment comment, int commentId, Comment parentComment) {
-    if (parentComment.getUserid() != comment.getUserid()) {
-      User parentAuthor = userDao.getUserCached(parentComment.getUserid());
-
-      if (!parentAuthor.isAnonymous()) {
-        Set<Integer> ignoreList = ignoreListDao.get(parentAuthor);
-
-        if (!ignoreList.contains(comment.getUserid())) {
-          userEventService.addReplyEvent(parentAuthor, comment.getTopicId(), commentId);
-          return Optional.of(parentAuthor);
-        }
-      }
-    }
-
-    return Optional.empty();
-  }
-
-  /* кастование пользователей */
-  private Set<User> notifyMentions(User author, Comment comment, MessageText commentBody, int commentId) {
-    Set<User> userRefs = textService.mentions(commentBody);
-    userRefs = userRefs.stream()
-            .filter(p -> !userService.isIgnoring(p.getId(), author.getId()))
-            .collect(Collectors.toSet());
-
-    userEventService.addUserRefEvent(userRefs, comment.getTopicId(), commentId);
-
-    return userRefs;
-  }
-
-  /**
-   * Редактирование комментария.
-   *
-   * @param oldComment     данные старого комментария
-   * @param newComment     данные нового комментария
-   * @param commentBody    текст нового комментария
-   * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
-   * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
-   */
-  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-  public void edit(
-    Comment oldComment,
-    Comment newComment,
-    String commentBody,
-    String remoteAddress,
-    String xForwardedFor,
-    @Nonnull User editor,
-    MessageText originalMessageText
-  ) {
-    commentDao.changeTitle(oldComment, newComment.getTitle());
-    msgbaseDao.updateMessage(oldComment.getId(), commentBody);
-
-    /* кастование пользователей */
-    Set<User> newUserRefs = textService.mentions(MessageText.apply(commentBody, originalMessageText.markup()));
-
-    MessageText messageText = msgbaseDao.getMessageText(oldComment.getId());
-    Set<User> oldUserRefs = textService.mentions(messageText);
-    Set<User> userRefs = new HashSet<>();
-    /* кастовать только тех, кто добавился. Существующие ранее не кастуются */
-    for (User user :newUserRefs) {
-      if (!oldUserRefs.contains(user)) {
-        userRefs.add(user);
-      }
-    }
-
-    if (permissionService.isUserCastAllowed(editor)) {
-      userEventService.addUserRefEvent(userRefs, oldComment.getTopicId(), oldComment.getId());
-    }
-
-    /* Обновление времени последнего изменения топика для того, чтобы данные в кеше автоматически обновились  */
-    topicDao.updateLastmod(oldComment.getTopicId(), false);
-
-    addEditHistoryItem(editor, oldComment, originalMessageText.text(), newComment, commentBody);
-
-    updateLatestEditorInfo(editor, oldComment, newComment);
-
-    String logMessage = makeLogString("Изменён комментарий " + oldComment.getId(), remoteAddress, xForwardedFor);
-    logger.info(logMessage);
-  }
-
-  /**
-   * Добавить элемент истории для комментария.
-   *
-   * @param editor              пользователь, изменивший комментарий
-   * @param original            оригинал (старый комментарий)
-   * @param originalMessageText старое содержимое комментария
-   * @param comment             изменённый комментарий
-   * @param messageText         новое содержимое комментария
-   */
-  private void addEditHistoryItem(User editor, Comment original, String originalMessageText, Comment comment, String messageText) {
-    EditHistoryRecord editHistoryRecord = new EditHistoryRecord();
-    editHistoryRecord.setMsgid(original.getId());
-    editHistoryRecord.setObjectType(EditHistoryObjectTypeEnum.COMMENT);
-    editHistoryRecord.setEditor(editor.getId());
-
-    boolean modified = false;
-    if (!original.getTitle().equals(comment.getTitle())) {
-      editHistoryRecord.setOldtitle(original.getTitle());
-      modified = true;
-    }
-
-    if (!originalMessageText.equals(messageText)) {
-      editHistoryRecord.setOldmessage(originalMessageText);
-      modified = true;
-    }
-
-    if (modified) {
-      editHistoryService.insert(editHistoryRecord);
-    }
-
-  }
-
-  /**
-   * Обновление информации о последнем изменении коммента.
-   *
-   * @param editor   пользователь, изменивший комментарий
-   * @param original оригинал (старый комментарий)
-   * @param comment  изменённый комментарий
-   */
-  private void updateLatestEditorInfo(User editor, Comment original, Comment comment) {
-    int editCount = editHistoryService.editCount(original.getId(), EditHistoryObjectTypeEnum.COMMENT);
-
-    commentDao.updateLatestEditorInfo(
-      original.getId(),
-      editor.getId(),
-      comment.getPostdate(),
-      editCount
-    );
-  }
-
-  /**
-   * Формирование строки в лог-файл.
-   *
-   * @param message        сообщение
-   * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
-   * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
-   * @return строка, готовая для добавления в лог-файл
-   */
-  private static String makeLogString(String message, String remoteAddress, String xForwardedFor) {
-    StringBuilder logMessage = new StringBuilder();
-
-    logMessage
-      .append(message)
-      .append("; ip: ")
-      .append(remoteAddress);
-
-    if (xForwardedFor != null) {
-      logMessage
-        .append(" XFF:")
-        .append(xForwardedFor);
-    }
-
-    return logMessage.toString();
-  }
+	private static final Logger logger = LoggerFactory.getLogger(CommentCreateService.class);
+
+	private final CommentDao commentDao;
+	private final TopicDao topicDao;
+	private final UserDao userDao;
+	private final UserService userService;
+	private final CaptchaService captcha;
+	private final CommentPrepareService commentPrepareService;
+	private final FloodProtector floodProtector;
+	private final MessageTextService textService;
+	private final UserEventService userEventService;
+	private final MsgbaseDao msgbaseDao;
+	private final IgnoreListDao ignoreListDao;
+	private final EditHistoryService editHistoryService;
+	private final TopicPermissionService permissionService;
+
+	public CommentCreateService(UserDao userDao, CommentDao commentDao, TopicDao topicDao, UserService userService,
+			CaptchaService captcha, CommentPrepareService commentPrepareService,
+			FloodProtector floodProtector, EditHistoryService editHistoryService,
+			MessageTextService textService, UserEventService userEventService, MsgbaseDao msgbaseDao,
+			IgnoreListDao ignoreListDao, TopicPermissionService permissionService) {
+		this.userDao = userDao;
+		this.commentDao = commentDao;
+		this.topicDao = topicDao;
+		this.userService = userService;
+		this.captcha = captcha;
+		this.commentPrepareService = commentPrepareService;
+		this.floodProtector = floodProtector;
+		this.editHistoryService = editHistoryService;
+		this.textService = textService;
+		this.userEventService = userEventService;
+		this.msgbaseDao = msgbaseDao;
+		this.ignoreListDao = ignoreListDao;
+		this.permissionService = permissionService;
+	}
+
+	public void requestValidator(WebDataBinder binder) {
+		binder.setValidator(new CommentRequestValidator());
+		binder.setBindingErrorProcessor(new ExceptionBindingErrorProcessor());
+	}
+
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Topic.class, new PropertyEditorSupport() {
+				@Override
+				public void setAsText(String text) throws IllegalArgumentException {
+				try {
+				setValue(topicDao.getById(Integer.parseInt(text.split(",")[0])));
+				} catch (MessageNotFoundException e) {
+				throw new IllegalArgumentException(e);
+				}
+				}
+				});
+
+		binder.registerCustomEditor(Comment.class, new PropertyEditorSupport() {
+				@Override
+				public void setAsText(String text) throws IllegalArgumentException {
+				if (text.isEmpty() || "0".equals(text)) {
+				setValue(null);
+				return;
+				}
+
+				try {
+				setValue(commentDao.getById(Integer.parseInt(text)));
+				} catch (MessageNotFoundException e) {
+				throw new IllegalArgumentException(e);
+				}
+				}
+				});
+
+		binder.registerCustomEditor(User.class, new UserPropertyEditor(userService));
+	}
+
+	/**
+	 * Проверка валидности данных запроса.
+	 *
+	 * @param commentRequest  WEB-форма, содержащая данные
+	 * @param user            пользователь, добавляющий или изменяющий комментарий
+	 * @param ipBlockInfo     информация о банах
+	 * @param request         данные запроса от web-клиента
+	 * @param errors          обработчик ошибок ввода для формы
+	 */
+	public void checkPostData(
+			CommentRequest commentRequest,
+			User user,
+			IPBlockInfo ipBlockInfo,
+			HttpServletRequest request,
+			Errors errors,
+			boolean editMode
+			)  {
+		if (commentRequest.getMsg() == null) {
+			errors.rejectValue("msg", null, "комментарий не задан");
+			commentRequest.setMsg("");
+		}
+
+		Template tmpl = Template.getTemplate(request);
+
+		if (commentRequest.getMode() == null) {
+			commentRequest.setMode(tmpl.getFormatMode());
+		}
+
+		if (!commentRequest.isPreviewMode() &&
+				(!tmpl.isSessionAuthorized() || ipBlockInfo.isCaptchaRequired())) {
+			captcha.checkCaptcha(request, errors);
+		}
+
+		if (!commentRequest.isPreviewMode() && !errors.hasErrors()) {
+			CSRFProtectionService.checkCSRF(request, errors);
+		}
+
+		user.checkBlocked(errors);
+		user.checkFrozen(errors);
+
+		IPBlockDao.checkBlockIP(ipBlockInfo, errors, user);
+
+		if (!commentRequest.isPreviewMode() && !errors.hasErrors()) {
+			String ipAddress = request.getHeader("X-FORWARDED-FOR");
+			if (ipAddress == null) {
+				ipAddress = request.getRemoteAddr();
+			}
+			floodProtector.checkDuplication(FloodProtector.Action.ADD_COMMENT, ipAddress, editMode || user.getScore() >= 100, errors);
+		}
+	}
+
+	/**
+	 * Получить текст комментария.
+	 *
+	 * @param commentRequest  WEB-форма, содержащая данные
+	 * @param user            пользователь, добавляющий или изменяющий комментарий
+	 * @param errors          обработчик ошибок ввода для формы
+	 * @return текст комментария
+	 */
+	public MessageText getCommentBody(
+			CommentRequest commentRequest,
+			User user,
+			Errors errors
+			) {
+		MessageText messageText = MessageTextService.processPostingText(commentRequest.getMsg(), commentRequest.getMode());
+		String commentBody = (messageText.text());
+
+		if (user.isAnonymous()) {
+			if (commentBody.length() > 4096) {
+				errors.rejectValue("msg", null, "Слишком большое сообщение");
+			}
+		} else {
+			if (commentBody.length() > 8192) {
+				errors.rejectValue("msg", null, "Слишком большое сообщение");
+			}
+		}
+
+		return messageText;
+	}
+
+	/**
+	 * Получить объект комментария из WEB-запроса.
+	 *
+	 * @param commentRequest  WEB-форма, содержащая данные
+	 * @param user            пользователь, добавляющий или изменяющий комментарий
+	 * @param request         данные запроса от web-клиента
+	 * @return объект комментария из WEB-запроса
+	 */
+	public Comment getComment(
+			CommentRequest commentRequest,
+			User user,
+			HttpServletRequest request
+			) {
+		Comment comment = null;
+
+		if (commentRequest.getTopic() != null) {
+
+			Integer replyto = commentRequest.getReplyto() != null ? commentRequest.getReplyto().getId() : null;
+
+			int commentId = commentRequest.getOriginal() == null
+				? 0
+				: commentRequest.getOriginal().getId();
+			String ipAddress = request.getHeader("X-FORWARDED-FOR");
+			if (ipAddress == null) {
+				ipAddress = request.getRemoteAddr();
+			}
+			comment = new Comment(
+					replyto,
+					"",
+					commentRequest.getTopic().getId(),
+					commentId,
+					user.getId(),
+					ipAddress
+					);
+		}
+		return comment;
+	}
+
+	/**
+	 * Получить объект пользователя, добавляющего или изменяющего комментарий
+	 *
+	 * @param commentRequest  WEB-форма, содержащая данные
+	 * @param request         данные запроса от web-клиента
+	 * @param errors          обработчик ошибок ввода для формы
+	 * @return объект пользователя
+	 */
+	@Nonnull
+		public User getCommentUser(
+				CommentRequest commentRequest,
+				HttpServletRequest request,
+				Errors errors
+				) {
+			Template tmpl = Template.getTemplate(request);
+
+			User currentUser = tmpl.getCurrentUser();
+
+			if (currentUser!=null) {
+				return currentUser;
+			}
+
+			if (commentRequest.getNick() != null) {
+				if (commentRequest.getPassword() == null) {
+					errors.reject(null, "Требуется авторизация");
+				}
+
+				return commentRequest.getNick();
+			} else {
+				return userService.getAnonymous();
+			}
+		}
+
+	public ImmutableMap<String, Object> prepareReplyto(CommentRequest add) throws UserNotFoundException {
+		if (add.getReplyto() != null) {
+			return ImmutableMap.of("onComment", commentPrepareService.prepareCommentForReplyto(add.getReplyto()));
+		} else {
+			return ImmutableMap.of();
+		}
+	}
+
+	/**
+	 * Создание нового комментария.
+	 *
+	 *
+	 * @param comment        объект комментария
+	 * @param commentBody    текст комментария
+	 * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
+	 * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
+	 * @param userAgent      заголовок User-Agent запроса
+	 * @return идентификационный номер нового комментария + список пользователей у которых появились события
+	 */
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+		public Tuple2<Integer, List<Integer>> create(
+				@Nonnull User author,
+				@Nonnull Comment comment,
+				MessageText commentBody,
+				String remoteAddress,
+				String xForwardedFor,
+				Optional<String> userAgent) throws MessageNotFoundException {
+			Preconditions.checkArgument(comment.getUserid() == author.getId());
+
+			ImmutableList.Builder<Integer> notifyUsers = ImmutableList.builder();
+
+			int commentId = commentDao.saveNewMessage(comment, userAgent);
+			msgbaseDao.saveNewMessage(commentBody, commentId);
+
+			if (permissionService.isUserCastAllowed(author)) {
+				Set<User> mentions = notifyMentions(author, comment, commentBody, commentId);
+
+				notifyUsers.addAll(mentions.stream().map(User::getId).iterator());
+			}
+
+			Optional<Comment> parentCommentOpt;
+
+			if (comment.getReplyTo() != 0) {
+				Comment parentComment = commentDao.getById(comment.getReplyTo());
+
+				Optional<User> mention = notifyReply(comment, commentId, parentComment);
+
+				mention.ifPresent(user -> notifyUsers.add(user.getId()));
+
+				parentCommentOpt = Optional.of(parentComment);
+			} else {
+				parentCommentOpt = Optional.empty();
+			}
+
+			List<Integer> commentNotified = userEventService.insertCommentWatchNotification(comment, parentCommentOpt, commentId);
+			notifyUsers.addAll(commentNotified);
+
+			String logMessage = makeLogString("Написан комментарий " + commentId, remoteAddress, xForwardedFor);
+			logger.info(logMessage);
+
+			return Tuple2.apply(commentId, notifyUsers.build());
+		}
+
+	/* оповещение об ответе на коммент */
+	private Optional<User> notifyReply(Comment comment, int commentId, Comment parentComment) {
+		if (parentComment.getUserid() != comment.getUserid()) {
+			User parentAuthor = userDao.getUserCached(parentComment.getUserid());
+
+			if (!parentAuthor.isAnonymous()) {
+				Set<Integer> ignoreList = ignoreListDao.get(parentAuthor);
+
+				if (!ignoreList.contains(comment.getUserid())) {
+					userEventService.addReplyEvent(parentAuthor, comment.getTopicId(), commentId);
+					return Optional.of(parentAuthor);
+				}
+			}
+		}
+
+		return Optional.empty();
+	}
+
+	/* кастование пользователей */
+	private Set<User> notifyMentions(User author, Comment comment, MessageText commentBody, int commentId) {
+		Set<User> userRefs = textService.mentions(commentBody);
+		userRefs = userRefs.stream()
+			.filter(p -> !userService.isIgnoring(p.getId(), author.getId()))
+			.collect(Collectors.toSet());
+
+		userEventService.addUserRefEvent(userRefs, comment.getTopicId(), commentId);
+
+		return userRefs;
+	}
+
+	/**
+	 * Редактирование комментария.
+	 *
+	 * @param oldComment     данные старого комментария
+	 * @param newComment     данные нового комментария
+	 * @param commentBody    текст нового комментария
+	 * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
+	 * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
+	 */
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+		public void edit(
+				Comment oldComment,
+				Comment newComment,
+				String commentBody,
+				String remoteAddress,
+				String xForwardedFor,
+				@Nonnull User editor,
+				MessageText originalMessageText
+				) {
+			commentDao.changeTitle(oldComment, newComment.getTitle());
+			msgbaseDao.updateMessage(oldComment.getId(), commentBody);
+
+			/* кастование пользователей */
+			Set<User> newUserRefs = textService.mentions(MessageText.apply(commentBody, originalMessageText.markup()));
+
+			MessageText messageText = msgbaseDao.getMessageText(oldComment.getId());
+			Set<User> oldUserRefs = textService.mentions(messageText);
+			Set<User> userRefs = new HashSet<>();
+			/* кастовать только тех, кто добавился. Существующие ранее не кастуются */
+			for (User user :newUserRefs) {
+				if (!oldUserRefs.contains(user)) {
+					userRefs.add(user);
+				}
+			}
+
+			if (permissionService.isUserCastAllowed(editor)) {
+				userEventService.addUserRefEvent(userRefs, oldComment.getTopicId(), oldComment.getId());
+			}
+
+			/* Обновление времени последнего изменения топика для того, чтобы данные в кеше автоматически обновились  */
+			topicDao.updateLastmod(oldComment.getTopicId(), false);
+
+			addEditHistoryItem(editor, oldComment, originalMessageText.text(), newComment, commentBody);
+
+			updateLatestEditorInfo(editor, oldComment, newComment);
+
+			String logMessage = makeLogString("Изменён комментарий " + oldComment.getId(), remoteAddress, xForwardedFor);
+			logger.info(logMessage);
+		}
+
+	/**
+	 * Добавить элемент истории для комментария.
+	 *
+	 * @param editor              пользователь, изменивший комментарий
+	 * @param original            оригинал (старый комментарий)
+	 * @param originalMessageText старое содержимое комментария
+	 * @param comment             изменённый комментарий
+	 * @param messageText         новое содержимое комментария
+	 */
+	private void addEditHistoryItem(User editor, Comment original, String originalMessageText, Comment comment, String messageText) {
+		EditHistoryRecord editHistoryRecord = new EditHistoryRecord();
+		editHistoryRecord.setMsgid(original.getId());
+		editHistoryRecord.setObjectType(EditHistoryObjectTypeEnum.COMMENT);
+		editHistoryRecord.setEditor(editor.getId());
+
+		boolean modified = false;
+		if (!original.getTitle().equals(comment.getTitle())) {
+			editHistoryRecord.setOldtitle(original.getTitle());
+			modified = true;
+		}
+
+		if (!originalMessageText.equals(messageText)) {
+			editHistoryRecord.setOldmessage(originalMessageText);
+			modified = true;
+		}
+
+		if (modified) {
+			editHistoryService.insert(editHistoryRecord);
+		}
+
+	}
+
+	/**
+	 * Обновление информации о последнем изменении коммента.
+	 *
+	 * @param editor   пользователь, изменивший комментарий
+	 * @param original оригинал (старый комментарий)
+	 * @param comment  изменённый комментарий
+	 */
+	private void updateLatestEditorInfo(User editor, Comment original, Comment comment) {
+		int editCount = editHistoryService.editCount(original.getId(), EditHistoryObjectTypeEnum.COMMENT);
+
+		commentDao.updateLatestEditorInfo(
+				original.getId(),
+				editor.getId(),
+				comment.getPostdate(),
+				editCount
+				);
+	}
+
+	/**
+	 * Формирование строки в лог-файл.
+	 *
+	 * @param message        сообщение
+	 * @param remoteAddress  IP-адрес, с которого был добавлен комментарий
+	 * @param xForwardedFor  IP-адрес через шлюз, с которого был добавлен комментарий
+	 * @return строка, готовая для добавления в лог-файл
+	 */
+	private static String makeLogString(String message, String remoteAddress, String xForwardedFor) {
+		StringBuilder logMessage = new StringBuilder();
+
+		logMessage
+			.append(message)
+			.append("; ip: ")
+			.append(remoteAddress);
+
+		if (xForwardedFor != null) {
+			logMessage
+				.append(" XFF:")
+				.append(xForwardedFor);
+		}
+
+		return logMessage.toString();
+	}
 }
