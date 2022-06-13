@@ -145,7 +145,7 @@
               <i class="icon-pin icon-pin-color" title="Прикрепленная тема"></i>
             </c:if>
             <c:if test="${msg.commentsClosed and not msg.deleted}">
-                          <i class="icon-pin icon-pin-color">&#128274;</i>
+                          <i class="icon-pin icon-pin-color" style="font-style:normal;">&#128274;</i>
             </c:if>
             <c:if test="${msg.resolved}">
               <i class="icon-pin-color" style="font-style:normal;">&#9745;</i>
