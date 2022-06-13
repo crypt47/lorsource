@@ -105,7 +105,7 @@
   <td align="center">
     <c:choose>
       <c:when test="${topic.event.type == 'DELETED'}">
-        <i class="icon-pin-color emoji">&#10060;</i>
+        <i class="icon-system-color emoji">&#10060;</i>
       </c:when>
       <c:when test="${topic.event.type == 'ANSWERS'}">
         <i class="icon-reply-color emoji">&#9899;</i>
@@ -114,10 +114,10 @@
         <i class="icon-user-color emoji">&#9899;</i>
       </c:when>
       <c:when test="${topic.event.type == 'TAG'}">
-        <i class="icon-pin-color emoji">&#9899;</i>
+        <i class="icon-system-color emoji">&#9899;</i>
       </c:when>
       <c:otherwise>
-        <i class="icon-pin-color emoji">&#9898;</i>
+        <i class="icon-system-color emoji">&#9898;</i>
       </c:otherwise>
     </c:choose>
   </td>

@@ -72,7 +72,7 @@
         <td class="hideon-tablet">${groupLink}</td>
         <td>
           <c:if test="${msg.resolved}">
-            <i class="icon-pin-color emoji">&#9745;</i>
+            <i class="icon-system-color emoji">&#9745;</i>
           </c:if>
             <a href="${msg.lastPageUrl}">
               <c:forEach var="tag" items="${msg.tags}">

@@ -76,10 +76,10 @@
         <div class="tracker-title">
           <p>
             <c:if test="${msg.commentsClosed and not msg.deleted}">
-                          <i class="icon-pin icon-pin-color emoji">&#128274;</i>
+                          <i class="icon-system-color emoji">&#128274;</i>
             </c:if>
             <c:if test="${msg.resolved}">
-              <i class="icon-pin-color emoji">&#9745;</i>
+              <i class="icon-system-color emoji">&#9745;</i>
             </c:if>
 
             <l:title>${msg.title}</l:title>

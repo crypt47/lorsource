@@ -166,11 +166,11 @@
 					<c:choose>
 					<c:when test="${template.moderatorSession}">
 					<a href="/undelete?msgid=${topic.msgid}">
-					      <i class="icon-pin icon-pin-color emoji">&#10060;</i>
+					      <i class="icon-system-color emoji">&#10060;</i>
 					</a>
 					</c:when>
 					<c:otherwise>
-					 <i class="icon-pin icon-pin-color emoji">&#10060;</i>
+					 <i class="icon-system-color emoji">&#10060;</i>
 					</c:otherwise>
 					</c:choose>
 					</c:if>
@@ -178,7 +178,7 @@
 					<i class="icon-pin icon-pin-color emoji"></i>
 					</c:if>
 					<c:if test="${topic.resolved}">
-					 <i class="icon-pin-color emoji">&#9745;</i>
+					 <i class="icon-system-color emoji">&#9745;</i>
 					</c:if>
 
 					<c:set var="topic_tags">
