@@ -108,13 +108,16 @@ public class CommentPrepareService {
 
           String replyAuthor = userDao.getUserCached(reply.getUserid()).getNick();
 
+          boolean replyToIgnoredComment  = hideSet.contains(reply.getId());
+
           replyInfo = new ReplyInfo(
                   reply.getId(),
                   replyAuthor,
                   Strings.emptyToNull(reply.getTitle().trim()),
                   reply.getPostdate(),
                   samePage,
-                  false
+                  false,
+                  replyToIgnoredComment
           );
         }
       }

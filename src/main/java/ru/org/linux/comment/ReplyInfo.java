@@ -31,6 +31,7 @@ public class ReplyInfo {
   private final Date postdate;
   private final boolean samePage;
   private final boolean deleted;
+  private final boolean replyToIgnored;
 
   public ReplyInfo(int id, boolean deleted) {
     this.id = id;
@@ -41,6 +42,7 @@ public class ReplyInfo {
     this.title = null;
     this.postdate = new Date(0);
     this.samePage = false;
+    this.replyToIgnored = false;
   }
 
   public ReplyInfo(
@@ -49,7 +51,8 @@ public class ReplyInfo {
           @Nullable String title,
           @Nonnull Date postdate,
           boolean samePage,
-          boolean deleted
+          boolean deleted,
+          boolean replyToIgnored
   ) {
     this.id = id;
     this.author = author;
@@ -57,6 +60,7 @@ public class ReplyInfo {
     this.postdate = postdate;
     this.samePage = samePage;
     this.deleted = deleted;
+    this.replyToIgnored = replyToIgnored;
   }
 
   public int getId() {
@@ -81,5 +85,9 @@ public class ReplyInfo {
 
   public boolean isDeleted() {
     return deleted;
+  }
+
+  public boolean isReplyToIgnored() {
+    return replyToIgnored;
   }
 }
