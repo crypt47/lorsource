@@ -105,17 +105,20 @@
   <td align="center">
     <c:choose>
       <c:when test="${topic.event.type == 'DELETED'}">
-                    <i class="icon-pin icon-pin-color" title="Сообщение удалено" style="font-style:normal;">&#10060;</i>
+                    <i class="icon-pin-color" title="Сообщение удалено" style="font-style:normal;">&#10060;</i>
       </c:when>
       <c:when test="${topic.event.type == 'ANSWERS'}">
-        <i class="icon-comment icon-reply-color" title="Ответ" style="font-style:normal;"></i>
+        <i class="icon-reply-color" title="Ответ" style="font-style:normal;">&#9899;</i>
       </c:when>
       <c:when test="${topic.event.type == 'REFERENCE'}">
-        <i class="icon-user icon-user-color" style="font-style:normal;"></i>
+        <i class="icon-user-color" style="font-style:normal;">&#9899;</i>
       </c:when>
       <c:when test="${topic.event.type == 'TAG'}">
-        <i class="icon-tag icon-tag-color" title="Избранный тег" style="font-style:normal;">&#127991;</i>
+        <i class="icon-pin-color" title="Избранный тег" style="font-style:normal;">&#9899;</i>
       </c:when>
+      <c:otherwise>
+        <i class="icon-pin-color" style="font-style:normal;">&#9898;</i>
+      </c:otherwise>
     </c:choose>
   </td>
   <td>
