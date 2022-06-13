@@ -30,270 +30,298 @@ import java.util.*;
 
 @Repository
 public class TopicListDao {
-  private static final Logger logger = LoggerFactory.getLogger(TopicListDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(TopicListDao.class);
 
-  private JdbcTemplate jdbcTemplate;
-  private NamedParameterJdbcTemplate namedJdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
+	private NamedParameterJdbcTemplate namedJdbcTemplate;
 
-  @Autowired
-  public void setDataSource(DataSource ds) {
-    jdbcTemplate = new JdbcTemplate(ds);
-    namedJdbcTemplate = new NamedParameterJdbcTemplate(ds);
-  }
+	@Autowired
+		public void setDataSource(DataSource ds) {
+			jdbcTemplate = new JdbcTemplate(ds);
+			namedJdbcTemplate = new NamedParameterJdbcTemplate(ds);
+		}
 
-  public List<Topic> getTopics(TopicListDto topicListDto, @Nullable User currentUser) {
-    logger.debug("TopicListDao.getTopics(); topicListDto = " + topicListDto.toString());
-    Map<String, Object> params = new HashMap<>();
+	public List<Topic> getTopics(TopicListDto topicListDto, @Nullable User currentUser) {
+		logger.debug("TopicListDao.getTopics(); topicListDto = " + topicListDto.toString());
+		Map<String, Object> params = new HashMap<>();
 
-    if (currentUser!=null) {
-      params.put("userid", currentUser.getId());
-    }
+		if (currentUser!=null) {
+			params.put("userid", currentUser.getId());
+		}
 
-    String sort = makeSortOrder(topicListDto);
-    String limit = makeLimitAndOffset(topicListDto);
+		String sort = makeSortOrder(topicListDto);
+		String limit = makeLimitAndOffset(topicListDto);
 
-    StringBuilder query = new StringBuilder();
+		StringBuilder query = new StringBuilder();
 
-    query
-      .append("SELECT ")
-      .append("postdate, topics.id as msgid, topics.userid, topics.title, ")
-      .append("topics.groupid as guid, topics.url, topics.linktext, ua_id, ")
-      .append("urlname, section, topics.sticky, topics.postip, ")
-      .append("COALESCE(commitdate, postdate)<(CURRENT_TIMESTAMP-sections.expire) as expired, deleted, lastmod, commitby, ")
-      .append("commitdate, topics.stat1, postscore, topics.moderate, notop, ")
-      .append("topics.resolved, minor, draft, allow_anonymous ")
-      .append("FROM topics ")
-      .append("INNER JOIN groups ON (groups.id=topics.groupid) ")
-      .append("INNER JOIN sections ON (sections.id=groups.section) ");
-    if (topicListDto.isUserFavs()) {
-      query.append("INNER JOIN memories ON (memories.topic = topics.id) ");
-    }
-    query
-      .append("WHERE ")
-      .append(makeConditions(topicListDto, params))
-      .append(sort)
-      .append(limit);
+		query
+			.append("SELECT ")
+			.append("postdate, topics.id as msgid, topics.userid, topics.title, ")
+			.append("topics.groupid as guid, topics.url, topics.linktext, ua_id, ")
+			.append("urlname, section, topics.sticky, topics.postip, ")
+			.append("COALESCE(commitdate, postdate)<(CURRENT_TIMESTAMP-sections.expire) as expired, deleted, lastmod, commitby, ")
+			.append("commitdate, topics.stat1, postscore, topics.moderate, notop, ")
+			.append("topics.resolved, minor, draft, allow_anonymous ")
+			.append("FROM topics ")
+			.append("INNER JOIN groups ON (groups.id=topics.groupid) ")
+			.append("INNER JOIN sections ON (sections.id=groups.section) ");
+		if (topicListDto.isUserFavs()) {
+			query.append("INNER JOIN memories ON (memories.topic = topics.id) ");
+		}
+		query
+			.append("WHERE ")
+			.append(makeConditions(topicListDto, params))
+			.append(sort)
+			.append(limit);
 
-    logger.trace("SQL query: " + query);
+		logger.trace("SQL query: " + query);
 
-    return namedJdbcTemplate.query(
-            query.toString(),
-            params,
-            (resultSet, i) -> new Topic(resultSet)
-    );
-  }
+		return namedJdbcTemplate.query(
+				query.toString(),
+				params,
+				(resultSet, i) -> new Topic(resultSet)
+				);
+	}
 
-  /**
-   * Возвращает удаленные темы в премодерируемом разделе.
-   *
-   * Темы, удаленные автором пропускаются.
-   *
-   * @param sectionId номер раздела или 0 для всех премодерируемых
-   * @param skipEmptyReason Пропускать темы, удаленные с пустым комментарием
-   * @param includeAnonymous
-   * @return список удаленных тем
-   */
-  public List<DeletedTopic> getDeletedTopics(int sectionId, boolean skipEmptyReason, boolean includeAnonymous) {
-    StringBuilder query = new StringBuilder();
-    List <Object> queryParameters = new ArrayList<>();
+	/**
+	 * Возвращает удаленные темы в премодерируемом разделе.
+	 *
+	 * Темы, удаленные автором пропускаются.
+	 *
+	 * @param sectionId номер раздела или 0 для всех премодерируемых
+	 * @param skipEmptyReason Пропускать темы, удаленные с пустым комментарием
+	 * @param includeAnonymous
+	 * @return список удаленных тем
+	 */
+	public List<DeletedTopic> getDeletedTopics(int sectionId, boolean skipEmptyReason, boolean includeAnonymous) {
+		StringBuilder query = new StringBuilder();
+		List <Object> queryParameters = new ArrayList<>();
 
-    query
-      .append("SELECT ")
-      .append("topics.title as subj, nick, groups.section, topics.id as msgid, ")
-      .append("reason, topics.postdate, del_info.delDate, bonus ")
-      .append("FROM topics,groups,users,sections,del_info ")
-      .append("WHERE sections.id=groups.section AND topics.userid=users.id ")
-      .append("AND topics.groupid=groups.id AND sections.moderate AND deleted ")
-      .append("AND del_info.msgid=topics.id AND topics.userid!=del_info.delby ")
-      .append("AND delDate is not null ");
+		query
+			.append("SELECT ")
+			.append("topics.title as subj, nick, groups.section, topics.id as msgid, ")
+			.append("reason, topics.postdate, del_info.delDate, bonus ")
+			.append("FROM topics,groups,users,sections,del_info ")
+			.append("WHERE sections.id=groups.section AND topics.userid=users.id ")
+			.append("AND topics.groupid=groups.id AND sections.moderate AND deleted ")
+			.append("AND del_info.msgid=topics.id AND topics.userid!=del_info.delby ")
+			.append("AND delDate is not null ");
 
-    if (skipEmptyReason) {
-      query.append("AND reason!='' ");
-    }
+		if (skipEmptyReason) {
+			query.append("AND reason!='' ");
+		}
 
-    if (!includeAnonymous) {
-      query.append("AND topics.userid != " + User.ANONYMOUS_ID + " ");
-    }
+		if (!includeAnonymous) {
+			query.append("AND topics.userid != " + User.ANONYMOUS_ID + " ");
+		}
 
-    if (sectionId != 0) {
-      query.append(" AND section=? ");
-      queryParameters.add(sectionId);
-    }
+		if (sectionId != 0) {
+			query.append(" AND section=? ");
+			queryParameters.add(sectionId);
+		}
 
-    query.append(" ORDER BY del_info.delDate DESC LIMIT 20");
+		query.append(" ORDER BY del_info.delDate DESC LIMIT 20");
 
-    return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
-  }
+		return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
+	}
 
-  public List<DeletedTopic> getDeletedUserTopics(User user, int topics) {
-    StringBuilder query = new StringBuilder();
-    List <Object> queryParameters = new ArrayList<>();
+/*	int UncommitedTopicsCount;
+	public List<UncommitedTopicsCount> getUncommitedTopicsCount(final int sectionId) {
 
-    query
-            .append("SELECT ")
-            .append("topics.title as subj, nick, groups.section, topics.id as msgid, ")
-            .append("reason, topics.postdate, del_info.delDate, bonus ")
-            .append("FROM topics,groups,users,del_info ")
-            .append("WHERE topics.userid=users.id ")
-            .append("AND topics.groupid=groups.id AND deleted ")
-            .append("AND del_info.msgid=topics.id ")
-            .append("AND delDate is not null ");
+		String sql = "SELECT count(*) from topics WHERE commitdate IS NULL AND groupid IN (select id from groups where section = " +
+		sectionId + " )");
 
-    query.append("AND topics.userid = " + user.getId() + " ");
+		return jdbcTemplate.query(sql, new RowMapper<UncommitedTopicsCount>() {
+				@Override
+				public UncommitedTopicsCount mapRow(ResultSet rs, int i) throws SQLException {
+				final int answers = rs.getInt("c");
 
-    query.append(" ORDER BY del_info.delDate DESC LIMIT " + topics);
+				return new UncommitedTopicsCount(
+						sectionService.getSection(rs.getInt("section")).getSectionLink()+rs.getString("urlname")+ '/' +rs.getInt("msgid"),
+						rs.getTimestamp("lastmod"),
+						rs.getString("title"),
+						answers,
+						pages
+						);
+				}
+				});
 
-    return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
-  }
+	}*/
+	int getUncommitedTopicsCount;
+	public int getUncommitedTopicsCount (int sectionId) {
+	    return jdbcTemplate.queryForObject("SELECT count(*) from topics WHERE commitdate IS NULL AND groupid IN (select id from groups where section = " + sectionId + " )", Integer.class);
+	}
 
-  /**
-   * Создание условий выборки SQL-запроса.
-   *
-   * @param request объект, содержащий условия выборки
-   * @return строка, содержащая условия выборки SQL-запроса
-   */
-  private static CharSequence makeConditions(TopicListDto request, Map<String, Object> paramsBuilder) {
-    StringBuilder where = new StringBuilder("NOT deleted");
 
-    if (paramsBuilder.containsKey("userid")) {
-      where.append(" AND ((sections.moderate AND commitdate is not null) OR userid NOT IN (select ignored from ignore_list where userid=:userid))");
-    }
+	public List<DeletedTopic> getDeletedUserTopics(User user, int topics) {
+		StringBuilder query = new StringBuilder();
+		List <Object> queryParameters = new ArrayList<>();
 
-    where.append(request.getCommitMode().getQueryPiece());
+		query
+			.append("SELECT ")
+			.append("topics.title as subj, nick, groups.section, topics.id as msgid, ")
+			.append("reason, topics.postdate, del_info.delDate, bonus ")
+			.append("FROM topics,groups,users,del_info ")
+			.append("WHERE topics.userid=users.id ")
+			.append("AND topics.groupid=groups.id AND deleted ")
+			.append("AND del_info.msgid=topics.id ")
+			.append("AND delDate is not null ");
 
-    Set<Integer> sections = Sets.filter(request.getSections(), v -> v != 0);
+		query.append("AND topics.userid = " + user.getId() + " ");
 
-    if (!sections.isEmpty()) {
-      where.append(" AND section in (:sections)");
-      paramsBuilder.put("sections", sections);
-    }
+		query.append(" ORDER BY del_info.delDate DESC LIMIT " + topics);
 
-    if (request.getGroup() != 0) {
-      where.append(" AND groupid=:groupId");
-      paramsBuilder.put("groupId", request.getGroup());
-    }
+		return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
+	}
 
-    if (!request.isIncludeAnonymous()) {
-      where.append(" AND topics.userid != " + User.ANONYMOUS_ID);
-    }
+	/**
+	 * Создание условий выборки SQL-запроса.
+	 *
+	 * @param request объект, содержащий условия выборки
+	 * @return строка, содержащая условия выборки SQL-запроса
+	 */
+	private static CharSequence makeConditions(TopicListDto request, Map<String, Object> paramsBuilder) {
+		StringBuilder where = new StringBuilder("NOT deleted");
 
-    switch (request.getDateLimitType()) {
-      case BETWEEN:
-        where.append(" AND postdate>=:fromDate AND postdate<:toDate");
-        paramsBuilder.put("fromDate", request.getFromDate());
-        paramsBuilder.put("toDate", request.getToDate());
-        break;
-      case FROM_DATE:
-        where.append(" AND postdate>=:fromDate");
-        paramsBuilder.put("fromDate", request.getFromDate());
-        break;
-      default:
-    }
+		if (paramsBuilder.containsKey("userid")) {
+			where.append(" AND ((sections.moderate AND commitdate is not null) OR userid NOT IN (select ignored from ignore_list where userid=:userid))");
+		}
 
-    if (request.getUserId() != 0) {
-      paramsBuilder.put("userId", request.getUserId());
-      if (request.isUserFavs()) {
-        where.append(" AND memories.userid=:userId");
-      } else {
-        where.append(" AND userid=:userId");
-      }
+		where.append(request.getCommitMode().getQueryPiece());
 
-      if (request.isUserFavs()) {
-        if (request.isUserWatches()) {
-          where.append(" AND watch ");
-        } else {
-          where.append(" AND NOT watch ");
-        }
-      }
-    }
+		Set<Integer> sections = Sets.filter(request.getSections(), v -> v != 0);
 
-    if (request.isNotalks()) {
-      where.append(" AND not topics.groupid=8404");
-    }
+		if (!sections.isEmpty()) {
+			where.append(" AND section in (:sections)");
+			paramsBuilder.put("sections", sections);
+		}
 
-    if (request.isTech()) {
-      where.append(" AND not topics.groupid=8404 AND not topics.groupid=4068 AND groups.section=2");
-    }
+		if (request.getGroup() != 0) {
+			where.append(" AND groupid=:groupId");
+			paramsBuilder.put("groupId", request.getGroup());
+		}
 
-    switch (request.getMiniNewsMode()) {
-      case MAJOR:
-        where.append(" AND NOT minor");
-        break;
-      case MINOR:
-        where.append(" AND minor");
-        break;
-    }
+		if (!request.isIncludeAnonymous()) {
+			where.append(" AND topics.userid != " + User.ANONYMOUS_ID);
+		}
 
-    if (request.getTag() != 0) {
-      paramsBuilder.put("tagId", request.getTag());
-      where.append(" AND topics.id IN (SELECT msgid FROM tags WHERE tagid=:tagId)");
-    }
+		switch (request.getDateLimitType()) {
+			case BETWEEN:
+				where.append(" AND postdate>=:fromDate AND postdate<:toDate");
+				paramsBuilder.put("fromDate", request.getFromDate());
+				paramsBuilder.put("toDate", request.getToDate());
+				break;
+			case FROM_DATE:
+				where.append(" AND postdate>=:fromDate");
+				paramsBuilder.put("fromDate", request.getFromDate());
+				break;
+			default:
+		}
 
-    if (!request.isShowDraft()) {
-      where.append(" AND NOT topics.draft ");
-    } else {
-      where.append(" AND topics.draft ");
-    }
+		if (request.getUserId() != 0) {
+			paramsBuilder.put("userId", request.getUserId());
+			if (request.isUserFavs()) {
+				where.append(" AND memories.userid=:userId");
+			} else {
+				where.append(" AND userid=:userId");
+			}
 
-    return where;
-  }
+			if (request.isUserFavs()) {
+				if (request.isUserWatches()) {
+					where.append(" AND watch ");
+				} else {
+					where.append(" AND NOT watch ");
+				}
+			}
+		}
 
-  /**
-   * Создание условий сортировки SQL-запроса.
-   *
-   * @param topicListDto объект, содержащий условия выборки
-   * @return строка, содержащая условия сортировки
-   */
-  private static String makeSortOrder(TopicListDto topicListDto) {
-    if (topicListDto.isUserFavs()) {
-      return "ORDER BY memories.id DESC";
-    }
+		if (request.isNotalks()) {
+			where.append(" AND not topics.groupid=8404");
+		}
 
-    switch (topicListDto.getCommitMode()) {
-      case COMMITED_ONLY:
-        return " ORDER BY commitdate DESC";
-      case UNCOMMITED_ONLY:
-        return " ORDER BY postdate DESC";
-      case POSTMODERATED_ONLY:
-        return " ORDER BY postdate DESC";
-      default:
-        return " ORDER BY COALESCE(commitdate, postdate) DESC";
-    }
-  }
+		if (request.isTech()) {
+			where.append(" AND not topics.groupid=8404 AND not topics.groupid=4068 AND groups.section=2");
+		}
 
-  /**
-   * Создание ограничений размера результатов SQL-запроса.
-   *
-   * @param topicListDto объект, содержащий условия выборки
-   * @return строка, содержащая смещение и количество записей
-   */
-  private static String makeLimitAndOffset(TopicListDto topicListDto) {
-    String limitStr = "";
-    if (topicListDto.getLimit() != null) {
-      limitStr += " LIMIT " + topicListDto.getLimit().toString();
-    }
+		switch (request.getMiniNewsMode()) {
+			case MAJOR:
+				where.append(" AND NOT minor");
+				break;
+			case MINOR:
+				where.append(" AND minor");
+				break;
+		}
 
-    if (topicListDto.getOffset() != null) {
-      limitStr += " OFFSET " + topicListDto.getOffset().toString();
-    }
-    return limitStr;
-  }
+		if (request.getTag() != 0) {
+			paramsBuilder.put("tagId", request.getTag());
+			where.append(" AND topics.id IN (SELECT msgid FROM tags WHERE tagid=:tagId)");
+		}
 
-  public enum CommitMode {
-    COMMITED_ONLY(" AND sections.moderate AND commitdate is not null "),
-    UNCOMMITED_ONLY(" AND (NOT topics.moderate) AND sections.moderate "),
-    POSTMODERATED_ONLY(" AND NOT sections.moderate"),
-    COMMITED_AND_POSTMODERATED(" AND (topics.moderate OR NOT sections.moderate) "),
-    ALL(" ");
+		if (!request.isShowDraft()) {
+			where.append(" AND NOT topics.draft ");
+		} else {
+			where.append(" AND topics.draft ");
+		}
 
-    private final String queryPiece;
+		return where;
+	}
 
-    CommitMode(String queryPiece) {
-      this.queryPiece = queryPiece;
-    }
+	/**
+	 * Создание условий сортировки SQL-запроса.
+	 *
+	 * @param topicListDto объект, содержащий условия выборки
+	 * @return строка, содержащая условия сортировки
+	 */
+	private static String makeSortOrder(TopicListDto topicListDto) {
+		if (topicListDto.isUserFavs()) {
+			return "ORDER BY memories.id DESC";
+		}
 
-    public String getQueryPiece() {
-      return queryPiece;
-    }
-  }
+		switch (topicListDto.getCommitMode()) {
+			case COMMITED_ONLY:
+				return " ORDER BY commitdate DESC";
+			case UNCOMMITED_ONLY:
+				return " ORDER BY postdate DESC";
+			case POSTMODERATED_ONLY:
+				return " ORDER BY postdate DESC";
+			default:
+				return " ORDER BY COALESCE(commitdate, postdate) DESC";
+		}
+	}
+
+	/**
+	 * Создание ограничений размера результатов SQL-запроса.
+	 *
+	 * @param topicListDto объект, содержащий условия выборки
+	 * @return строка, содержащая смещение и количество записей
+	 */
+	private static String makeLimitAndOffset(TopicListDto topicListDto) {
+		String limitStr = "";
+		if (topicListDto.getLimit() != null) {
+			limitStr += " LIMIT " + topicListDto.getLimit().toString();
+		}
+
+		if (topicListDto.getOffset() != null) {
+			limitStr += " OFFSET " + topicListDto.getOffset().toString();
+		}
+		return limitStr;
+	}
+
+	public enum CommitMode {
+		COMMITED_ONLY(" AND sections.moderate AND commitdate is not null "),
+		UNCOMMITED_ONLY(" AND (NOT topics.moderate) AND sections.moderate "),
+		POSTMODERATED_ONLY(" AND NOT sections.moderate"),
+		COMMITED_AND_POSTMODERATED(" AND (topics.moderate OR NOT sections.moderate) "),
+		ALL(" ");
+
+		private final String queryPiece;
+
+		CommitMode(String queryPiece) {
+			this.queryPiece = queryPiece;
+		}
+
+		public String getQueryPiece() {
+			return queryPiece;
+		}
+	}
 }

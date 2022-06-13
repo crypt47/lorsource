@@ -105,7 +105,7 @@
   <td align="center">
     <c:choose>
       <c:when test="${topic.event.type == 'DELETED'}">
-        <img src="/img/del.png" alt="[X]" title="Сообщение удалено" width="15" height="15">
+                    <i class="icon-pin icon-pin-color" title="Сообщение удалено">&#10060;</i>
       </c:when>
       <c:when test="${topic.event.type == 'ANSWERS'}">
         <i class="icon-reply icon-reply-color" title="Ответ"></i>

@@ -139,7 +139,7 @@
         <div class="tracker-title">
           <p>
             <c:if test="${msg.deleted}">
-              <img src="/img/del.png" alt="[X]" width="15" height="15">
+              <i class="icon-pin icon-pin-color">&#10060;</i>
             </c:if>
             <c:if test="${msg.sticky and not msg.deleted}">
               <i class="icon-pin icon-pin-color" title="Прикрепленная тема"></i>

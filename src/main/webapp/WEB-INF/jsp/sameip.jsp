@@ -192,7 +192,7 @@
       </div>
     </div>
     <c:if test="${comment.comment.deleted}">
-      <img src="/img/del.png" alt="[X]" width="15" height="15">
+                    <i class="icon-pin icon-pin-color">&#10060;</i>
       Удалено по причине: <c:out escapeXml="true" value="${comment.comment.reason}"/>
     </c:if>
   </div>
