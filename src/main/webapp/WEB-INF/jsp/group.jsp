@@ -165,10 +165,12 @@
 					<c:if test="${topic.deleted}">
 					<c:choose>
 					<c:when test="${template.moderatorSession}">
-					<a href="/undelete?msgid=${topic.msgid}"><img src="/img/del.png" alt="[X]" width="15" height="15"></a>
+					<a href="/undelete?msgid=${topic.msgid}">
+					      <i class="icon-pin icon-pin-color">&#10060;</i>
+					</a>
 					</c:when>
 					<c:otherwise>
-					<img src="/img/del.png" alt="[X]" width="15" height="15">
+					              <i class="icon-pin icon-pin-color">&#10060;</i>
 					</c:otherwise>
 					</c:choose>
 					</c:if>
