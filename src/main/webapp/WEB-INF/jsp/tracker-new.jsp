@@ -76,7 +76,7 @@
         <div class="tracker-title">
           <p>
             <c:if test="${msg.commentsClosed and not msg.deleted}">
-              &#128274;
+                          <i class="icon-pin icon-pin-color">&#128274;</i>
             </c:if>
             <c:if test="${msg.resolved}">
               <i class="icon-pin-color" style="font-style:normal;">&#9745;</i>
