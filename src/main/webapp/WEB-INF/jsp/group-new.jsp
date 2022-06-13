@@ -139,10 +139,10 @@
         <div class="tracker-title">
           <p>
             <c:if test="${msg.deleted}">
-              <i class="icon-pin icon-pin-color">&#10060;</i>
+              <i class="icon-pin icon-pin-color" style="font-style:normal;>&#10060;</i>
             </c:if>
             <c:if test="${msg.sticky and not msg.deleted}">
-              <i class="icon-pin icon-pin-color" title="Прикрепленная тема"></i>
+              <i class="icon-pin icon-pin-color" title="Прикрепленная тема" style="font-style:normal;></i>
             </c:if>
             <c:if test="${msg.commentsClosed and not msg.deleted}">
                           <i class="icon-pin icon-pin-color" style="font-style:normal;">&#128274;</i>
