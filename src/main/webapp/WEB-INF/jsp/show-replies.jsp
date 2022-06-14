@@ -128,8 +128,16 @@
       </c:forEach>
       <l:title>${topic.event.subj}</l:title>
     </a>
-      (${topic.section.name})
 
+	<c:choose>
+	<c:when test="${topic.section.name == 'Club'}">
+	    <i class="icon-system-color">&#128274;</i>(${topic.section.name})
+	</c:when>
+	<c:otherwise>
+	    (${topic.section.name})
+	</c:otherwise>
+	</c:choose>
+	
       <c:if test="${topic.event.type == 'DELETED'}">
         <br>
         <c:out value="${topic.event.eventMessage}" escapeXml="true"/> (${topic.bonus})
