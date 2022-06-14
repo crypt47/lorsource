@@ -74,10 +74,12 @@ public class UncommitedTopicsController {
     int UncommitedNewsCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_NEWS);
     int UncommitedPollsCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_POLLS);
     int UncommitedGalleryCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_GALLERY);
-    int UncommitedSum = UncommitedNewsCount + UncommitedPollsCount + UncommitedGalleryCount;
+    int UncommitedBlogsCount = topicListDao.getUncommitedTopicsCount(Section.SECTION_BLOGS);
+    int UncommitedSum = UncommitedNewsCount + UncommitedPollsCount + UncommitedGalleryCount + UncommitedBlogsCount;
     modelAndView.addObject("UncommitedNewsCount", UncommitedNewsCount);
     modelAndView.addObject("UncommitedGalleryCount", UncommitedGalleryCount);
     modelAndView.addObject("UncommitedPollsCount", UncommitedPollsCount);
+    modelAndView.addObject("UncommitedBlogsCount", UncommitedBlogsCount);
     modelAndView.addObject("UncommitedSum", UncommitedSum);
 
     switch (sectionId) {
@@ -89,6 +91,9 @@ public class UncommitedTopicsController {
         break;
       case Section.SECTION_GALLERY:
         title = "Неподтвержденные изображения: "+UncommitedGalleryCount;
+        break;
+      case Section.SECTION_BLOGS:
+        title = "Неподтвержденные Блоги: "+UncommitedBlogsCount;
         break;
       case 0:
         title = "Все неподтвержденные: "+UncommitedSum;

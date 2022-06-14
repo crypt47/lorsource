@@ -74,6 +74,14 @@ limitations under the License.
 <a class="btn btn-selected" href="view-all.jsp?section=5">Голосования&nbsp;&#40;${UncommitedPollsCount}&#41;</a>
 </c:if>
 
+<c:if test="${section.id != 8}">
+<a class="btn btn-default" href="view-all.jsp?section=8">Блоги&nbsp;&#40;${UncommitedBlogsCount}&#41;</a>
+</c:if>
+
+<c:if test="${section.id == 8}">
+<a class="btn btn-selected" href="view-all.jsp?section=8">Блоги&nbsp;&#40;${UncommitedBlogsCount}&#41;</a>
+</c:if>
+
 
 <c:if test="${not empty addlink}">
 <a class="btn btn-primary" href="${addlink}">Добавить</a>
