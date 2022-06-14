@@ -131,7 +131,7 @@
 
 	<c:choose>
 	<c:when test="${topic.section.name == 'Club'}">
-	    <i class="icon-system-color">&#128274;</i>(${topic.section.name})
+	    <i class="icon-system-color emoji">&#128274;</i>(${topic.section.name})
 	</c:when>
 	<c:otherwise>
 	    (${topic.section.name})
