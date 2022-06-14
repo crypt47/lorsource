@@ -124,7 +124,7 @@ class TopicListController(sectionService: SectionService, topicListService: Topi
     modelAndView
   }
 
-  @RequestMapping(Array("/{section:(?:news)|(?:polls)|(?:gallery)}/"))
+  @RequestMapping(Array("/{section:(?:news)|(?:polls)|(?:gallery)|(?:blogs)}/"))
   def topics(request: HttpServletRequest, @PathVariable("section") sectionName: String,
              topicListForm: TopicListRequest, response: HttpServletResponse): CompletionStage[ModelAndView] = {
     val deadline = TagPageController.Timeout.fromNow

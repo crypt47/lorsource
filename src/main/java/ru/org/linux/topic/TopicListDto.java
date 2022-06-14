@@ -18,6 +18,7 @@ package ru.org.linux.topic;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Date;
+import java.util.Set;
 
 public class TopicListDto {
   public enum DateLimitType {
@@ -58,6 +59,10 @@ public class TopicListDto {
   }
 
   public void setSection(Integer... sections) {
+    this.sections = ImmutableSet.copyOf(sections);
+  }
+
+  public void setSection(Set<Integer> sections) {
     this.sections = ImmutableSet.copyOf(sections);
   }
 

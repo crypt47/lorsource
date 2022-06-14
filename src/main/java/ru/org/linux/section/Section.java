@@ -44,6 +44,8 @@ public class Section implements Serializable {
 
   public static final int SECTION_CLUB = 7;
 
+  public static final int SECTION_BLOGS = 8;
+
   private static final ImmutableMap<Integer, String> sections
           = ImmutableMap.of(
           SECTION_NEWS, "news",
@@ -52,7 +54,7 @@ public class Section implements Serializable {
           SECTION_POLLS, "polls",
           SECTION_TALKS, "talks",
           SECTION_CLUB, "club",
-          8, "blogs"
+          SECTION_BLOGS, "blogs"
   );
 
   public Section(ResultSet rs) throws SQLException {

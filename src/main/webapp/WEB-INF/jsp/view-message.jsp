@@ -308,6 +308,7 @@
 		<c:if test="${template.currentUser.clubVisible}">
 			<li><a href="/club/">Клуб</a></li>
 		</c:if>
+		<li><a href="/talks/">Блоги</a></li>
 	</ul>
 </div>
 <hr>
