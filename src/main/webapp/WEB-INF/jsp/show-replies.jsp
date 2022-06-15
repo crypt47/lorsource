@@ -125,11 +125,6 @@
                 <lor:dateinterval date="${topic.event.eventDate}"/>
             </td>
             <td>
-                <c:if test="${topic.author != null}">
-                <a class="sign" itemprop="creator" href="/people/<lor:user user="${topic.author}"/>/profile">
-                    <lor:user user="${topic.author}"/></a>
-                </c:if>
-            </td><td>
                 <a href="${topic.link}">
                     <l:title>${topic.event.subj}</l:title>
                     <a>
@@ -142,7 +137,14 @@
                         </c:otherwise>
                         </c:choose>
 
-            </td><td>
+            </td>
+            <td>
+                <c:if test="${topic.author != null}">
+                <a class="sign" itemprop="creator" href="/people/<lor:user user="${topic.author}"/>/profile">
+                    <lor:user user="${topic.author}"/></a>
+                </c:if>
+            </td>
+            <td>
 
                 <c:forEach var="tag" items="${topic.tags}">
                 <span class="tag">${tag}</span>
