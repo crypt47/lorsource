@@ -21,6 +21,7 @@ import ru.org.linux.user.UserDao;
 import ru.org.linux.user.UserNotFoundException;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -46,7 +47,7 @@ public class CommentNode implements Serializable {
       User commentAuthor = userDao.getUserCached(comment.getUserid());
 
       if (commentAuthor.isAnonymousScore()) {
-        hideNode(hideSet);
+        hideNode(hideSet, Collections.singleton(User.ANONYMOUS_ID));
       }
     }
 
@@ -60,7 +61,7 @@ public class CommentNode implements Serializable {
   public void hideIgnored(Set<Integer> hideSet, Set<Integer> ignoreList) {
     if (comment != null) {
       if (comment.isIgnored(ignoreList)) {
-        hideNode(hideSet);
+        hideNode(hideSet, ignoreList);
       }
     }
 
@@ -75,10 +76,18 @@ public class CommentNode implements Serializable {
     if (comment!=null) {
       consumer.accept(comment);
     }
+    for (CommentNode child : childs) {
+      child.foreach(consumer);
+    }
   }
 
-  private void hideNode(Set<Integer> hideSet) {
-    foreach(c -> hideSet.add(c.getId()));
+  private void hideNode(Set<Integer> hideSet, Set<Integer> ignoreList) {
+    foreach(c -> {
+        if(c.isIgnored(ignoreList)) {
+            hideSet.add(c.getId());
+        }
+    }
+);
   }
 
   public Comment getComment() {
