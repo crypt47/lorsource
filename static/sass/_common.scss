@@ -24,7 +24,9 @@ $total_width: 100%;
 $gutter_width: 2%;
 $container_margin: 0;
 $amber: #fcaf3e;
+$amber_pale: #E9B96E;
 $system_blue: #2A62B3;
+$blue_pale: #729FCF;
 
 @import "clearfix";
 
@@ -714,7 +716,8 @@ a img { border: none; }
 }
 
 .stars {
-  color: #01F814;
+ // color: $blue_pale;
+ // #01F814;
   font-size: 0.7rem;
   vertical-align: middle;
   letter-spacing: 0.1rem;
