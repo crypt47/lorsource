@@ -21,6 +21,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
+import ru.org.linux.auth.AuthUtil
 import ru.org.linux.group.GroupDao
 import ru.org.linux.section.{Section, SectionService}
 import ru.org.linux.tag.{TagRef, TagService}
@@ -47,8 +48,14 @@ class SearchResultsService(
 ) extends StrictLogging {
   import ru.org.linux.search.SearchResultsService._
 
-  def prepareAll(docs:java.lang.Iterable[SearchHit]) = (docs.asScala map prepare).asJavaCollection
+  def prepareAll(docs:java.lang.Iterable[SearchHit]) = (docs.asScala filter filterClub map prepare).asJavaCollection
 
+  def filterClub(doc :SearchHit) : Boolean = {
+    val user = AuthUtil.getCurrentUser
+    val section = sectionService.nameToSection(doc.sourceAsMap("section").asInstanceOf[String])
+
+    section.getId != Section.SECTION_CLUB || (user != null && user.hasClubAccess)
+  }
   def prepare(doc: SearchHit):SearchItem = {
     val author = userService.getUserCached(doc.sourceAsMap("author").asInstanceOf[String])
 
