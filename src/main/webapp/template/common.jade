@@ -32,17 +32,18 @@ mixin sign(user, shortMode, author, postdate, timeprop)
 
     | #{' '}
 
+    |  &nbsp
+
+    mixin time(postdate, timeprop)
+
+    |  &nbsp<br>
+
     if !shortMode
         span.stars
             !{user.stars}
     if !shortMode && user.score!=null
         |  (Score: #{user.score} MaxScore: #{user.maxScore})
 
-    |  (
-
-    mixin time(postdate, timeprop)
-
-    | )
 
 mixin time(postdate, timeprop)
     time(datetime='#{ dateFormat.iso(postdate) }', itemprop='#{timeprop}') #{ dateFormat.apply(postdate) }

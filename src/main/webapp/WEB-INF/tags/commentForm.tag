@@ -63,9 +63,9 @@
   <div class="control-group">
     <label for="msg">Сообщение</label>
     <textarea id="msg" required name="msg"><%= msg == null ? "" : StringUtil.escapeHtml(msg) %></textarea><br>
-    <div class="help-block">Пустая строка (два раза Enter) начинает новый абзац.
+    <div class="help-block"><b>Картинки</b>: в markdown: ![](http://url.com/img.png)<br>Пустая строка (два раза Enter) начинает новый абзац.<br>
                  Знак '&gt;' в начале абзаца выделяет абзац курсивом цитирования.<br>
-      <b>Внимание:</b> прочитайте описание разметки <a target="_blank" href="/help/markdown.md">Markdown</a> или <a href="/help/lorcode.md" target="_blank" title="[br] - перевод строки
+      Описание разметки <a target="_blank" href="/help/markdown.md">Markdown</a> или <a href="/help/lorcode.md" target="_blank" title="[br] - перевод строки
 
 [b]жирный текст[/b]
 

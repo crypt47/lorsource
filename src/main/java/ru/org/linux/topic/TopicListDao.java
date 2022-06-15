@@ -125,31 +125,9 @@ public class TopicListDao {
 		return jdbcTemplate.query(query.toString(), (rs, rowNum) -> DeletedTopic.apply(rs), queryParameters.toArray());
 	}
 
-/*	int UncommitedTopicsCount;
-	public List<UncommitedTopicsCount> getUncommitedTopicsCount(final int sectionId) {
-
-		String sql = "SELECT count(*) from topics WHERE commitdate IS NULL AND groupid IN (select id from groups where section = " +
-		sectionId + " )");
-
-		return jdbcTemplate.query(sql, new RowMapper<UncommitedTopicsCount>() {
-				@Override
-				public UncommitedTopicsCount mapRow(ResultSet rs, int i) throws SQLException {
-				final int answers = rs.getInt("c");
-
-				return new UncommitedTopicsCount(
-						sectionService.getSection(rs.getInt("section")).getSectionLink()+rs.getString("urlname")+ '/' +rs.getInt("msgid"),
-						rs.getTimestamp("lastmod"),
-						rs.getString("title"),
-						answers,
-						pages
-						);
-				}
-				});
-
-	}*/
 	int getUncommitedTopicsCount;
 	public int getUncommitedTopicsCount (int sectionId) {
-	    return jdbcTemplate.queryForObject("SELECT count(*) from topics WHERE commitdate IS NULL AND groupid IN (select id from groups where section = " + sectionId + " )", Integer.class);
+	    return jdbcTemplate.queryForObject("SELECT count(*) from topics WHERE deleted = false AND commitdate IS NULL AND groupid IN (select id from groups where section = " + sectionId + " )", Integer.class);
 	}
 
 
