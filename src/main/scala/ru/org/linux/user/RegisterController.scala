@@ -124,7 +124,7 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
       }
 
       if (userDao.isUserExists(form.getNick) || userDao.hasSimilarUsers(form.getNick)) {
-        errors.rejectValue("nick", null, "Это имя пользователя уже используется. Пожалуйста выберите другое имя.")
+        errors.rejectValue("nick", null, "Это имя пользователя уже используется.")
       }
 
       if (userDao.getByEmail(new InternetAddress(form.getEmail).getAddress.toLowerCase, false) != null) {

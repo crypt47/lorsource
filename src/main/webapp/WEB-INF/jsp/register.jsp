@@ -54,7 +54,7 @@
 
   <div class="control-group">
     <label for="nick">Login</label>
-    <form:input class="btn" path="nick" required="required" size="40" cssErrorClass="error"
+    <form:input class="btn btn-selected" path="nick" required="required" size="40" cssErrorClass="error"
                 title="Только латинские буквы, цифры и знаки _-, в первом символе только буквы"
                 pattern="[a-zA-Z][a-zA-Z0-9_-]*"
                 autocapitalize="off"
@@ -67,8 +67,8 @@
 
   <div class="control-group">
     <label for="email">E-mail</label>
-    <form:input readonly="${invite!=null}" path="email" type="email" required="required" cssClass="email btn" size="40" cssErrorClass="error"/>
-    <form:errors class="btn" path="email" element="span" cssClass="error help-inline" for="email"/>
+    <form:input readonly="${invite!=null}" path="email" type="email" required="required" cssClass="email btn btn-selected" size="40" cssErrorClass="error"/>
+    <form:errors class="btn btn-selected" path="email" element="span" cssClass="error help-inline" for="email"/>
     <div class="help-block">
       позже этот e-mail пригодится для восстановления<br>
       учётной записи, если вы потеряете к ней доступ
@@ -77,14 +77,14 @@
 
   <div class="control-group">
     <label for="password">Пароль</label>
-    <form:password class="btn" path="password" size="40" required="required" cssErrorClass="error" minlength="5"/>
-    <form:errors class="btn" path="password" element="span" cssClass="error help-inline" for="password"/>
+    <form:password class="btn btn-selected" path="password" size="40" required="required" cssErrorClass="error" minlength="5"/>
+    <form:errors class="btn btn-selected" path="password" element="span" cssClass="error help-inline" for="password"/>
   </div>
 
   <div class="control-group">
     <label for="password2">Подтвердите пароль</label>
-    <form:password class="btn" path="password2" size="40" required="required" cssErrorClass="error"/>
-    <form:errors class="btn" path="password2" element="span" cssClass="error help-inline btn" for="password"/>
+    <form:password class="btn btn-selected" path="password2" size="40" required="required" cssErrorClass="error"/>
+    <form:errors class="btn btn-selected" path="password2" element="span" cssClass="error help-inline btn btn-selected" for="password"/>
   </div>
 
   <c:if test="${invite==null}">
@@ -104,7 +104,7 @@
   <div class="control-group">
     <label for="rules">С
       <a href="/help/rules.md" target="_blank" title="правила откроются в новом окне">правилами</a> ознакомился:
-      <form:checkbox class="btn" path="rules" id="rules" value="okay" required="required" cssErrorClass="error"/>
+      <form:checkbox class="btn btn-selected" path="rules" id="rules" value="okay" required="required" cssErrorClass="error"/>
       <form:errors path="rules" element="span" cssClass="error help-inline" for="rules"/></label>
   </div>
 
