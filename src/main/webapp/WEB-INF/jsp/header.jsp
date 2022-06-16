@@ -27,3 +27,4 @@
 </c:if>
 
 <div id="bd">
+<!-- end of header.jsp -->

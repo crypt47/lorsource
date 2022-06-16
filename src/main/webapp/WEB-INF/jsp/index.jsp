@@ -43,7 +43,7 @@
 
 <%--
 	<c:if test="${template.moderatorSession or template.correctorSession}">
-	<div class="nav"   style="border-bottom: none">
+	<div class="nav" style="border-bottom: none">
 	<c:if test="${uncommited > 0}">
 	[<a href="view-all.jsp">Неподтвержденных</a>: ${uncommited},
 	<c:if test="${uncommitedNews > 0}">

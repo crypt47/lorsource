@@ -28,16 +28,15 @@
 
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
 
-<c:set var="title">
 <c:choose>
 <c:when test="${isMyNotifications}">
-Уведомления
+<%--<button type="button" class="btn btn-small btn-default" onclick="showMore()" style="float: left; margin: 1rem; width="100%";">Фильтр</button>--%>
 </c:when>
 <c:otherwise>
 Уведомления пользователя ${nick}
 </c:otherwise>
 </c:choose>
-</c:set>
+
 <title>${title}</title>
 <link rel="alternate" title="RSS" href="show-replies.jsp?output=rss&amp;nick=${nick}" type="application/rss+xml">
 <link rel="alternate" title="Atom" href="show-replies.jsp?output=atom&amp;nick=${nick}" type="application/atom+xml">
@@ -55,7 +54,7 @@
 
 <h1>${title}</h1>
 
-<nav>
+<nav class="top_menu">
     <c:forEach var="f" items="${filterValues}">
     <c:url var="fUrl" value="/notifications">
     <c:param name="filter">${f.name}</c:param>
@@ -126,16 +125,23 @@
             </td>
             <td>
                 <a href="${topic.link}">
+                    <c:choose>
+                    <c:when test="${topic.section.name == 'Club'}">
+                    <i class="icon-system-color emoji">&#128274;</i>
+                    </c:when>
+                    </c:choose>
+
+
                     <l:title>${topic.event.subj}</l:title>
-                    <a>
-                        <c:choose>
-                        <c:when test="${topic.section.name == 'Club'}">
-                        <i class="icon-system-color emoji">&#128274;</i>(${topic.section.name})
-                        </c:when>
-                        <c:otherwise>
-                        (${topic.section.name})
-                        </c:otherwise>
-                        </c:choose>
+                </a>
+                <%--   <c:choose>
+                <c:when test="${topic.section.name == 'Club'}">
+                <i class="icon-system-color emoji">&#128274;</i>(${topic.section.name})
+                </c:when>
+                <c:otherwise>
+                (${topic.section.name})
+                </c:otherwise>
+                </c:choose>--%>
 
             </td>
             <td>
@@ -143,8 +149,13 @@
                 <a class="sign" itemprop="creator" href="/people/<lor:user user="${topic.author}"/>/profile">
                     <lor:user user="${topic.author}"/></a>
                 </c:if>
+                <c:if test="${topic.event.type == 'TAG'}">
+                <c:forEach var="tag" items="${topic.tags}">
+                <span class="tag">${tag}</span>
+                </c:forEach>
+                </c:if>
             </td>
-            <td>
+            <%--            <td>
 
                 <c:forEach var="tag" items="${topic.tags}">
                 <span class="tag">${tag}</span>
@@ -158,7 +169,7 @@
                 </c:if>
 
                 <c:if test="${topic.event.unread}">&bull;</c:if>
-            </td>
+            </td>--%>
         </tr>
                 </c:forEach>
 
