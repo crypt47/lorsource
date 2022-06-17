@@ -86,18 +86,20 @@
   </bean>
 
   <!-- enabling jmx causes tomcat stop lock -->
+  <!-- we use external activemq now 
   <amq:broker useJmx="false" persistent="true" dataDirectory="${activemq.path}">
     <amq:transportConnectors>
       <amq:transportConnector uri="vm://localhost"/>
     </amq:transportConnectors>
-  </amq:broker>
+  </amq:broker>-->
 
   <amq:redeliveryPolicy id="redeliveryPolicy" maximumRedeliveries="-1"
                         initialRedeliveryDelay="60000">
     <property name="queue" value="*"/>
   </amq:redeliveryPolicy>
 
-  <amq:connectionFactory id="jmsFactory" brokerURL="vm://localhost?create=false">
+<!--  <amq:connectionFactory id="jmsFactory" brokerURL="vm://localhost?create=false"> -->
+  <amq:connectionFactory id="jmsFactory" brokerURL="tcp://127.0.0.1:61616">
     <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
     <property name="trustedPackages">
       <list>
