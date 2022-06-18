@@ -518,10 +518,13 @@ fieldset legend {
 #bd .mention {
     text-decoration: none;
     white-space: nowrap;
+    font-style: normal;
     a {
+	font-style: normal;
         text-decoration: none;
     }
     a:visited {
+	font-style: normal;
         color: $blue_pale !important;
         text-decoration: none !important;
     }
