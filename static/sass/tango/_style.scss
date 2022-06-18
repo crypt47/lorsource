@@ -14,8 +14,8 @@
  */
 
 body {
-  font-family: "Arial", sans-serif;
-  color: $text_color;
+    font-family: "Arial", sans-serif;
+    color: $text_color;
 }
 
 
@@ -35,41 +35,41 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 strong {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 p {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 #hd {
-  margin-bottom: 0.5em;
+    margin-bottom: 0.5em;
 
-  .menu a {
-    color: $main_menu_color;
-  }
+    .menu a {
+        color: $main_menu_color;
+    }
 }
 
 #sitetitle {
-  font-weight: 600;
-  font-family: "Open Sans", sans-serif;
-  padding-top: 0.5rem;
-  font-size: 2em;
-  text-decoration: none;
-  display: block;
-  float: left;
-  color: $site_title_color;
-  padding-left: 1.5rem;
-  padding-right: 0.5em;
-  margin-right: 0.5em;
+    font-weight: 600;
+    font-family: "Open Sans", sans-serif;
+    padding-top: 0.5rem;
+    font-size: 2em;
+    text-decoration: none;
+    display: block;
+    float: left;
+    color: $site_title_color;
+    padding-left: 1.5rem;
+    padding-right: 0.5em;
+    margin-right: 0.5em;
 }
 
 #hd .menu {
-  padding-top: 0.5rem;
-  margin-left: 0.5rem;
-  font-size: 1.1em;
+    padding-top: 0.5rem;
+    margin-left: 0.5rem;
+    font-size: 1.1em;
 
-  @include clearfix;
+    @include clearfix;
 
     li {
         float: left;
@@ -79,7 +79,7 @@ p {
 }
 
 .news {
-	margin-bottom: 2em;
+    margin-bottom: 2em;
     border-top: none;
 
     .entry-body {
@@ -96,92 +96,92 @@ p {
 }
 
 #bd ul, #bd ol {
-	margin-top: 1em;
-	margin-bottom: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 #bd ul *, #bd ol * {
-	margin: 0;
+    margin: 0;
 }
 
 #bd li {
-	margin-left: 2em;
-	list-style: inherit;
+    margin-left: 2em;
+    list-style: inherit;
 }
 
 #bd .sign {
-  font-style: normal;
-  text-align: left;
-  margin-bottom: 0.5em;
+    font-style: normal;
+    text-align: left;
+    margin-bottom: 0.5em;
 
-  a {
-    color: $signature_user_color;
-    &:visited {
-      color: $signature_user_color;
+    a {
+        color: $signature_user_color;
+        &:visited {
+            color: $signature_user_color;
+        }
     }
-  }
 }
 
 .boxlet {
-  padding-bottom: 0.5em;
-  margin-bottom: 0.5em;
-  border-radius: 0.2em;
-  background-color: $article_background;
-
-  h2 {
-    font-weight: bold;
-    padding: 0.25em;
-    margin-bottom: 0.25em;
-    font-size: 1.5em;
-    margin-top: 0;
-  }
-
-  p.image {
-    text-align: center;
-    margin-bottom: 0;
-  }
-
-  h3 {
+    padding-bottom: 0.5em;
     margin-bottom: 0.5em;
-  }
+    border-radius: 0.2em;
+    background-color: $article_background;
+
+    h2 {
+        font-weight: bold;
+        padding: 0.25em;
+        margin-bottom: 0.25em;
+        font-size: 1.5em;
+        margin-top: 0;
+    }
+
+    p.image {
+        text-align: center;
+        margin-bottom: 0;
+    }
+
+    h3 {
+        margin-bottom: 0.5em;
+    }
 }
 
 #bd .forum {
-  table {
-    th {
-      border: 1px solid $table_border_color;
-    }
-
-    tbody td {
-      border: 1px solid;
-      border-color: $table_border_color;
-
-      a {
-        text-decoration: none;
-        color: $table_link_color;
-        &:visited {
-          color: $text_color;
+    table {
+        th {
+            border: 1px solid $table_border_color;
         }
-      }
 
-      s {
-        text-decoration: line-through;
-      }
+        tbody td {
+            border: 1px solid;
+            border-color: $table_border_color;
+
+            a {
+                text-decoration: none;
+                color: $table_link_color;
+                &:visited {
+                    color: $text_color;
+                }
+            }
+
+            s {
+                text-decoration: line-through;
+            }
+        }
+
+        thead, tfoot {
+            background-color: $table_header_background;
+            color: $table_header_color;
+
+            a {
+                color: $text_color;
+            }
+        }
+
+        tbody tr:hover {
+            background-color: $table_hover_background;
+        }
     }
-
-    thead, tfoot {
-      background-color: $table_header_background;
-      color: $table_header_color;
-
-      a {
-        color: $text_color;
-      }
-    }
-
-    tbody tr:hover {
-      background-color: $table_hover_background;
-    }
-  }
 }
 
 #ft {
@@ -190,11 +190,11 @@ p {
 }
 
 .msg {
-  border-radius: 0.2em;
+    border-radius: 0.2em;
 
-  .code .title {
-    margin-left: inherit;
-  }
+    .code .title {
+        margin-left: inherit;
+    }
 }
 
 .code {
@@ -205,28 +205,28 @@ p {
 }
 
 #navPath {
-  font-size: 1.6em;
+    font-size: 1.6em;
 
-  a {
-    text-decoration: underline;
+    a {
+        text-decoration: underline;
 
-    &:visited {
-      text-decoration: underline;
-      color: $link_color;
+        &:visited {
+            text-decoration: underline;
+            color: $link_color;
+        }
     }
-  }
 }
 
 #loginGreating {
-  text-align: right;
-  float: right !important;
-  padding-left: 1em;
-  margin-right: 0.75em;
-  margin-top: 0.5em;
+    text-align: right;
+    float: right !important;
+    padding-left: 1em;
+    margin-right: 0.75em;
+    margin-top: 0.5em;
 
-  a {
-    color: $hd_user_color !important;
-  }
+    a {
+        color: $hd_user_color !important;
+    }
 }
 
 input[type="radio"] {
@@ -240,66 +240,66 @@ input[type="checkbox"] {
 }
 
 #whois_userpic {
-  border-radius: 0.2em;
-  padding: 1em;
-  background: $article_background;
+    border-radius: 0.2em;
+    padding: 1em;
+    background: $article_background;
 }
 
 .infoblock {
-  border-radius: 0.2em;
-  border: 0;
-  margin-bottom: 0.5em;
-  background-color: $article_background;
+    border-radius: 0.2em;
+    border: 0;
+    margin-bottom: 0.5em;
+    background-color: $article_background;
 }
 
 #realtime {
-  text-align: center;
-  padding: .5em 1em;
-  vertical-align: middle;
+    text-align: center;
+    padding: .5em 1em;
+    vertical-align: middle;
 
-  background-color: $button_primary_background;
-  color: $button_primary_text;
-  &:visited {
+    background-color: $button_primary_background;
     color: $button_primary_text;
-  }
+    &:visited {
+        color: $button_primary_text;
+    }
 }
 
 blockquote {
-  border-left-color: $table_border_color;
-  color: $blockquote_color;
+    border-left-color: $table_border_color;
+    color: $blockquote_color;
 }
 
 .page-number {
-  border: solid 1px;
-  border-radius: 5px;
-  background-color: $article_background;
+    border: solid 1px;
+    border-radius: 5px;
+    background-color: $article_background;
 }
 
 .message-table {
-  .tag {
-    border-radius: 3px;
-    font-size: 0.8em;
-    padding: 2px 4px;
-    background-color: $table_border_color;
-  }
+    .tag {
+        border-radius: 3px;
+        font-size: 0.8em;
+        padding: 2px 4px;
+        background-color: $table_border_color;
+    }
 
-  a.secondary {
-    text-decoration: underline !important;
-    color: $text_color !important;
-  }
+    a.secondary {
+        text-decoration: underline !important;
+        color: $text_color !important;
+    }
 }
 
 @include respond-to(desktops) {
-  .medium-image-container {
-    width: 80%;
-  }
+    .medium-image-container {
+        width: 80%;
+    }
 
-  .news .medium-image-container {
-    margin-left: 1em;
-    width: 40%;
-    float: right;
-    text-align: left;
-  }
+    .news .medium-image-container {
+        margin-left: 1em;
+        width: 40%;
+        float: right;
+        text-align: left;
+    }
 }
 
 .photo {
@@ -307,210 +307,222 @@ blockquote {
 }
 
 html, body {
-  background-color: $main_background;
+    background-color: $main_background;
 }
 
 a {
-  color: $link_color;
+    color: $link_color;
 }
 
 #bd h2 * {
-  color: $text_color;
+    color: $text_color;
 }
 
 #bd h3 * {
-  color: $text_color;
+    color: $text_color;
 }
 
 #bd .tags a {
-  color: $tag_color;
-  &:visited {
     color: $tag_color;
-  }
+    &:visited {
+        color: $tag_color;
+    }
 }
 
 #bd h1, #bd h2 {
-  color: $header_color;
+    color: $header_color;
 }
 
 #bd h1 a, #bd header h1 a, #bd h2 a {
-  color: $header_color;
-  &:visited {
     color: $header_color;
-  }
+    &:visited {
+        color: $header_color;
+    }
 }
 
 #bd header {
-  a:visited {
-    color: $link_color;
-  }
+    a:visited {
+        color: $link_color;
+    }
 }
 
 #bd a.tag {
-  color: $tag_color;
-  &.tag:visited {
     color: $tag_color;
-  }
+    &.tag:visited {
+        color: $tag_color;
+    }
 }
 
 .messages .msg {
-  background:  $article_background;
+    background:  $article_background;
 }
 
 #bd a:visited {
-  color: $text_color;
+    color: $text_color;
 }
 
 #bd a.navLink:visited {
-  color: $link_color;
+    color: $link_color;
 }
 
 #bd .nav a:visited {
-  color: $link_color;
+    color: $link_color;
 }
 
 fieldset {
-  border: 1px solid $table_border_color;
-  padding: 5px;
+    border: 1px solid $table_border_color;
+    padding: 5px;
 }
 
 fieldset legend {
-  padding-left: 5px;
-  padding-right: 5px;
-  color:$text_color;
+    padding-left: 5px;
+    padding-right: 5px;
+    color:$text_color;
 }
 
 #bd .nav li a {
-  margin-left: 0 !important;
-  position: relative;
-  overflow: visible;
-  display: inline-block;
-  padding: 1px 5px;
-  border: 1px solid;
-  margin: 0;
-  white-space: nowrap;
-  outline: none;
-  border-radius: 0.2em;
-  zoom: 1;
+    margin-left: 0 !important;
+    position: relative;
+    overflow: visible;
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid;
+    margin: 0;
+    white-space: nowrap;
+    outline: none;
+    border-radius: 0.2em;
+    zoom: 1;
 
-  border-color: $button_border_color;
-  background-color: $button_background;
-  color: $text_color;
-
-  text-decoration: none;
-
-  &:visited {
+    border-color: $button_border_color;
+    background-color: $button_background;
     color: $text_color;
-  }
-  &:hover {
-    box-shadow: 0 0 1px 1px $link_color;
-  }
-  &.current {
-    background-color: $button_selected_background;
-    color: $button_selected_text_color !important;
-  }
+
+    text-decoration: none;
+
+    &:visited {
+        color: $text_color;
+    }
+    &:hover {
+        box-shadow: 0 0 1px 1px $link_color;
+    }
+    &.current {
+        background-color: $button_selected_background;
+        color: $button_selected_text_color !important;
+    }
 }
 
 #bd .btn {
-  border-radius: .2em;
-  border: 1px solid $button_border_color;
-  color: $button_text_color;
-  background-image: none; // https://bugzilla.mozilla.org/show_bug.cgi?id=763671
-
-  &:visited {
+    border-radius: .2em;
+    border: 1px solid $button_border_color;
     color: $button_text_color;
-  }
-  &:hover {
-    box-shadow: 0 0 1px 1px $link_color;
-  }
+    background-image: none; // https://bugzilla.mozilla.org/show_bug.cgi?id=763671
+
+    &:visited {
+        color: $button_text_color;
+    }
+    &:hover {
+        box-shadow: 0 0 1px 1px $link_color;
+    }
 }
 
 #bd nav .btn {
-  border: 1px solid transparent;
+    border: 1px solid transparent;
 }
 
 #bd .btn-primary {
-  background-color: $button_primary_background;
-  color: $button_primary_text;
-  &:visited {
+    background-color: $button_primary_background;
     color: $button_primary_text;
-  }
+    &:visited {
+        color: $button_primary_text;
+    }
 }
 
 #bd .btn-default {
-  background-color: $button_background;
+    background-color: $button_background;
 }
 
 #bd .btn-danger {
-  background-color: $button_danger_background;
-  color: $button_danger_text;
-  &:visited {
+    background-color: $button_danger_background;
     color: $button_danger_text;
-  }
+    &:visited {
+        color: $button_danger_text;
+    }
 }
 
 #bd .btn-selected {
-  background-color: $button_selected_background;
-  color: $button_selected_text_color;
-  &:visited {
+    background-color: $button_selected_background;
     color: $button_selected_text_color;
-  }
+    &:visited {
+        color: $button_selected_text_color;
+    }
 }
 
 .fav-buttons {
-  .selected [class^="icon-"] {
-    color: $icon_button_active_color;
-  }
-  a {
-    color: $text_color;
-  }
+    .selected [class^="icon-"] {
+        color: $icon_button_active_color;
+    }
+    a {
+        color: $text_color;
+    }
 }
 
 .user-remark {
-  color: $signature_remark_color;
+    color: $signature_remark_color;
 }
 
 .group-label {
-  border-radius: 3px;
-  font-size: 0.8em;
-  padding: 2px 4px;
-  background-color: $tagpage_group_label_background;
-  color: $tagpage_group_label_color;
-  white-space: nowrap;
+    border-radius: 3px;
+    font-size: 0.8em;
+    padding: 2px 4px;
+    background-color: $tagpage_group_label_background;
+    color: $tagpage_group_label_color;
+    white-space: nowrap;
 
-  a:visited & {
-    color: $text_color;
-  }
+    a:visited & {
+        color: $text_color;
+    }
 }
 
 #bd .search-hl {
-  color: $button_selected_text_color;
-  background-color: $button_selected_background;
-  font-style: normal;
+    color: $button_selected_text_color;
+    background-color: $button_selected_background;
+    font-style: normal;
 }
 
 .icon-tag-color {
-  color: $icon_tag_color;
+    color: $icon_tag_color;
 }
 
 .icon-reply-color {
-  color: $icon_reply_color;
+    color: $icon_reply_color;
 }
 
 .icon-pin-color {
-  color: $icon_pin_color;
+    color: $icon_pin_color;
 }
 
 .icon-system-color {
-  color: $icon_pin_color;
+    color: $icon_pin_color;
 }
 
 
 .icon-user-color {
-  color: $icon_user_color;
+    color: $icon_user_color;
 }
 
 #commentPreview {
-  border: 1px solid $preview_border_color;
-  padding: 0.3rem;
+    border: 1px solid $preview_border_color;
+    padding: 0.3rem;
+}
+
+#bd .mention {
+    text-decoration: none;
+    white-space: nowrap;
+    a {
+        text-decoration: none;
+    }
+    a:visited {
+        color: $blue_pale !important;
+        text-decoration: none !important;
+    }
 }
