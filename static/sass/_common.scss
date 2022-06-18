@@ -20,6 +20,7 @@
 
 @import "grid";
 
+$stars_color: #68CF46;
 $total_width: 100%;
 $gutter_width: 2%;
 $container_margin: 0;
@@ -730,7 +731,7 @@ a img { border: none; }
 }
 
 .stars {
-    color: $blue_pale;
+    color: $stars_color;
     // #01F814;
     font-size: 0.7rem;
     vertical-align: middle;
