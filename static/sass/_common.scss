@@ -20,6 +20,7 @@
 
 @import "grid";
 
+$stars_color: #68CF46;
 $total_width: 100%;
 $gutter_width: 2%;
 $container_margin: 0;
@@ -31,31 +32,31 @@ $blue_pale: #729FCF;
 @import "clearfix";
 
 @mixin respond-to($media) {
-  @if $media == widedesktop {
-    @media only screen and (min-width: 90em) { @content; }
-  }
-  @else if $media == desktops {
-    @media only screen and (min-width: 60em) { @content; }
-  }
-  @else if $media == tablet-and-desktops {
-    @media only screen and (min-width: 40em) { @content; }
-  }
+    @if $media == widedesktop {
+        @media only screen and (min-width: 90em) { @content; }
+    }
+    @else if $media == desktops {
+        @media only screen and (min-width: 60em) { @content; }
+    }
+    @else if $media == tablet-and-desktops {
+        @media only screen and (min-width: 40em) { @content; }
+    }
 }
 
 /* document wide styles */
 
 html {
-  text-size-adjust: none;
+    text-size-adjust: none;
 
-  @include respond-to(widedesktop) {
-    font-size: 1.125em;
-  }
+    @include respond-to(widedesktop) {
+        font-size: 1.125em;
+    }
 }
 
 body {
-   max-width: 89em;
-   margin: auto;
-   line-height: 1.4;
+    max-width: 89em;
+    margin: auto;
+    line-height: 1.4;
 }
 
 pre {
@@ -68,14 +69,14 @@ pre {
 }
 
 #bd {
-  margin-bottom: 2em;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+    margin-bottom: 2em;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 #bd nav {
-  margin-bottom: 1em;
-  line-height: 3;
+    margin-bottom: 1em;
+    line-height: 3;
 }
 
 button,
@@ -97,185 +98,199 @@ textarea {
 /* common parts */
 
 #bd, #ft, #hd {
-  @include clearfix;
+    @include clearfix;
 }
 
 // sizes calculated at https://www.modularscale.com/?1&em&1.098
 h1 {
-  font-size: 1.752em;
-  margin-top: 0.25em;
-  margin-bottom: 0;
+    font-size: 1.752em;
+    margin-top: 0.25em;
+    margin-bottom: 0;
 }
 
 h2 {
-  font-size: 1.596em
+    font-size: 1.596em
 }
 
 h3 {
-  font-size: 1.453em
+    font-size: 1.453em
 }
 
 h4 {
-  font-size: 1.324em
+    font-size: 1.324em
 }
 
 h5 {
-  font-size: 1.206em
+    font-size: 1.206em
 }
 
 h6 {
-  font-size: 1.098em
+    font-size: 1.098em
 }
 
 /* specific styles */
 
 .news {
-  border-top: 1px solid;
-}
-
-.msg_body {
-  // sizes calculated at https://www.modularscale.com/?1&em&1.098
-  h1 {
-    font-size: 1.752em;
-    margin-top: 0.25em;
-    margin-bottom: 0;
-  }
-
-  h2 {
-    font-size: 1.596em
-  }
-
-  h3 {
-    font-size: 1.453em
-  }
-
-  h4 {
-    font-size: 1.324em
-  }
-
-  h5 {
-    font-size: 1.206em
-  }
-
-  h6 {
-    font-size: 1.098em
-  }
-}
-
-.msg_body {
-  table {
-    margin-bottom: 1em;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  th {
-    font-weight: bold;
-    border-bottom: 2px solid;
-  }
-
-  td, th {
-    padding: 0.75em;
     border-top: 1px solid;
-  }
+}
+
+.msg_body {
+    // sizes calculated at https://www.modularscale.com/?1&em&1.098
+    h1 {
+        font-size: 1.752em;
+        margin-top: 0.25em;
+        margin-bottom: 0;
+    }
+
+    h2 {
+        font-size: 1.596em
+    }
+
+    h3 {
+        font-size: 1.453em
+    }
+
+    h4 {
+        font-size: 1.324em
+    }
+
+    h5 {
+        font-size: 1.206em
+    }
+
+    h6 {
+        font-size: 1.098em
+    }
+}
+
+.msg_body {
+    table {
+        margin-bottom: 1em;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    th {
+        font-weight: bold;
+        border-bottom: 2px solid;
+    }
+
+    td, th {
+        padding: 0.75em;
+        border-top: 1px solid;
+    }
 }
 
 .comment {
-  h1, h2, h3, h4, h5, h6 {
-    font-size: 1em;
-  }
+    h1, h2, h3, h4, h5, h6 {
+        font-size: 1em;
+    }
 }
 
 .entry-body {
-  margin-left: 75px;
-  padding-top: 5px;
+    margin-left: 75px;
+    padding-top: 5px;
 
-  .nav {
-    border: none;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-bottom: 1em;
-  }
+    .nav {
+        border: none;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 1em;
+    }
 }
 
 div.entry-userpic {
-  float: left;
-  text-align: center;
-  width: 70px;
+    float: left;
+    text-align: center;
+    width: 70px;
 }
 
 .messages H2 { margin-bottom: 5px; margin-top: 5px; }
 
-.nav {
-  text-align: center;
-  margin-bottom: 1em;
-  margin-top: 5px;
-  padding: 2px;
-
-  li {
-    display: inline-block;
-    margin-left: 0 !important;
-  }
-
-  ul {
-    margin-top: inherit !important;
-    margin-bottom: inherit !important;
-    display: inline-block;
-  }
-
-  form {
-    display: inline;
-  }
-
-  @include clearfix;
+@media (orientation: landscape) {
+    .top_menu {
+        display: block;
+    }
 }
 
+@media (orientation: portrait) {
+    .top_menu {
+        display: none;
+    }
+}
+
+
+.nav {
+    text-align: center;
+    margin-bottom: 1em;
+    margin-top: 5px;
+    padding: 2px;
+
+    li {
+        display: inline-block;
+        margin-left: 0 !important;
+    }
+
+    ul {
+        margin-top: inherit !important;
+        margin-bottom: inherit !important;
+        display: inline-block;
+    }
+
+    form {
+        display: inline;
+    }
+
+    @include clearfix;
+}
+
+
 table.nav {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .msg .reply {
-  font-size: smaller;
+    font-size: smaller;
 
-  ul {
-    display: inline;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 0;
-  }
+    ul {
+        display: inline;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-left: 0;
+    }
 
-  li {
-    display: inline;
-    margin-left: 0 !important;
-  }
+    li {
+        display: inline;
+        margin-left: 0 !important;
+    }
 
-  li:after {
-    content: "]";
-  }
+    li:after {
+        content: "]";
+    }
 
-  li:before {
-    content: "[";
-  }
+    li:before {
+        content: "[";
+    }
 }
 
 DIV.sign {
-  margin-top: 1em;
-  margin-bottom: 1em; 
+    margin-top: 1em;
+    margin-bottom: 1em; 
 }
 
 .messages .msg {
-  margin-bottom: 1em;
-  word-wrap: break-word;
-  padding: 0.25em 1em 1em 1em;
+    margin-bottom: 1em;
+    word-wrap: break-word;
+    padding: 0.25em 1em 1em 1em;
 }
 
 .msg_header, .msg_footer {
-  padding-left: 0.5em;
+    padding-left: 0.5em;
 }
 
 .msg_body, .msg_header, .msg_footer {
-  padding-right: 0.5em;
+    padding-right: 0.5em;
 }
 
 div[itemprop="articleBody"] {
@@ -285,40 +300,40 @@ div[itemprop="articleBody"] {
 }
 
 .msg-container {
-  margin-top: 0.5em;
-  @include clearfix;
+    margin-top: 0.5em;
+    @include clearfix;
 }
 
 .msg header {
-  margin-bottom: 0.7em;
-  margin-top: .5em;
+    margin-bottom: 0.7em;
+    margin-top: .5em;
 
-  h1 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
+    h1 {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 }
 
 .msg footer {
-  padding-top: .5em;
-  padding-bottom: 0.5em;
-  @include clearfix;
+    padding-top: .5em;
+    padding-bottom: 0.5em;
+    @include clearfix;
 
-  .sign {
-    margin-left: 115px;
-    margin-top: 0;
-  }
-
-  .userpic {
-    width: 100px;
-
-    img {
-      max-width: 100px;
-      max-height: 100px;
-      height: auto;
-      width: auto;
+    .sign {
+        margin-left: 115px;
+        margin-top: 0;
     }
-  }
+
+    .userpic {
+        width: 100px;
+
+        img {
+            max-width: 100px;
+            max-height: 100px;
+            height: auto;
+            width: auto;
+        }
+    }
 }
 
 .messages .msg:target {
@@ -338,60 +353,60 @@ div[itemprop="articleBody"] {
 .cloud10 { font-size: 1.5em; }
 
 blockquote {
-  border-top-width: 0;
-  border-right-width: 0;
-  border-bottom-width: 0;
-  border-left: 5px solid;
-  margin: 0;
-  font-style: italic;
-  padding: 0 0.5em 0;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left: 5px solid;
+    margin: 0;
+    font-style: italic;
+    padding: 0 0.5em 0;
 
-  h3 {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 100%;
-    font-style: normal;
-  }
+    h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 100%;
+        font-style: normal;
+    }
 
-  p cite {
-    text-decoration: underline;
-  }
+    p cite {
+        text-decoration: underline;
+    }
 }
 
 code {
-  border: 0;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  font-family: "Droid Sans Mono", monospace, sans-serif;
-  font-size: 1em;
+    border: 0;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-family: "Droid Sans Mono", monospace, sans-serif;
+    font-size: 1em;
 }
 
 .code {
-  margin-top: 1em;
-  margin-bottom: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .message-table {
-  width: 100%;
-  margin-bottom: 1em;
+    width: 100%;
+    margin-bottom: 1em;
 
-  td {
-    padding: 0.3em;
-  }
+    td {
+        padding: 0.3em;
+    }
 
-  td.dateinterval {
-    text-align: right;
-  }
+    td.dateinterval {
+        text-align: right;
+    }
 
-  td.numbers {
-    text-align: center;
-  }
+    td.numbers {
+        text-align: center;
+    }
 
-  th {
-    padding: 0.3em;
-    vertical-align: top;
-    text-align: left;
-  }
+    th {
+        padding: 0.3em;
+        vertical-align: top;
+        text-align: left;
+    }
 }
 
 .userpic {
@@ -426,21 +441,21 @@ textarea.error {
 }
 
 #commentForm {
-  margin-top: 0.5em;
-  font-size: 1rem;
+    margin-top: 0.5em;
+    font-size: 1rem;
 
-  textarea {
-    width: 40em;
-    height: 20em;
-  }
+    textarea {
+        width: 40em;
+        height: 20em;
+    }
 
-  input[type="text"] {
-    width: 40em;
-  }
+    input[type="text"] {
+        width: 40em;
+    }
 
-  input[type="password"] {
-    width: 40em;
-  }
+    input[type="password"] {
+        width: 40em;
+    }
 }
 
 .message-w-userpic {
@@ -448,31 +463,31 @@ textarea.error {
 }
 
 .news {
-  .group {
-    font-size: smaller;
-  }
+    .group {
+        font-size: smaller;
+    }
 
-  .entry-userpic {
-    padding-top: 5px;
-  }
+    .entry-userpic {
+        padding-top: 5px;
+    }
 }
 
 #whois_userpic {
-  float: right;
-  text-align: center;
+    float: right;
+    text-align: center;
 
-  .userpic {
-    float: none;
-    display: inline-block;
-  }
+    .userpic {
+        float: none;
+        display: inline-block;
+    }
 
-  form {
-    display: inline;
-  }
+    form {
+        display: inline;
+    }
 
-  span {
-    display: block;
-  }
+    span {
+        display: block;
+    }
 }
 
 #ft {
@@ -499,17 +514,17 @@ h1 {
 }
 
 .infoblock {
-  @include clearfix();
+    @include clearfix();
 
-  padding: .5em;
-  border: 1px solid;
-  margin-top: 1em;
-  margin-bottom: 1em;
+    padding: .5em;
+    border: 1px solid;
+    margin-top: 1em;
+    margin-bottom: 1em;
 
-  h2 {
-    font-weight: bold;
-    margin-top: 0;
-  }
+    h2 {
+        font-weight: bold;
+        margin-top: 0;
+    }
 }
 
 .infoblock-small {
@@ -517,7 +532,7 @@ h1 {
 }
 
 table.poll td {
-  padding-right: 1em;
+    padding-right: 1em;
 }
 
 .penguin_label {
@@ -537,37 +552,37 @@ table.poll td {
 }
 
 #bd .poll-result {
-  @include clearfix;
+    @include clearfix;
 
-  ol {
-    list-style: none;
-  }
+    ol {
+        list-style: none;
+    }
 
-  li {
-    clear: both;
-    margin-left: 0;
-  }
+    li {
+        clear: both;
+        margin-left: 0;
+    }
 
-  p {
-    margin: 0;
-  }
+    p {
+        margin: 0;
+    }
 }
 
 .penguin_progress {
-  width: 320px;
-  display: inline-block;
+    width: 320px;
+    display: inline-block;
 
-  span {
-    background-repeat: repeat-x;
-    background-color: transparent !important;
-    background-image: url("/tango/img/votes.png") !important;
-    display: block;
-    height: 19px;
-  }
+    span {
+        background-repeat: repeat-x;
+        background-color: transparent !important;
+        background-image: url("/tango/img/votes.png") !important;
+        display: block;
+        height: 19px;
+    }
 
-  span span {
-    display: none;
-  }
+    span span {
+        display: none;
+    }
 }
 
 .poll-sum p {
@@ -581,11 +596,11 @@ table.poll-result img {
 }
 
 .difference-insert,  .difference-insert * {
-  background-color: green;
+    background-color: green;
 }
 
 .difference-delete, .difference-delete * {
-  background-color: $amber;
+    background-color: $amber;
 }
 
 #warning-body { margin: 5em auto; width:50%; }
@@ -595,7 +610,7 @@ table.poll-result img {
 #warning-footer { clear: both; }
 
 .nav-buttons {
-   float: right;
+    float: right;
 }
 
 #navPath {
@@ -611,44 +626,44 @@ article, aside, details, figcaption, figure, footer, header, hgroup, nav, sectio
 }
 
 .grid-row {
-  @include clearfix;
-  @include container;
+    @include clearfix;
+    @include container;
 
-  .grid-3-1 {
-    vertical-align: middle;
-    @include column(4);
-  }
+    .grid-3-1 {
+        vertical-align: middle;
+        @include column(4);
+    }
 
-  .grid-3-2 {
-    @include column(4, 4);
-    text-align: center;
-  }
+    .grid-3-2 {
+        @include column(4, 4);
+        text-align: center;
+    }
 
-  .grid-3-3 {
-    @include column(4, 8);
-  }
+    .grid-3-3 {
+        @include column(4, 8);
+    }
 }
 
 #bd li {
-  padding-top: 0.25em;
-  padding-bottom: 0.25em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
 }
 
 .fav-buttons {
-  float: right;
-  margin-right: 0.5em;
-  margin-left: 0.4em;
-  text-align: center;
-  line-height: 1;
+    float: right;
+    margin-right: 0.5em;
+    margin-left: 0.4em;
+    text-align: center;
+    line-height: 1;
 
-  a {
-    font-size: 200%;
-    text-decoration: none;
-  }
+    a {
+        font-size: 200%;
+        text-decoration: none;
+    }
 
-  span {
-    font-size: smaller;
-  }
+    span {
+        font-size: smaller;
+    }
 }
 
 .fav-buttons [class^="icon-"] {
@@ -658,135 +673,135 @@ article, aside, details, figcaption, figure, footer, header, hgroup, nav, sectio
 a img { border: none; }
 
 .container {
-  @include container();
-  @include clearfix();
+    @include container();
+    @include clearfix();
 }
 
 #tag-page-gallery {
-  @include clearfix();
-  @include container();
-
-  article {
-    margin-bottom: 1em;
-  }
-
-  @include respond-to(tablet-and-desktops) {
-    @include generate_grid_positions('article', 4);
+    @include clearfix();
+    @include container();
 
     article {
-      @include column(4);
+        margin-bottom: 1em;
     }
-  }
 
-  article img {
-    width: 100%;
-    height: auto;
-    max-width: 1000px;
-  }
+    @include respond-to(tablet-and-desktops) {
+        @include generate_grid_positions('article', 4);
 
-  article h3 {
-    font-size: 1.2em;
-  }
+        article {
+            @include column(4);
+        }
+    }
+
+    article img {
+        width: 100%;
+        height: auto;
+        max-width: 1000px;
+    }
+
+    article h3 {
+        font-size: 1.2em;
+    }
 }
 
 .tag-page-buttons {
-  @include clearfix();
-  @include container();
+    @include clearfix();
+    @include container();
 
-  div {
-    @include column(12);
-  }
+    div {
+        @include column(12);
+    }
 
-  margin-bottom: 1em;
-  margin-top: 1em;
+    margin-bottom: 1em;
+    margin-top: 1em;
 }
 
 #tag-page-forum, #tag-page-news, #tag-page-polls, #main-page-news {
-  @include clearfix();
-  @include container();
+    @include clearfix();
+    @include container();
 
-  @include respond-to(tablet-and-desktops) {
-    @include generate_grid_positions('section', 6);
+    @include respond-to(tablet-and-desktops) {
+        @include generate_grid_positions('section', 6);
 
-    section {
-      @include column(6);
-      margin-bottom: 0 !important;
+        section {
+            @include column(6);
+            margin-bottom: 0 !important;
+        }
     }
-  }
 }
 
 .stars {
- // color: $blue_pale;
- // #01F814;
-  font-size: 0.7rem;
-  vertical-align: middle;
-  letter-spacing: 0.1rem;
+    color: $stars_color;
+    // #01F814;
+    font-size: 0.7rem;
+    vertical-align: middle;
+    letter-spacing: 0.1rem;
 }
 
 #bd .btn {
-  display: inline-block;
-  text-align: center;
-  padding: 6px 12px;
-  vertical-align: middle;
-  cursor: pointer;
-  white-space: nowrap;
-  text-decoration: none;
-  line-height: 1.4;
-  margin-top: 0;
+    display: inline-block;
+    text-align: center;
+    padding: 6px 12px;
+    vertical-align: middle;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1.4;
+    margin-top: 0;
 }
 
 #bd .btn-small {
-  padding: 2px 6px;
+    padding: 2px 6px;
 }
 
 // highlight.js fixes
 pre code .container:before, pre code .container:after {
-  display: inherit;
+    display: inherit;
 }
 
 .page-number {
-  padding: 5px;
-  text-decoration: none;
-  display: inline-block;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  min-width: 1.5em;
+    padding: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    min-width: 1.5em;
 }
 
 @keyframes spinner {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
 }
 
 .spinner {
-  animation: spinner 2s infinite linear;
-  -webkit-animation: spinner 2s infinite linear;
+    animation: spinner 2s infinite linear;
+    -webkit-animation: spinner 2s infinite linear;
 }
 
 img.medium-image {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
 }
 
 figure.medium-image {
-  width: 100%;
+    width: 100%;
 }
 
 .medium-image-container {
-  margin: 1em auto;
+    margin: 1em auto;
 }
 
 @media screen and (min-width: 768px) {
-  #cal-heatmap {
-    min-height: 100px;
-  }
+    #cal-heatmap {
+        min-height: 100px;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -802,8 +817,8 @@ figure.medium-image {
 @import "spoilers";
 
 @font-face {
-        font-family: 'EmoSymbols';
-        src: url('/font/EmojiSymbols.Regular.woff') format('woff');
+    font-family: 'EmoSymbols';
+    src: url('/font/EmojiSymbols.Regular.woff') format('woff');
 }
 
 .emoji {

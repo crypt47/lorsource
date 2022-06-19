@@ -390,7 +390,7 @@ $(document).ready(function() {
     })
   }
 
-  function initScollupButton() {
+/*  function initScollupButton() {
     var backButton = $('<button id="ft-back-button">');
 
     backButton.text("Вверх");
@@ -400,7 +400,7 @@ $(document).ready(function() {
     });
 
     $('#ft').prepend(backButton);
-  }
+  }*/
 
   function spoilerShow() {
     var $this = $(this);
@@ -423,8 +423,8 @@ $(document).ready(function() {
   initCtrlEnter();
 
   initSamepageCommentNavigation();
-  initScollupButton();
-  
+/*  initScollupButton();*/
+
   replace_state()
   $(window).bind('hashchange', replace_state);
 

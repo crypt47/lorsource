@@ -74,9 +74,9 @@ public final class DefaultProfile {
     builder.put(AVATAR_PROPERTY, "empty");
     builder.put(HIDE_ADSENSE_PROPERTY, true);
     builder.put(MAIN_GALLERY_PROPERTY, false);
-    builder.put(MAIN_BLOGS_PROPERTY, true);
-    builder.put(TRACKER_MODE, DEFAULT_TRACKER_MODE.getValue());
-    builder.put(OLD_TRACKER, false);
+    builder.put(MAIN_BLOGS_PROPERTY, false);
+/*    builder.put(TRACKER_MODE, DEFAULT_TRACKER_MODE.getValue());*/
+    builder.put(OLD_TRACKER, true);
 
     builder.put("DebugMode", Boolean.FALSE);
 

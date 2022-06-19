@@ -112,37 +112,48 @@ class LorUserRenderer(userService: UserService, toHtmlFormatter: ToHtmlFormatter
   override def getNodeRenderingHandlers: util.Set[NodeRenderingHandler[_ <: Node]] = {
     Set(new NodeRenderingHandler[LorUser](classOf[LorUser], (node, ctx, html) => {
       val nick = node.getChars.subSequence(1).toString
+      var nick_desc: String = "<i class=\"icon-system-color\">👤</i>" + nick
 
       val maybeUser = userService.findUserCached(nick)
 
       maybeUser match {
         case Some(user) =>
           val resolvedLink = ctx.resolveLink(LinkType.LINK, toHtmlFormatter.memberURL(user), null)
-          val tuxLink = ctx.resolveLink(LinkType.LINK, "/img/tuxlor.png", null)
+          //val tuxLink = ctx.resolveLink(LinkType.LINK, "/img/tuxlor.png", null)
 
           html
             .withAttr()
             .attr("style", "white-space: nowrap")
             .tag("span")
 
-          html
+          /*html
             .attr("src", "/img/tuxlor.png")
             .withAttr(tuxLink)
             .attr("alt", "@")
             .attr("title", "@")
             .attr("width", "7")
             .attr("height", "16")
-            .tagVoid("img")
+            .tagVoid("img")*/
 
           if (user.isBlocked) {
             html.tag("s")
           }
+          /*             .text("👤")*/
+          /*html
+             .withAttr()
+             .attr("class","icon-system-color emoji")
+             .tag("i")
+	    .text("👤")
+          html.closeTag("i")*/
+          
+          html.withAttr().attr("class", "mention").tag("i")
 
           html
-            .attr("style", "text-decoration: none")
             .attr("href", resolvedLink.getUrl)
             .withAttr(resolvedLink)
             .tag("a", false, false, () => html.text(nick))
+
+	  html.closeTag("i")
 
           if (user.isBlocked) {
             html.closeTag("s")

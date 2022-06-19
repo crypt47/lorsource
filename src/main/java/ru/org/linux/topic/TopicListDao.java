@@ -127,7 +127,7 @@ public class TopicListDao {
 
 	int getUncommitedTopicsCount;
 	public int getUncommitedTopicsCount (int sectionId) {
-	    return jdbcTemplate.queryForObject("SELECT count(*) from topics WHERE deleted = false AND commitdate IS NULL AND groupid IN (select id from groups where section = " + sectionId + " )", Integer.class);
+	    return jdbcTemplate.queryForObject("SELECT count(*) from topics WHERE deleted = false AND commitdate IS NULL AND draft = 'false' AND groupid IN (select id from groups where section = " + sectionId + " )", Integer.class);
 	}
 
 
