@@ -55,6 +55,8 @@ public class User implements Serializable {
 
   private final boolean clubAccess;
   private final boolean activated;
+
+  private final int complaints;
   public static final int CORRECTOR_SCORE = 200;
 
   public static final int MAX_NICK_LENGTH = 19; // check only on new user registration, do not check existing users!
@@ -87,6 +89,7 @@ public class User implements Serializable {
     frozenBy = rs.getInt("frozen_by");
     freezingReason = rs.getString("freezing_reason");
     clubAccess = rs.getBoolean("club_member");
+    complaints = rs.getInt("complaints");
   }
 
   public int getId() {
@@ -273,6 +276,10 @@ public class User implements Serializable {
     }
   }
 
+  public int getComplaints() {
+    return complaints;
+  }
+
   @Deprecated
   public String getStars() {
     return getStars(score, maxScore, true);
@@ -363,9 +370,12 @@ public class User implements Serializable {
   }
 
   public boolean isAnonymousScore() {
-    return anonymous || blocked || score<ANONYMOUS_LEVEL_SCORE;
+    return anonymous || blocked || isNewlyRegisteredUser();
   }
 
+  public boolean isNewlyRegisteredUser() {
+    return  score < ANONYMOUS_LEVEL_SCORE;
+  }
   public boolean isCorrector() {
     return corrector;
   }

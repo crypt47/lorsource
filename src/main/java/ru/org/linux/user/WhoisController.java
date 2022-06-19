@@ -110,6 +110,10 @@ public class WhoisController {
       mv.getModel().put("banInfo", userDao.getBanInfoClass(user));
     }
 
+    if(user.isNewlyRegisteredUser()) {
+      mv.getModel().put("newreg", true);
+    }
+
     // add the isFrozen to simplify controller,
     // and put information about moderator who
     // freezes the user, if frozen

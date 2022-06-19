@@ -188,6 +188,16 @@
     <c:if test="${user.corrector}"> (корректор)</c:if>
     <c:if test="${user.blocked}"> (заблокирован)</c:if>
 
+    <br/>
+    <c:if test="${newreg}">
+        <form action="/usermod.jsp" method="POST" style="display: inline">
+            <lor:csrf/>
+            <input type="hidden" name="id" value="${user.id}">
+            <input type='hidden' name='action' value='reportAbuse'>
+            <button type="submit" class="btn btn-small btn-default">Пожаловаться</button>
+        </form>
+    </c:if>
+
     <c:if test="${isFrozen}">
         <br>
         <b>Заморожен</b>
