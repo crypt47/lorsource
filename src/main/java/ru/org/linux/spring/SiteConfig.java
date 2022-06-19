@@ -187,4 +187,12 @@ public class SiteConfig {
     return properties.getProperty("telegram.token");
   }
 
+
+  public Integer getMaxComplaintsCount() {
+    String property = properties.getProperty("user.maxComplaintsCount");
+    if (property == null) {
+      return 3;
+    }
+    return Integer.valueOf(property);
+  }
 }
