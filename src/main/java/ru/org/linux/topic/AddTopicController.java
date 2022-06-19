@@ -54,6 +54,7 @@ import ru.org.linux.user.UserErrorException;
 import ru.org.linux.user.UserPropertyEditor;
 import ru.org.linux.user.UserService;
 import ru.org.linux.util.ExceptionBindingErrorProcessor;
+import ru.org.linux.util.LorHttpUtils;
 import scala.Tuple2;
 
 import javax.servlet.http.HttpServletRequest;
@@ -272,7 +273,7 @@ public class AddTopicController {
 			Topic previewMsg = null;
 
 			if (group!=null) {
-				previewMsg = new Topic(form, user, request.getHeader("X-Forwarded-For"));
+				previewMsg = new Topic(form, user, LorHttpUtils.getRequestIp(request));
 
 				Image imageObject = null;
 
@@ -320,11 +321,7 @@ public class AddTopicController {
 			}
 
 			if (!form.isPreviewMode() && !errors.hasErrors()) {
-				String ipAddress = request.getHeader("X-FORWARDED-FOR");
-				if (ipAddress == null) {
-					ipAddress = request.getRemoteAddr();
-				}
-				dupeProtector.checkDuplication(FloodProtector.Action.ADD_TOPIC, ipAddress, user.getScore() >= 100, errors);
+				dupeProtector.checkDuplication(FloodProtector.Action.ADD_TOPIC, LorHttpUtils.getRequestIp(request), user.getScore() >= 100, errors);
 			}
 
 			if (!form.isPreviewMode() && !errors.hasErrors() && group != null) {

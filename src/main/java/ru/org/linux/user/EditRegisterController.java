@@ -39,6 +39,7 @@ import ru.org.linux.auth.UserDetailsServiceImpl;
 import ru.org.linux.email.EmailService;
 import ru.org.linux.site.Template;
 import ru.org.linux.util.ExceptionBindingErrorProcessor;
+import ru.org.linux.util.LorHttpUtils;
 import ru.org.linux.util.StringUtil;
 import ru.org.linux.util.URLUtil;
 
@@ -162,10 +163,7 @@ public class EditRegisterController {
 			if (!Strings.isNullOrEmpty(form.getInfo())) {
 				info = StringUtil.escapeHtml(form.getInfo());
 			}
-			String ipAddress = request.getHeader("X-FORWARDED-FOR");
-			if (ipAddress == null) {
-				ipAddress = request.getRemoteAddr();
-			}
+			String ipAddress = LorHttpUtils.getRequestIp(request);
 			ipBlockDao.checkBlockIP(ipAddress, errors, tmpl.getCurrentUser());
 
 			boolean emailChanged = false;

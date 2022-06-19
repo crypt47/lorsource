@@ -19,6 +19,7 @@ import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
+import ru.org.linux.util.LorHttpUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -73,15 +74,11 @@ public class CSRFProtectionService {
 		boolean r = inputValue.trim().equals(cookieValue.trim());
 
 		if (!r) {
-			String ipAddress = request.getHeader("X-FORWARDED-FOR");  
-			if (ipAddress == null) {
-				ipAddress = request.getRemoteAddr();
-			}
 			logger.info(String.format(
 						"Flood protection (CSRF cookie differs: cookie=%s param=%s) ip=%s url=%s",
 						cookieValue,
 						inputValue,
-						ipAddress,
+						LorHttpUtils.getRequestIp(request),
 						request.getRequestURI()
 						));
 		}

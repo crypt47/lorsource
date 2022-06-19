@@ -27,7 +27,7 @@ import ru.org.linux.search.SearchQueueSender
 import ru.org.linux.site.Template
 import ru.org.linux.spring.dao.{MessageText, MsgbaseDao}
 import ru.org.linux.topic.TopicPermissionService
-import ru.org.linux.util.ServletParameterException
+import ru.org.linux.util.{LorHttpUtils, ServletParameterException}
 
 import java.util
 import javax.servlet.http.HttpServletRequest
@@ -134,7 +134,7 @@ class EditCommentController(commentService: CommentCreateService, msgbaseDao: Ms
       deadline.foreach(value => formParams.put("deadline", value.toDate))
       modelAndView
     } else {
-      commentService.edit(commentRequest.getOriginal, comment, msg.text, request.getRemoteAddr, request.getHeader("X-Forwarded-For"), user, originalMessageText)
+      commentService.edit(commentRequest.getOriginal, comment, msg.text, request.getRemoteAddr, LorHttpUtils.getRequestIp(request), user, originalMessageText)
       searchQueueSender.updateComment(commentRequest.getOriginal.getId)
       val returnUrl = "/jump-message.jsp?msgid=" + commentRequest.getTopic.getId + "&cid=" + commentRequest.getOriginal.getId
       new ModelAndView(new RedirectView(returnUrl))

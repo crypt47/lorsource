@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.validation.Errors;
 import ru.org.linux.user.User;
+import ru.org.linux.util.LorHttpUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +39,7 @@ public class IPBlockDao {
   }
 
   public IPBlockInfo getBlockInfo(HttpServletRequest request) {
-    return getBlockInfo(request.getHeader("X-Forwarded-For"));
+    return getBlockInfo(LorHttpUtils.getRequestIp(request));
   }
   public IPBlockInfo getBlockInfo(String addr) {
     List<IPBlockInfo> list = jdbcTemplate.query(

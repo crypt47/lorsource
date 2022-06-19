@@ -15,9 +15,9 @@
 package ru.org.linux.auth
 
 import java.util.concurrent.CompletionStage
-
 import akka.actor.ActorSystem
 import com.typesafe.scalalogging.StrictLogging
+
 import javax.servlet.http.{Cookie, HttpServletRequest, HttpServletResponse}
 import org.springframework.security.authentication.{AuthenticationManager, BadCredentialsException, LockedException, UsernamePasswordAuthenticationToken}
 import org.springframework.security.core.context.SecurityContextHolder
@@ -29,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.view.RedirectView
 import ru.org.linux.site.{PublicApi, Template}
 import ru.org.linux.user.UserDao
+import ru.org.linux.util.LorHttpUtils
 
 import scala.compat.java8.FutureConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -70,7 +71,7 @@ class LoginController(userDao: UserDao, userDetailsService: UserDetailsService,
       }
     } catch {
       case e@(_: LockedException | _: BadCredentialsException | _: UsernameNotFoundException) =>
-        logger.warn("Login of " + username + " failed; remote IP: " + request.getHeader("X-Forwarded-For") + "; " + e.toString)
+        logger.warn("Login of " + username + " failed; remote IP: " + LorHttpUtils.getRequestIp(request) + "; " + e.toString)
 
         delayResponse {
           new ModelAndView(new RedirectView("/login.jsp?error=true"))
@@ -102,7 +103,7 @@ class LoginController(userDao: UserDao, userDetailsService: UserDetailsService,
       }
     } catch {
       case e@(_: LockedException | _: BadCredentialsException | _: UsernameNotFoundException) =>
-        logger.warn("Login of " + username + " failed; remote IP: " + request.getHeader("X-Forwarded-For") + "; " + e.toString)
+        logger.warn("Login of " + username + " failed; remote IP: " + LorHttpUtils.getRequestIp(request) + "; " + e.toString)
         delayResponse { LoginStatus(success = false, "Bad credentials") }
     }
   }
