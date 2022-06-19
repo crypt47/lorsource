@@ -84,7 +84,7 @@ public class CommentPrepareService {
           Topic topic,
           Set<Integer> hideSet,
           @Nullable Set<Integer> samePageComments) throws UserNotFoundException {
-    String processedMessage = textService.renderCommentText(messageText, !topicPermissionService.followAuthorLinks(author));
+    String processedMessage = textService.renderCommentText(messageText, !topicPermissionService.restrictCommentRendering(author));
 
     ReplyInfo replyInfo = null;
     boolean deletable = false;

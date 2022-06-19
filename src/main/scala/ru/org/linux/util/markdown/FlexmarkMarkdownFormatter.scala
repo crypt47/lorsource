@@ -38,18 +38,18 @@ import scala.collection.mutable
 @Qualifier("flexmark")
 class FlexmarkMarkdownFormatter(siteConfig: SiteConfig, topicDao: TopicDao, commentDao: CommentDao,
                                 userService: UserService, toHtmlFormatter: ToHtmlFormatter) extends MarkdownFormatter {
-  private def options(nofollow: Boolean, minimizeCut: Boolean, cutUrl: Option[String] = None) = {
+  private def options(restrictRendering: Boolean, minimizeCut: Boolean, cutUrl: Option[String] = None) = {
     val options = new MutableDataSet
 
     val extensions = Seq(TablesExtension.create, StrikethroughExtension.create, AutolinkExtension.create(),
-      TypographicExtension.create(), new InlineImagesExtension,
+      TypographicExtension.create(),
       new LorLinkExtension(siteConfig, topicDao, commentDao), new LorUserExtension(userService, toHtmlFormatter),
       new CutExtension, new FencedCodeExtension/*, YouTubeLinkExtension.create()*/)
 
-    val allExtensions = (if (nofollow) {
-      extensions :+ new NofollowExtension
+    val allExtensions = (if (restrictRendering) {
+      extensions :+ new RestrictedRenderingExtension
     } else {
-      extensions
+      extensions :+ new InlineImagesExtension
     }).asJava
 
     options.set(Parser.EXTENSIONS, allExtensions)
@@ -76,26 +76,26 @@ class FlexmarkMarkdownFormatter(siteConfig: SiteConfig, topicDao: TopicDao, comm
     options.toImmutable
   }
 
-  private val parser = Parser.builder(options(nofollow = false, minimizeCut = false)).build
-  private val renderer = HtmlRenderer.builder(options(nofollow = false, minimizeCut = false)).build
-  private val rendererNofollow = HtmlRenderer.builder(options(nofollow = true, minimizeCut = false)).build
+  private val parser = Parser.builder(options(restrictRendering = false, minimizeCut = false)).build
+  private val renderer = HtmlRenderer.builder(options(restrictRendering = false, minimizeCut = false)).build
+  private val restrictedRenderer = HtmlRenderer.builder(options(restrictRendering = true, minimizeCut = false)).build
 
-  override def renderToHtml(content: String, nofollow: Boolean): String = {
+  override def renderToHtml(content: String, restrictRendering: Boolean): String = {
     // You can re-use parser and renderer instances
     val document = parser.parse(content)
 
-    (if (nofollow) {
-      rendererNofollow
+    (if (restrictRendering) {
+      restrictedRenderer
     } else {
       renderer
     }).render(document)
   }
 
 
-  override def renderWithMinimizedCut(content: String, nofollow: Boolean, canonicalUrl: String): String = {
+  override def renderWithMinimizedCut(content: String, restrictRendering: Boolean, canonicalUrl: String): String = {
     val document = parser.parse(content)
 
-    val renderer = HtmlRenderer.builder(options(nofollow = false, minimizeCut = true, cutUrl = Some(canonicalUrl))).build
+    val renderer = HtmlRenderer.builder(options(restrictRendering = false, minimizeCut = true, cutUrl = Some(canonicalUrl))).build
 
     renderer.render(document)
   }

@@ -165,7 +165,7 @@ public class WhoisController {
               "userInfoText",
               lorCodeService.parseComment(
                       userinfo,
-                      !topicPermissionService.followAuthorLinks(user)
+                      !topicPermissionService.restrictCommentRendering(user)
               )
       );
     }
