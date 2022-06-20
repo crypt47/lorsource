@@ -45,6 +45,7 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
                          @Qualifier("authenticationManager") authenticationManager: AuthenticationManager,
                          userDetailsService: UserDetailsServiceImpl, userDao: UserDao, emailService: EmailService,
                          siteConfig: SiteConfig, userService: UserService, invitesDao: UserInvitesDao,
+                         ipBlockDao: IPBlockDao,
                          resourceLoader: ResourceLoader) extends StrictLogging {
   private val registerRequestValidator = new RegisterRequestValidator(resourceLoader)
 
@@ -53,7 +54,7 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
                request: HttpServletRequest, @RequestParam(required = false) invite: String): ModelAndView = {
     response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
 
-    if (invite!=null) {
+    if (invite != null) {
       val emailOpt = invitesDao.emailFromValidInvite(invite)
 
       emailOpt match {
@@ -101,10 +102,10 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
   def doRegister(request: HttpServletRequest, @Valid @ModelAttribute("form") form: RegisterRequest,
                  errors: Errors, @RequestParam(required = false) invite: String,
                  @RequestParam(required = false) permit: String): ModelAndView = {
-    if (invite==null && permit == null) {
+    if (invite == null && permit == null) {
       return new ModelAndView("no-register")
     } else {
-      if (invite!=null) {
+      if (invite != null) {
         val emailOpt = invitesDao.emailFromValidInvite(invite)
 
         emailOpt match {
@@ -119,7 +120,7 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
     }
 
     if (!errors.hasErrors) {
-      if (invite==null) {
+      if (invite == null) {
         captcha.checkCaptcha(request, errors)
       }
 
@@ -130,6 +131,12 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
       if (userDao.getByEmail(new InternetAddress(form.getEmail).getAddress.toLowerCase, false) != null) {
         errors.rejectValue("email", null, "пользователь с таким e-mail уже зарегистрирован. " +
           "Если вы забыли параметры своего аккаунта, воспользуйтесь формой восстановления пароля.")
+      }
+      if (ipBlockDao.getBlockInfo(request).isBlocked) {
+        new ModelAndView(
+          "action-done",
+          "message",
+          "Добавление пользователя прошло успешно. Ожидайте письма с кодом активации.")
       }
     }
 
@@ -242,7 +249,7 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
 
   @ResponseBody
   @RequestMapping(Array("check-login"))
-  def ajaxLoginCheck(@RequestParam nick: String):String = {
+  def ajaxLoginCheck(@RequestParam nick: String): String = {
     if (nick.isEmpty) {
       "Не задан nick."
     } else if (!StringUtil.checkLoginName(nick)) {
@@ -257,7 +264,7 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
   }
 
   @InitBinder(Array("form"))
-  def requestValidator(binder: WebDataBinder):Unit = {
+  def requestValidator(binder: WebDataBinder): Unit = {
     binder.setValidator(registerRequestValidator)
     binder.setBindingErrorProcessor(new ExceptionBindingErrorProcessor)
   }
