@@ -43,6 +43,7 @@ import ru.org.linux.topic.TopicDao;
 import ru.org.linux.topic.TopicPermissionService;
 import ru.org.linux.user.*;
 import ru.org.linux.util.ExceptionBindingErrorProcessor;
+import ru.org.linux.util.LorHttpUtils;
 import scala.Tuple2;
 
 import javax.annotation.Nonnull;
@@ -171,11 +172,7 @@ public class CommentCreateService {
 		IPBlockDao.checkBlockIP(ipBlockInfo, errors, user);
 
 		if (!commentRequest.isPreviewMode() && !errors.hasErrors()) {
-			String ipAddress = request.getHeader("X-FORWARDED-FOR");
-			if (ipAddress == null) {
-				ipAddress = request.getRemoteAddr();
-			}
-			floodProtector.checkDuplication(FloodProtector.Action.ADD_COMMENT, ipAddress, editMode || user.getScore() >= 100, errors);
+			floodProtector.checkDuplication(FloodProtector.Action.ADD_COMMENT, LorHttpUtils.getRequestIp(request), editMode || user.getScore() >= 100, errors);
 		}
 	}
 
@@ -230,17 +227,13 @@ public class CommentCreateService {
 			int commentId = commentRequest.getOriginal() == null
 				? 0
 				: commentRequest.getOriginal().getId();
-			String ipAddress = request.getHeader("X-FORWARDED-FOR");
-			if (ipAddress == null) {
-				ipAddress = request.getRemoteAddr();
-			}
 			comment = new Comment(
 					replyto,
 					"",
 					commentRequest.getTopic().getId(),
 					commentId,
 					user.getId(),
-					ipAddress
+					LorHttpUtils.getRequestIp(request)
 					);
 		}
 		return comment;

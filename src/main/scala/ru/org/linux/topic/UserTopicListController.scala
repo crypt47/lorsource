@@ -104,7 +104,7 @@ class UserTopicListController(topicListService: TopicListService, userDao: UserD
 
     val userInfo = userDao.getUserInfoClass(user)
 
-    if (topicPermissionService.followAuthorLinks(user)) {
+    if (topicPermissionService.restrictCommentRendering(user)) {
       modelAndView.addObject("meLink", userInfo.getUrl)
     }
 

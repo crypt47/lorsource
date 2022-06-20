@@ -201,7 +201,7 @@ public class TopicPrepareService {
       String url = siteConfig.getSecureUrlWithoutSlash() + message.getLink();
 
       String processedMessage =
-              textService.renderTopic(text, minimizeCut, !topicPermissionService.followInTopic(message, author), url);
+              textService.renderTopic(text, minimizeCut, !topicPermissionService.restrictTopicRendering(message, author), url);
 
       PreparedImage preparedImage = null;
 

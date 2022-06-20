@@ -45,8 +45,16 @@ public final class LorHttpUtils {
 		return c;
 	}
 
-	public static String getRequestIP(HttpServletRequest request) {
-		String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+	public static String getRequestIp(HttpServletRequest request) {
+		String ipAddress = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
+		if (ipAddress == null) {
+			ipAddress = request.getRemoteAddr();
+		}
+		return ipAddress;
+	}
+
+	public static String logRequestIp(HttpServletRequest request) {
+		String ipAddress = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
 		if (ipAddress == null) {  
 			ipAddress = request.getRemoteAddr();  
 		}

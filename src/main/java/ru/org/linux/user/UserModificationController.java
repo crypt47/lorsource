@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.org.linux.auth.AccessViolationException;
+import ru.org.linux.auth.AuthUtil;
 import ru.org.linux.comment.CommentDeleteService;
 import ru.org.linux.comment.DeleteCommentResult;
 import ru.org.linux.search.SearchQueueSender;
 import ru.org.linux.site.Template;
+import ru.org.linux.spring.SiteConfig;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -39,9 +41,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import static ru.org.linux.user.User.ANONYMOUS_ID;
 
 @Controller
 public class UserModificationController {
@@ -54,7 +59,12 @@ public class UserModificationController {
   private UserDao userDao;
 
   @Autowired
+  private UserLogDao userLogDao;
+  @Autowired
   private CommentDeleteService commentService;
+
+  @Autowired
+  private SiteConfig siteConfig;
 
   /**
    * Возвращает объект User модератора, если текущая сессия не модераторская, тогда исключение
@@ -141,6 +151,37 @@ public class UserModificationController {
     userDao.unblock(user, moderator);
     logger.info("User " + user.getNick() + " unblocked by " + moderator.getNick());
     return redirectToProfile(user);
+  }
+
+  @RequestMapping(value = "/usermod.jsp", method = RequestMethod.POST, params = "action=reportAbuse")
+  public ModelAndView reportAbuse(
+          HttpServletRequest request,
+          @RequestParam("id") User user
+  ) throws Exception {
+
+    User reporter = AuthUtil.getCurrentUser();
+
+    if (reporter != null && reporter.getScore() < 100) {
+      throw new AccessViolationException("Вы не можете жаловаться на " + user.getNick());
+    }
+
+    Map<String, Object> params = new HashMap<>();
+    if(userLogDao.getComplaintsCount(user,reporter, Duration.of(1, ChronoUnit.DAYS)) == 0) {
+
+      userDao.recordComplaint(user, reporter);
+
+      if (userDao.getUser(user.getId()).getComplaints() > siteConfig.getMaxComplaintsCount()) {
+        Timestamp forOneDay = getUntil("P1D");
+        userDao.freezeUser(user, userDao.getUser(ANONYMOUS_ID), "многочисленные жалобы пользователей", forOneDay);
+      }
+
+      params.put("message", "Жалоба отправлена");
+      params.put("bigMessage", "Администрация будет уведомлена и примет меры в случае нарушения правил.\n Ложные жалобы будут иметь последствия.");
+    } else {
+      params.put("message", "Вы уже жаловались на этого пользователя недавно");
+      params.put("bigMessage", "Администрация в курсе.");
+    }
+    return new ModelAndView("action-done", params);
   }
 
   private static ModelAndView redirectToProfile(User user) throws UnsupportedEncodingException{

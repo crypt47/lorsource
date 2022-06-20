@@ -17,8 +17,8 @@ package ru.org.linux.comment
 
 import java.util
 import java.util.Optional
-
 import akka.actor.ActorRef
+
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 import org.springframework.beans.factory.annotation.Qualifier
@@ -36,7 +36,7 @@ import ru.org.linux.search.SearchQueueSender
 import ru.org.linux.site.Template
 import ru.org.linux.spring.dao.MessageText
 import ru.org.linux.topic.{TopicPermissionService, TopicPrepareService}
-import ru.org.linux.util.{ServletParameterException, StringUtil}
+import ru.org.linux.util.{LorHttpUtils, ServletParameterException, StringUtil}
 
 import scala.jdk.CollectionConverters._
 
@@ -146,7 +146,7 @@ class AddCommentController(ipBlockDao: IPBlockDao, commentPrepareService: Commen
 
       new ModelAndView("add_comment", (commentService.prepareReplyto(add).asScala ++ info).asJava)
     } else {
-      val (msgid, mentions) = commentService.create(user, comment, msg, request.getRemoteAddr, request.getHeader("X-Forwarded-For"),
+      val (msgid, mentions) = commentService.create(user, comment, msg, request.getRemoteAddr, LorHttpUtils.getRequestIp(request),
         Optional.ofNullable(request.getHeader("user-agent")))
 
       searchQueueSender.updateComment(msgid)
@@ -183,7 +183,7 @@ class AddCommentController(ipBlockDao: IPBlockDao, commentPrepareService: Commen
         Map("errors" -> errorsList.asJava)
       }
     } else {
-      val (msgid, mentions) = commentService.create(user, comment, msg, request.getRemoteAddr, request.getHeader("X-Forwarded-For"),
+      val (msgid, mentions) = commentService.create(user, comment, msg, request.getRemoteAddr, LorHttpUtils.getRequestIp(request),
         Optional.ofNullable(request.getHeader("user-agent")))
 
       searchQueueSender.updateComment(msgid)

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.org.linux.site.DeleteInfo;
 import ru.org.linux.site.ScriptErrorException;
 import ru.org.linux.spring.dao.DeleteInfoDao;
+import ru.org.linux.spring.dao.MsgbaseDao;
 import ru.org.linux.topic.Topic;
 import ru.org.linux.topic.TopicDao;
 import ru.org.linux.topic.TopicService;
@@ -32,6 +33,7 @@ import ru.org.linux.user.UserEventService;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class CommentDeleteService {
@@ -42,10 +44,11 @@ public class CommentDeleteService {
   private final DeleteInfoDao deleteInfoDao;
   private final CommentReadService commentService;
   private final TopicDao topicDao;
+  private final MsgbaseDao msgbaseDao;
 
   public CommentDeleteService(CommentDao commentDao, TopicService topicService, UserDao userDao,
                               UserEventService userEventService, DeleteInfoDao deleteInfoDao,
-                              CommentReadService commentService, TopicDao topicDao) {
+                              CommentReadService commentService, TopicDao topicDao, MsgbaseDao msgbaseDao) {
     this.commentDao = commentDao;
     this.topicService = topicService;
     this.userDao = userDao;
@@ -53,6 +56,7 @@ public class CommentDeleteService {
     this.deleteInfoDao = deleteInfoDao;
     this.commentService = commentService;
     this.topicDao = topicDao;
+    this.msgbaseDao = msgbaseDao;
   }
 
   /**
@@ -262,6 +266,8 @@ public class CommentDeleteService {
     List<Integer> deletedTopicIds = topicService.deleteAllByUser(user, moderator);
 
     List<Integer> deletedCommentIds = deleteAllCommentsByUser(user, moderator);
+
+    Stream.concat(deletedCommentIds.stream(), deletedTopicIds.stream()).forEach(msgbaseDao::wipeMessage);
 
     return new DeleteCommentResult(deletedTopicIds, deletedCommentIds, null);
   }

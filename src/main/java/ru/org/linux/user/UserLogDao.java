@@ -103,6 +103,17 @@ public class UserLogDao {
   }
 
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+  public void logComplaintOnUser(@Nonnull User user, @Nonnull User reporter, @Nonnull String reason) {
+    jdbcTemplate.update(
+            "INSERT INTO user_log (userid, action_userid, action_date, action, info) VALUES (?,?,CURRENT_TIMESTAMP, ?::user_log_action, ?)",
+            reporter.getId(),
+            user.getId(),
+            UserLogAction.COMPLAINT.toString(),
+            ImmutableMap.of(OPTION_REASON, reason)
+    );
+  }
+
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
   public void logFreezeUser(@Nonnull User user, @Nonnull User moderator,  
     @Nonnull String reason, @Nonnull Timestamp until) {
 
@@ -229,6 +240,16 @@ public class UserLogDao {
             Integer.class,
             user.getId(),
             UserLogAction.SET_USERPIC.toString(),
+            OffsetDateTime.now().minus(duration));
+  }
+
+  public int getComplaintsCount(User user, User reporter, Duration duration) {
+    return jdbcTemplate.queryForObject(
+            "SELECT count(*) FROM user_log WHERE userid=? AND action=?::user_log_action AND action_userid = ? AND action_date>?",
+            Integer.class,
+            reporter.getId(),
+            UserLogAction.COMPLAINT.toString(),
+            user.getId(),
             OffsetDateTime.now().minus(duration));
   }
 

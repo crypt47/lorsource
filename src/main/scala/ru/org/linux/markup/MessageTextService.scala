@@ -39,16 +39,16 @@ class MessageTextService(lorCodeService: LorCodeService, markdownFormatter: Mark
     * @param text текст комментария
     * @return строку html комментария
     */
-  def renderCommentText(text: MessageText, nofollow: Boolean): String = {
+  def renderCommentText(text: MessageText, restrictRendering: Boolean): String = {
     text.markup match {
       case Lorcode =>
-        lorCodeService.parseComment(prepareLorcode(text.text), nofollow)
+        lorCodeService.parseComment(prepareLorcode(text.text), restrictRendering)
       case LorcodeUlb =>
-        lorCodeService.parseComment(prepareUlb(text.text), nofollow)
+        lorCodeService.parseComment(prepareUlb(text.text), restrictRendering)
       case Html =>
         "<p>" + text.text + "</p>"
       case Markdown =>
-        markdownFormatter.renderToHtml(text.text, nofollow)
+        markdownFormatter.renderToHtml(text.text, restrictRendering)
     }
   }
 
@@ -68,31 +68,31 @@ class MessageTextService(lorCodeService: LorCodeService, markdownFormatter: Mark
         "<p>" + text.text + "</p>"
       case Markdown =>
         // TODO check if rss needs special rendering
-        markdownFormatter.renderToHtml(text.text, nofollow = false)
+        markdownFormatter.renderToHtml(text.text, restrictRendering = false)
     }
   }
 
-  def renderTopic(text: MessageText, minimizeCut: Boolean, nofollow: Boolean, canonicalUrl: String): String = {
+  def renderTopic(text: MessageText, minimizeCut: Boolean, restrictRendering: Boolean, canonicalUrl: String): String = {
     text.markup match {
       case Lorcode =>
         if (minimizeCut) {
-          lorCodeService.parseTopicWithMinimizedCut(prepareLorcode(text.text), canonicalUrl, nofollow)
+          lorCodeService.parseTopicWithMinimizedCut(prepareLorcode(text.text), canonicalUrl, restrictRendering)
         } else {
-          lorCodeService.parseTopic(prepareLorcode(text.text), nofollow)
+          lorCodeService.parseTopic(prepareLorcode(text.text), restrictRendering)
         }
       case LorcodeUlb =>
         if (minimizeCut) {
-          lorCodeService.parseTopicWithMinimizedCut(prepareUlb(text.text), canonicalUrl, nofollow)
+          lorCodeService.parseTopicWithMinimizedCut(prepareUlb(text.text), canonicalUrl, restrictRendering)
         } else {
-          lorCodeService.parseTopic(prepareUlb(text.text), nofollow)
+          lorCodeService.parseTopic(prepareUlb(text.text), restrictRendering)
         }
       case Html =>
         "<p>" + text.text
       case Markdown =>
         if (minimizeCut) {
-          markdownFormatter.renderWithMinimizedCut(text.text, nofollow, canonicalUrl)
+          markdownFormatter.renderWithMinimizedCut(text.text, restrictRendering, canonicalUrl)
         } else {
-          markdownFormatter.renderToHtml(text.text, nofollow)
+          markdownFormatter.renderToHtml(text.text, restrictRendering)
         }
     }
   }
@@ -106,7 +106,7 @@ class MessageTextService(lorCodeService: LorCodeService, markdownFormatter: Mark
       case Html =>
         Jsoup.parse(text.text).text
       case Markdown =>
-        Jsoup.parse(markdownFormatter.renderToHtml(text.text, nofollow = false)).text()
+        Jsoup.parse(markdownFormatter.renderToHtml(text.text, restrictRendering = false)).text()
     }
   }
 

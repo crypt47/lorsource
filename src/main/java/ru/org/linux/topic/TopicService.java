@@ -134,7 +134,7 @@ public class TopicService {
       notified = ImmutableSet.of();
     }
 
-    String logmessage = "Написана тема " + msgid + ' ' + LorHttpUtils.getRequestIP(request);
+    String logmessage = "Написана тема " + msgid + ' ' + LorHttpUtils.logRequestIp(request);
     logger.info(logmessage);
 
     return Tuple2.apply(msgid, notified);

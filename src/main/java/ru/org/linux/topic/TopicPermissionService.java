@@ -415,7 +415,7 @@ public class TopicPermissionService {
    * @param author автор сообщения содержащего ссылку
    * @return true обычная ссылка, false - добавить rel=nofollow
    */
-  public boolean followAuthorLinks(User author) {
+  public boolean restrictCommentRendering(User author) {
     if (author.isBlocked() || author.isAnonymous()) {
       return false;
     }
@@ -427,8 +427,8 @@ public class TopicPermissionService {
    * follow топиков которые подтверждены и у которых автор не заблокирован и
    * score > LINK_FOLLOW_MIN_SCORE
    */
-  public boolean followInTopic(Topic topic, User author) {
-    return topic.isCommited() || followAuthorLinks(author);
+  public boolean restrictTopicRendering(Topic topic, User author) {
+    return topic.isCommited() || restrictCommentRendering(author);
   }
 
   public boolean isUserCastAllowed(User author) {

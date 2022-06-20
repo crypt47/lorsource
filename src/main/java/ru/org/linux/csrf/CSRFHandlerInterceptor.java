@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import ru.org.linux.auth.AccessViolationException;
+import ru.org.linux.util.LorHttpUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,11 +48,7 @@ public class CSRFHandlerInterceptor extends HandlerInterceptorAdapter {
 					if ((handler instanceof HandlerMethod)) {
 						logger.warn("Missing CSRF field for " + request.getRequestURI()+ ' ' +((HandlerMethod) handler).getBeanType().getName()+ '.' +((HandlerMethod) handler).getMethod().getName());
 					} else {
-						String ipAddress = request.getHeader("X-FORWARDED-FOR");
-						if (ipAddress == null) {
-							ipAddress = request.getRemoteAddr();
-						}
-						logger.warn("Missing CSRF field for " + request.getRequestURI()+" handler="+handler.getClass().toString()+" ip="+ipAddress);
+						logger.warn("Missing CSRF field for " + request.getRequestURI()+" handler="+handler.getClass().toString()+" ip="+ LorHttpUtils.getRequestIp(request));
 					}
 				}
 

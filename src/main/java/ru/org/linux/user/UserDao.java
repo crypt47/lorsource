@@ -26,7 +26,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.internet.InternetAddress;
 import javax.sql.DataSource;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -57,7 +55,9 @@ public class UserDao {
    * изменение score пользователю
    */
   private static final String queryChangeScore = "UPDATE users SET score=score+? WHERE id=?";
-  private static final String queryUserById = "SELECT id,nick,score,max_score,candel,canmod,corrector,passwd,blocked,activated,photo,email,name,unread_events,style,frozen_until,frozen_by,freezing_reason,club_member FROM users where id=?";
+
+  private static final String queryChangeComplaintsCount = "UPDATE users SET complaints=complaints+1 WHERE id=?";
+  private static final String queryUserById = "SELECT id,nick,score,max_score,candel,canmod,corrector,passwd,blocked,activated,photo,email,name,unread_events,style,frozen_until,frozen_by,freezing_reason,club_member,complaints FROM users where id=?";
   private static final String queryUserIdByNick = "SELECT id FROM users where nick=?";
   private static final String updateUserStyle = "UPDATE users SET style=? WHERE id=?";
 
@@ -331,6 +331,15 @@ public class UserDao {
   public void resetPassword(User user, User moderator){
     setPassword(user, StringUtil.generatePassword());
     userLogDao.logResetPassword(user, moderator);
+  }
+
+  @CacheEvict(value="Users", key="#user.id")
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+  public void recordComplaint(User user, User reporterId) {
+    if (jdbcTemplate.update(queryChangeComplaintsCount, user.getId())==0) {
+      throw new IllegalArgumentException(new UserNotFoundException(user.getId()));
+    }
+    userLogDao.logComplaintOnUser(user, reporterId,"Жалоба");
   }
 
   private String setPassword(User user, String password) {
