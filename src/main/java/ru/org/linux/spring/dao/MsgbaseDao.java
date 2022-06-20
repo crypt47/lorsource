@@ -39,7 +39,7 @@ public class MsgbaseDao {
    */
   private static final String QUERY_MESSAGE_TEXT = "SELECT message, markup FROM msgbase WHERE id=?";
 
-  private static final String WIPE_MESSAGE_TEXT = "UPDATE msgbase SET message = '[message lost]' WHERE id = ?";
+  private static final String WIPE_MESSAGE_TEXT = "UPDATE msgbase SET message = '[ message lost ]' WHERE id = ?";
 
   private JdbcTemplate jdbcTemplate;
   private NamedParameterJdbcTemplate namedJdbcTemplate;
