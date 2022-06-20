@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -93,6 +94,20 @@ public class SiteConfig {
 
   public String getElasticsearch() {
     return properties.getProperty("Elasticsearch");
+  }
+
+  public String getSmtpHost() {
+    return Optional.ofNullable(properties.getProperty("smtp.host")).orElse("localhost");
+  }
+
+  public Integer getSmtpPort() {
+    return Integer.parseInt(Optional.ofNullable(properties.getProperty("smtp.port")).orElse("25"));
+  }
+  public String getSmtpLogin() {
+    return properties.getProperty("smtp.login");
+  }
+  public String getSmtpPass() {
+    return properties.getProperty("smtp.pass");
   }
 
   public String getHTMLPathPrefix() {
@@ -194,5 +209,13 @@ public class SiteConfig {
       return 3;
     }
     return Integer.valueOf(property);
+  }
+
+  public int getMaxRegistrationsPerHour() {
+    return Integer.parseInt(Optional.ofNullable(properties.getProperty("registrations.maxPerHour")).orElse("6"));
+  }
+
+  public int getRegistrationInterval() {
+    return Integer.parseInt(Optional.ofNullable(properties.getProperty("registrations.interval")).orElse("10"));
   }
 }
