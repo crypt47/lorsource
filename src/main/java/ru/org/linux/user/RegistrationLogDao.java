@@ -3,6 +3,7 @@ package ru.org.linux.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
@@ -54,6 +55,6 @@ public class RegistrationLogDao {
     }
 
     public int getMinutesSinceLastSentEmail() {
-        return jdbcTemplate.queryForObject("SELECT MIN(d.duration) FROM (SELECT extract(MINS FROM CURRENT_TIMESTAMP - rl.mail_sent_timestamp) as duration FROM registrations_log rl WHERE rl.mail_sent_timestamp is not null  ORDER BY rl.mail_sent_timestamp) as d", Integer.class);
+        return jdbcTemplate.query("SELECT extract(MINS FROM CURRENT_TIMESTAMP - rl.mail_sent_timestamp) as duration FROM registrations_log rl WHERE rl.mail_sent_timestamp is not null ORDER BY rl.mail_sent_timestamp", (ResultSetExtractor<Integer>) rs -> rs.next() ? rs.getInt(0) : Integer.MAX_VALUE);
     }
 }
