@@ -249,7 +249,8 @@ input[type="checkbox"] {
     border-radius: 0.2em;
     border: 0;
     margin-bottom: 0.5em;
-    background-color: $article_background;
+    background-color: $table_border_color;
+    //$article_background;
 }
 
 #realtime {
@@ -505,6 +506,11 @@ fieldset legend {
     color: $icon_pin_color;
 }
 
+.mini-news-title {
+    color: $header_color;
+}
+
+
 
 .icon-user-color {
     color: $icon_user_color;
@@ -529,3 +535,4 @@ fieldset legend {
         text-decoration: none !important;
     }
 }
+

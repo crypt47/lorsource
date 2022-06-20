@@ -208,9 +208,9 @@
 </c:if>
 
 <c:if test="${message.minor && !minorAsMajor}">
-<article class="infoblock mini-news" id="topic-${message.id}">
-Мини-новость:
-  <a href="${fn:escapeXml(message.link)}"><l:title>${message.title}</l:title></a>
+<article class="infoblock" id="topic-${message.id}">
+Новости:
+  <a class="mini-news-title" href="${fn:escapeXml(message.link)}"><l:title>${message.title}</l:title></a>
 
 <c:if test="${multiPortal}">
     <c:if test="${not message.commited and preparedMessage.section.premoderated}">
