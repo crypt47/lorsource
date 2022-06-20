@@ -249,7 +249,8 @@ input[type="checkbox"] {
     border-radius: 0.2em;
     border: 0;
     margin-bottom: 0.5em;
-    background-color: $article_background;
+    background-color: $table_border_color;
+    //$article_background;
 }
 
 #realtime {
