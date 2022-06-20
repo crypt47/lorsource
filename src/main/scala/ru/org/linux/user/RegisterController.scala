@@ -133,7 +133,8 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
           "Если вы забыли параметры своего аккаунта, воспользуйтесь формой восстановления пароля.")
       }
       if (ipBlockDao.getBlockInfo(request).isBlocked) {
-        new ModelAndView(
+        logger.info(s"Регистрация пользователя ${form.getNick} отклонена из-за блокировки IP ${LorHttpUtils.logRequestIp(request)}")
+        return new ModelAndView(
           "action-done",
           "message",
           "Добавление пользователя прошло успешно. Ожидайте письма с кодом активации.")
