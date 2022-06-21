@@ -43,7 +43,7 @@ import scala.jdk.CollectionConverters._
 @Controller
 class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMeServices,
                          @Qualifier("authenticationManager") authenticationManager: AuthenticationManager,
-                         userDetailsService: UserDetailsServiceImpl, userDao: UserDao, emailService: EmailService,
+                         userDetailsService: UserDetailsServiceImpl, userDao: UserDao, registrationLogDao: RegistrationLogDao, emailService: EmailService,
                          siteConfig: SiteConfig, userService: UserService, invitesDao: UserInvitesDao,
                          ipBlockDao: IPBlockDao,
                          resourceLoader: ResourceLoader) extends StrictLogging {
@@ -147,8 +147,8 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
         LorHttpUtils.getRequestIp(request), Option(invite))
 
       logger.info(s"Зарегистрирован пользователь ${form.getNick} (id=$userid) ${LorHttpUtils.logRequestIp(request)}")
-
-      emailService.sendRegistrationEmail(form.getNick, mail.getAddress, isNew = true)
+      val regcode = User.getActivationCode(siteConfig.getSecret, form.getNick, mail.getAddress)
+      registrationLogDao.recordRegistrationRequest(userid, regcode)
 
       new ModelAndView(
         "action-done",

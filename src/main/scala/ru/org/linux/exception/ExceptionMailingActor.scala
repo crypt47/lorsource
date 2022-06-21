@@ -56,7 +56,7 @@ class ExceptionMailingActor(siteConfig: SiteConfig) extends Actor with ActorLogg
   private def sendErrorMail(subject: String, text: String): Boolean = {
     val adminEmailAddress = siteConfig.getAdminEmailAddress
 
-    val emailMessage = EmailService.createMessage
+    val emailMessage = EmailService.createMessage(siteConfig)
 
     try {
       val mail = new InternetAddress(adminEmailAddress, true)
