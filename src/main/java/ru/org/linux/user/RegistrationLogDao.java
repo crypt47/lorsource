@@ -10,10 +10,12 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Types;
+import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class RegistrationLogDao {
@@ -54,7 +56,8 @@ public class RegistrationLogDao {
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM registrations_log rl WHERE rl.mail_sent_timestamp is not null AND rl.mail_sent_timestamp > CURRENT_TIMESTAMP - interval '1 hours'", Integer.class);
     }
 
-    public int getMinutesSinceLastSentEmail() {
-        return jdbcTemplate.query("SELECT extract(MINS FROM CURRENT_TIMESTAMP - rl.mail_sent_timestamp) as duration FROM registrations_log rl WHERE rl.mail_sent_timestamp is not null ORDER BY rl.mail_sent_timestamp", (ResultSetExtractor<Integer>) rs -> rs.next() ? rs.getInt(0) : Integer.MAX_VALUE);
+    public long getMinutesSinceLastSentEmail() {
+        Long duration = jdbcTemplate.queryForObject("select extract( EPOCH from MIN( CURRENT_TIMESTAMP - rl.mail_sent_timestamp)) as duration from registrations_log rl", Long.class);
+        return duration != null ? Duration.of(duration, ChronoUnit.SECONDS).toMinutes() : Long.MAX_VALUE;
     }
 }
