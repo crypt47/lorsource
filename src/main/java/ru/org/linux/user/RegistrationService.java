@@ -42,7 +42,7 @@ public class RegistrationService {
 
     private boolean canSend() {
         int sentEmailsLastHour = registrationLogDao.getSentEmailsLastHour();
-        int minutesSinceLastSentEmail = registrationLogDao.getMinutesSinceLastSentEmail();
+        long minutesSinceLastSentEmail = registrationLogDao.getMinutesSinceLastSentEmail();
         boolean maxRegistrationsPerHourBreached = sentEmailsLastHour <= siteConfig.getMaxRegistrationsPerHour();
         boolean intervalBetweenSendingNotReached = minutesSinceLastSentEmail >= sentEmailsLastHour * siteConfig.getRegistrationInterval();
         logger.info("Checking sending registration email conditions: max registrations limit: {}, interval between sending : {} ", maxRegistrationsPerHourBreached, intervalBetweenSendingNotReached);
