@@ -18,6 +18,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.org.linux.auth.AuthUtil;
 import ru.org.linux.group.Group;
 import ru.org.linux.section.Section;
 import ru.org.linux.tag.TagNotFoundException;
@@ -27,6 +28,7 @@ import ru.org.linux.user.UserErrorException;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TopicListService {
@@ -128,6 +130,13 @@ public class TopicListService {
     return getUserTopicsFeed(user, null, null, offset, isFavorite, watches);
   }
 
+  private List<Topic> filterRestrictedAccessTopics(List<Topic> userTopics) {
+    @Nullable User currentUser = AuthUtil.getCurrentUser();
+    return userTopics.stream().
+            filter(aTopic -> aTopic.getSectionId() != Section.SECTION_CLUB || (currentUser!=null && currentUser.hasClubAccess()))
+            .collect(Collectors.toList());
+  }
+
   /**
    * Получение списка топиков пользователя.
    *
@@ -160,7 +169,7 @@ public class TopicListService {
       topicListDto.setGroup(group.getId());
     }
 
-    return topicListDao.getTopics(topicListDto, null);
+    return filterRestrictedAccessTopics(topicListDao.getTopics(topicListDto, null));
   }
 
   /**
