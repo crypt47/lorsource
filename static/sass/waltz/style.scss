@@ -296,6 +296,13 @@ input[type="checkbox"] {
   background-color: $article_background;
 }
 
+.mini-news {
+  border-radius: .5em;
+  border: 1px solid $article_border_color;
+  margin-bottom: 1em;
+  background-color: $article_background;
+}
+
 blockquote {
     border-left-color: #555753;
 }
@@ -475,6 +482,26 @@ fieldset legend {
 
 .stars {
   color: $stars_color;
+}
+
+.icon-tag-color {
+    color: $icon_tag_color;
+}
+
+.icon-reply-color {
+    color: $icon_reply_color;
+}
+
+.icon-pin-color {
+    color: $icon_pin_color;
+}
+
+.icon-system-color {
+    color: $icon_pin_color;
+}
+
+#bd .event-unread-true {
+    background-color: #D3D7CF;
 }
 
 @import "../responsive";

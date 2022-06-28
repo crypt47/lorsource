@@ -164,6 +164,17 @@ p {
                 }
             }
 
+
+	    .event-unread-false {
+            a {
+                text-decoration: none;
+                color: $table_border_color;
+                &:visited {
+                    color: $table_border_color;
+                }
+            }
+            }
+
             s {
                 text-decoration: line-through;
             }
@@ -246,6 +257,15 @@ input[type="checkbox"] {
 }
 
 .infoblock {
+    border-radius: 0.2em;
+    border: 0;
+    margin-bottom: 0.5em;
+    color: black;
+    background-color: $amber_pale;
+    //$article_background;
+}
+
+.mini-news {
     border-radius: 0.2em;
     border: 0;
     margin-bottom: 0.5em;
@@ -536,3 +556,7 @@ fieldset legend {
     }
 }
 
+#bd .event-unread-true {
+    color: #babdb6;
+    background-color: #42464e;
+}

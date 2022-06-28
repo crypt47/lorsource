@@ -527,6 +527,20 @@ h1 {
     }
 }
 
+.mini-news {
+    @include clearfix();
+
+    padding: .5em;
+    border: 1px solid;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    h2 {
+        font-weight: bold;
+        margin-top: 0;
+    }
+}
+
 .infoblock-small {
     font-size: smaller;
 }

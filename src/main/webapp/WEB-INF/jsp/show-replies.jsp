@@ -100,7 +100,7 @@
 <div class=forum>
     <table width="100%" class="message-table">
         <c:forEach var="topic" items="${topicsList}">
-        <tr>
+        <tr class="event-unread-${topic.event.unread}">
             <td align="center">
                 <c:choose>
                 <c:when test="${topic.event.type == 'DELETED'}">
@@ -130,21 +130,10 @@
                     <i class="icon-system-color emoji">&#128274;</i>
                     </c:when>
                     </c:choose>
-
-
                     <l:title>${topic.event.subj}</l:title>
                 </a>
-                <%--   <c:choose>
-                <c:when test="${topic.section.name == 'Club'}">
-                <i class="icon-system-color emoji">&#128274;</i>(${topic.section.name})
-                </c:when>
-                <c:otherwise>
-                (${topic.section.name})
-                </c:otherwise>
-                </c:choose>--%>
-
             </td>
-            <td>
+            <td class="last_td">
                 <c:if test="${topic.author != null}">
                 <a class="sign" itemprop="creator" href="/people/<lor:user user="${topic.author}"/>/profile">
                     <lor:user user="${topic.author}"/></a>
@@ -155,23 +144,8 @@
                 </c:forEach>
                 </c:if>
             </td>
-            <%--            <td>
-
-                <c:forEach var="tag" items="${topic.tags}">
-                <span class="tag">${tag}</span>
-                </c:forEach>
-
-
-
-                <c:if test="${topic.event.type == 'DELETED'}">
-                <br>
-                <c:out value="${topic.event.eventMessage}" escapeXml="true"/> (${topic.bonus})
-                </c:if>
-
-                <c:if test="${topic.event.unread}">&bull;</c:if>
-            </td>--%>
         </tr>
-                </c:forEach>
+        </c:forEach>
 
     </table>
 </div>
