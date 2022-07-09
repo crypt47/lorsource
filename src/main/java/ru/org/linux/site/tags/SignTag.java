@@ -20,6 +20,7 @@ import de.neuland.jade4j.JadeConfiguration;
 import de.neuland.jade4j.template.JadeTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import ru.org.linux.auth.AuthUtil;
 import ru.org.linux.site.DateFormats;
 import ru.org.linux.user.ApiUserRef;
 
@@ -92,11 +93,11 @@ public class SignTag extends TagSupport {
 
   public static class DateFormatHandler {
     public String apply(Date input) {
-      return DateFormats.getDefault().print(input.getTime());
+      return DateFormats.format(input, AuthUtil.getProfile().getTimeZone(), DateFormats.getDefaultJavaDateFormat());
     }
 
     public String iso(Date input) {
-      return DateFormats.iso8601().print(input.getTime());
+      return DateFormats.isoDateTime(input, AuthUtil.getProfile().getTimeZone());
     }
   }
 }

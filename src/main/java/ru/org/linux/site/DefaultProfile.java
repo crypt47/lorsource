@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import ru.org.linux.markup.MarkupType;
+import ru.org.linux.spring.SiteConfig;
 import ru.org.linux.tracker.TrackerFilterEnum;
 
 import javax.annotation.Nonnull;
@@ -84,6 +85,8 @@ public final class DefaultProfile {
     ImmutableList<String> boxes = ImmutableList.of("poll", "top10", "gallery", "tagcloud");
 
     builder.put(BOXES_MAIN2_PROPERTY, boxes);
+
+    builder.put(TIME_ZONE, SiteConfig.DEFAULT_TIMEZONE);
 
     return builder.build();
   }

@@ -40,6 +40,7 @@ public class Profile {
   public static final String BOXES_MAIN2_PROPERTY = "main2";
   public static final String TRACKER_MODE = "trackerMode";
   public static final String OLD_TRACKER = "oldTracker";
+  public static final String TIME_ZONE = "timeZone";
 
   public static final String MAIN_BLOGS_PROPERTY = "mainBlogs";
 
@@ -59,6 +60,8 @@ public class Profile {
 
   private List<String> boxes;
 
+  private String timeZone;
+
   public Profile(ProfileHashtable p, List<String> boxes) {
     style = fixStyle(p.getString(STYLE_PROPERTY));
     formatMode = fixFormat(p.getString(FORMAT_MODE_PROPERTY));
@@ -77,6 +80,7 @@ public class Profile {
 
     oldTracker = p.getBoolean(OLD_TRACKER);
 
+    timeZone = p.getString(TIME_ZONE);
     this.boxes = boxes;
   }
 
@@ -95,6 +99,7 @@ public class Profile {
     p.setBoolean(SHOW_ANONYMOUS_PROPERTY, showAnonymous);
     p.setString(TRACKER_MODE, trackerMode.getValue());
     p.setBoolean(OLD_TRACKER, oldTracker);
+    p.setString(TIME_ZONE, timeZone);
 
     return p.getSettings();
   }
@@ -233,6 +238,15 @@ public class Profile {
 
   public void setBoxlets(List<String> list) {
     boxes = new ArrayList<>(list);
+  }
+
+
+  public String getTimeZone() {
+    return timeZone;
+  }
+
+  public void setTimeZone(String timeZone) {
+    this.timeZone = timeZone;
   }
 
   public static Profile createDefault() {

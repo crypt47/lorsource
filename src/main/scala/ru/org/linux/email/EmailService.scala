@@ -111,7 +111,7 @@ class EmailService(siteConfig: SiteConfig, @Qualifier("exceptionMailingActor") e
          |https://linuxtalks.co/register.jsp?invite=${URLEncoder.encode(inviteCode, "utf-8")}
          |
          |Эта ссылка позволяет зарегистрировать только одну учетную запись. Ссылка действует
-         |до ${DateFormats.getDefault.print(validUntil)}.
+         |до ${DateFormats.dateTime(validUntil.toDate, SiteConfig.DEFAULT_TIMEZONE)}.
          |
          |До встречи!
          |

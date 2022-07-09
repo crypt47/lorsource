@@ -27,6 +27,9 @@ import ru.org.linux.user.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
+import java.time.ZoneId;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Template {
   @Nonnull
@@ -97,6 +100,10 @@ public final class Template {
 
   public boolean isCorrectorSession() {
     return AuthUtil.isCorrectorSession();
+  }
+
+  public Set<String> getAvailableTimeZones() {
+    return SiteConfig.AVAILABLE_TIMEZONES;
   }
 
   /**

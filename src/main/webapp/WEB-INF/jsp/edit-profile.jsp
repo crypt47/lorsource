@@ -52,6 +52,15 @@ $script.ready('plugins', function() {
 <td><input type="checkbox" name="mainGallery" <c:if test="${template.prof.showGalleryOnMain}">checked</c:if> ></td></tr>
 <tr><td>Показывать блоги в ленте на главной</td>
 <td><input type="checkbox" name="mainBlogs" <c:if test="${template.prof.showBlogsOnMain}">checked</c:if> ></td></tr>
+
+<tr><td>Часовой пояс</td>
+<td>
+  <select name="timeZone">
+    <c:forEach var="tzName" items="${template.availableTimeZones}">
+      <option value="${tzName}" ${template.prof.timeZone == tzName ? 'selected="selected"' : ''}>${tzName}</option>
+    </c:forEach>
+  </select>
+</td></tr>
 <%--  <tr>
     <td>Старый вид трекера и форума</td>
     <td><input type="checkbox" name="oldTracker"
