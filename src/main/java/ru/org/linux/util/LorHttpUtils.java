@@ -17,54 +17,62 @@ package ru.org.linux.util;
 
 import com.google.common.base.Joiner;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.InetAddresses;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
 public final class LorHttpUtils {
-	private LorHttpUtils() {
-	}
+    private LorHttpUtils() {
+    }
 
-	public static Properties getCookies(Cookie[] cookies) {
-		Properties c = new Properties();
+    public static Properties getCookies(Cookie[] cookies) {
+        Properties c = new Properties();
 
-		if (cookies == null) {
-			return c;
-		}
+        if (cookies == null) {
+            return c;
+        }
 
-		for (Cookie cooky : cookies) {
-			String n = cooky.getName();
-			if (n != null) {
-				c.put(n, cooky.getValue());
-			}
-		}
+        for (Cookie cooky : cookies) {
+            String n = cooky.getName();
+            if (n != null) {
+                c.put(n, cooky.getValue());
+            }
+        }
 
-		return c;
-	}
+        return c;
+    }
 
-	public static String getRequestIp(HttpServletRequest request) {
-		String ipAddress = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
-		if (ipAddress == null) {
-			ipAddress = request.getRemoteAddr();
-		}
-		return ipAddress;
-	}
+    public static String getRequestIp(HttpServletRequest request) {
+        String ipAddress = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        return Arrays.stream(ipAddress.split(","))
+                .filter(InetAddresses::isInetAddress)
+                .map(InetAddresses::forString)
+                .filter(inetAddress -> !inetAddress.isSiteLocalAddress())
+                .reduce((first, second) -> second)
+                .orElse(InetAddresses.forString(request.getRemoteAddr()))
+                .getHostAddress();
+    }
 
-	public static String logRequestIp(HttpServletRequest request) {
-		String ipAddress = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
-		if (ipAddress == null) {  
-			ipAddress = request.getRemoteAddr();  
-		}
-		String logmessage = "ip:" + ipAddress;
-		ArrayList<String> xff = Collections.list(request.getHeaders(HttpHeaders.X_FORWARDED_FOR));
+    public static String logRequestIp(HttpServletRequest request) {
+        String ipAddress = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        String logmessage = "ip:" + ipAddress;
+        ArrayList<String> xff = Collections.list(request.getHeaders(HttpHeaders.X_FORWARDED_FOR));
 
-		if (!xff.isEmpty()) {
-			logmessage = logmessage + " XFF:" + Joiner.on(", ").join(xff);
-		}
+        if (!xff.isEmpty()) {
+            logmessage = logmessage + " XFF:" + Joiner.on(", ").join(xff);
+        }
 
-		return logmessage;
-	}
+        return logmessage;
+    }
 }
