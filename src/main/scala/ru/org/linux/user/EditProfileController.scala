@@ -107,7 +107,7 @@ class EditProfileController(
     tmpl.getProf.setFormatMode(formatMode)
     tmpl.getProf.setStyle(request.getParameter("style"))
     userDao.setStyle(tmpl.getCurrentUser, request.getParameter("style"))
-    tmpl.getProf.setOldTracker("on" == request.getParameter("oldTracker"))
+    tmpl.getProf.setOldTracker(true)
     tmpl.getProf.setTrackerMode(TrackerFilterEnum.getByValue(request.getParameter("trackerMode"), tmpl.isModeratorSession).orElse(DefaultProfile.DEFAULT_TRACKER_MODE))
 
     val avatar = request.getParameter("avatar")

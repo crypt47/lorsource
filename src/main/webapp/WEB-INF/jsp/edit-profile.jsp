@@ -45,9 +45,7 @@ $script.ready('plugins', function() {
 <tr><td>Показывать фотографии</td>
 <td><input type="checkbox" name="photos" <c:if test="${template.prof.showPhotos}">checked</c:if> ></td></tr>
 <tr><td>Показывать анонимные комментарии</td>
-<%--<td><input type="checkbox" name="showanonymous" <c:if test="${template.prof.showAnonymous}">checked</c:if> ></td></tr>
-<tr><td>Показывать меньше рекламы (доступна пользователям начиная с одной зеленой звезды)</td>--%>
-<td><input type="checkbox" <c:if test="${template.currentUser.score<100 && !template.prof.hideAdsense}">disabled</c:if> name="hideAdsense" <c:if test="${template.prof.hideAdsense}">checked</c:if> ></td></tr>
+<td><input type="checkbox" name="showanonymous" <c:if test="${template.prof.showAnonymous}">checked</c:if> ></td></tr>
 <tr><td>Показывать галерею в ленте на главной</td>
 <td><input type="checkbox" name="mainGallery" <c:if test="${template.prof.showGalleryOnMain}">checked</c:if> ></td></tr>
 <tr><td>Показывать блоги в ленте на главной</td>
@@ -61,11 +59,6 @@ $script.ready('plugins', function() {
     </c:forEach>
   </select>
 </td></tr>
-<%--  <tr>
-    <td>Старый вид трекера и форума</td>
-    <td><input type="checkbox" name="oldTracker"
-               <c:if test="${template.prof.oldTracker}">checked</c:if> ></td>
-</tr>--%>
   <tr><td colspan=2><hr></td></tr>
 
 

@@ -44,7 +44,7 @@ public final class DefaultProfile {
   private static final ImmutableList<String> AVATAR_TYPES =
           ImmutableList.of("empty", "identicon", "monsterid", "wavatar", "retro", "robohash");
 
-  public static final TrackerFilterEnum DEFAULT_TRACKER_MODE = TrackerFilterEnum.MAIN;
+  public static final TrackerFilterEnum DEFAULT_TRACKER_MODE = TrackerFilterEnum.ALL;
 
   private static final ImmutableMap<String, Object> defaultProfile = createDefaultProfile();
 
@@ -76,7 +76,7 @@ public final class DefaultProfile {
     builder.put(HIDE_ADSENSE_PROPERTY, true);
     builder.put(MAIN_GALLERY_PROPERTY, false);
     builder.put(MAIN_BLOGS_PROPERTY, false);
-/*    builder.put(TRACKER_MODE, DEFAULT_TRACKER_MODE.getValue());*/
+    builder.put(TRACKER_MODE, DEFAULT_TRACKER_MODE.getValue());
     builder.put(OLD_TRACKER, true);
 
     builder.put("DebugMode", Boolean.FALSE);
