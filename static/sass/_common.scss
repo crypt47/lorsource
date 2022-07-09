@@ -294,9 +294,15 @@ DIV.sign {
 }
 
 div[itemprop="articleBody"] {
+    text-indent: 1em;
+    text-align: justify;
     margin-right: 4em;
     margin-bottom: .5em;
     margin-top: .5em;
+    font-family: sans-serif;
+    li {
+        text-indent: 0em;
+    }
 }
 
 .msg-container {
