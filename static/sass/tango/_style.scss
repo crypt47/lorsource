@@ -262,7 +262,6 @@ input[type="checkbox"] {
     margin-bottom: 0.5em;
     color: black;
     background-color: $amber_pale;
-    //$article_background;
 }
 
 .mini-news {
@@ -270,6 +269,7 @@ input[type="checkbox"] {
     border: 0;
     margin-bottom: 0.5em;
     background-color: $table_border_color;
+    color: $header_color;
     //$article_background;
 }
 
@@ -527,10 +527,12 @@ fieldset legend {
 }
 
 .mini-news-title {
-    color: $header_color;
+    text-decoration: none !important;
+    a {
+    text-decoration: none !important;
+    }
+    color: $header_color !important;
 }
-
-
 
 .icon-user-color {
     color: $icon_user_color;
