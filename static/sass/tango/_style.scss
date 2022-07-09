@@ -164,6 +164,17 @@ p {
                 }
             }
 
+
+	    .event-unread-false {
+            a {
+                text-decoration: none;
+                color: $table_border_color;
+                &:visited {
+                    color: $table_border_color;
+                }
+            }
+            }
+
             s {
                 text-decoration: line-through;
             }
@@ -249,7 +260,16 @@ input[type="checkbox"] {
     border-radius: 0.2em;
     border: 0;
     margin-bottom: 0.5em;
+    color: black;
+    background-color: $amber_pale;
+}
+
+.mini-news {
+    border-radius: 0.2em;
+    border: 0;
+    margin-bottom: 0.5em;
     background-color: $table_border_color;
+    color: $header_color;
     //$article_background;
 }
 
@@ -507,10 +527,12 @@ fieldset legend {
 }
 
 .mini-news-title {
-    color: $header_color;
+    text-decoration: none !important;
+    a {
+    text-decoration: none !important;
+    }
+    color: $header_color !important;
 }
-
-
 
 .icon-user-color {
     color: $icon_user_color;
@@ -536,3 +558,7 @@ fieldset legend {
     }
 }
 
+#bd .event-unread-true {
+    color: #babdb6;
+    background-color: #42464e;
+}

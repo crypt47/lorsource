@@ -294,9 +294,18 @@ DIV.sign {
 }
 
 div[itemprop="articleBody"] {
+    a {
+	text-decoration: none;
+    }
+    text-indent: 1em;
+    text-align: justify;
     margin-right: 4em;
     margin-bottom: .5em;
     margin-top: .5em;
+    font-family: sans-serif;
+    li {
+        text-indent: 0em;
+    }
 }
 
 .msg-container {
@@ -514,6 +523,20 @@ h1 {
 }
 
 .infoblock {
+    @include clearfix();
+
+    padding: .5em;
+    border: 1px solid;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    h2 {
+        font-weight: bold;
+        margin-top: 0;
+    }
+}
+
+.mini-news {
     @include clearfix();
 
     padding: .5em;

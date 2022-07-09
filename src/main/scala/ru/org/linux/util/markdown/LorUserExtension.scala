@@ -62,7 +62,7 @@ object LorUserParserExtension {
 }
 
 class LorUser(openingMarker: BasedSequence, text: BasedSequence)
-  extends Node(Node.spanningChars(openingMarker, text)) with DoNotDecorate {
+extends Node(Node.spanningChars(openingMarker, text)) with DoNotDecorate {
 
   override def getSegments: Array[BasedSequence] = { //return EMPTY_SEGMENTS;
     Array[BasedSequence](openingMarker, text)
@@ -102,9 +102,9 @@ class LorUserParserExtension(val inlineParser: InlineParser) extends InlineParse
       } else {
         false
       }
-    } else {
-      false
-    }
+      } else {
+        false
+      }
   }
 }
 
@@ -126,40 +126,47 @@ class LorUserRenderer(userService: UserService, toHtmlFormatter: ToHtmlFormatter
             .attr("style", "white-space: nowrap")
             .tag("span")
 
-          /*html
-            .attr("src", "/img/tuxlor.png")
-            .withAttr(tuxLink)
-            .attr("alt", "@")
-            .attr("title", "@")
-            .attr("width", "7")
-            .attr("height", "16")
-            .tagVoid("img")*/
+            /*html
+              .attr("src", "/img/tuxlor.png")
+              .withAttr(tuxLink)
+              .attr("alt", "@")
+              .attr("title", "@")
+              .attr("width", "7")
+              .attr("height", "16")
+              .tagVoid("img")*/
 
-          if (user.isBlocked) {
-            html.tag("s")
-          }
-          /*             .text("👤")*/
-          /*html
-             .withAttr()
-             .attr("class","icon-system-color emoji")
-             .tag("i")
-	    .text("👤")
-          html.closeTag("i")*/
-          
-          html.withAttr().attr("class", "mention").tag("i")
+             if (user.isBlocked) {
+               html.tag("s")
+             }
+             /* .text("👤") - man emoji */
+            /* html
+              .withAttr()
+              .attr("class","icon-system-color emoji")
+              .tag("i")
+              .text("👤") 
+              html.closeTag("i")*/
 
-          html
-            .attr("href", resolvedLink.getUrl)
-            .withAttr(resolvedLink)
-            .tag("a", false, false, () => html.text(nick))
+             html
+               .withAttr()
+               .attr("class","icon-system-color emoji")
+               .tag("i")
+               .text("@")
+               html.closeTag("i")
 
-	  html.closeTag("i")
+               html.withAttr().attr("class", "mention").tag("i")
 
-          if (user.isBlocked) {
-            html.closeTag("s")
-          }
+               html
+                 .attr("href", resolvedLink.getUrl)
+                 .withAttr(resolvedLink)
+                 .tag("a", false, false, () => html.text(nick))
 
-          html.closeTag("span")
+                 html.closeTag("i")
+
+                 if (user.isBlocked) {
+                   html.closeTag("s")
+                 }
+
+                 html.closeTag("span")
         case _ =>
           html.tag("s")
           html.text(node.getChars.toString)
