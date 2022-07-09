@@ -54,11 +54,12 @@
   <c:if test="${original != null}">
     <input type="hidden" name="original" value="${original}">
   </c:if>
+  <%--
   <c:if test="${not empty modes}">
     <label>Разметка:*<br>
       <form:select path="mode" items="${modes}"/></label><br>
   </c:if>
-
+  --%>
 
   <div class="control-group">
     <label for="msg">Сообщение</label>
