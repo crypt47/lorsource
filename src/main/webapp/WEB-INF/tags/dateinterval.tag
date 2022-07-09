@@ -1,5 +1,6 @@
 <%@ tag import="org.joda.time.DateTime" %>
 <%@ tag import="ru.org.linux.site.DateFormats" %>
+<%@ tag import="ru.org.linux.auth.AuthUtil" %>
 <%@ tag pageEncoding="utf-8" trimDirectiveWhitespaces="true" %>
 <%--
   ~ Copyright 1998-2015 Linux.org.ru
@@ -16,7 +17,8 @@
   ~    limitations under the License.
   --%>
 <%@ attribute name="compact" required="false" type="java.lang.Boolean"%>
-<%@ attribute name="date" required="true" type="java.util.Date" %><time datetime="<%= DateFormats.iso8601().print(date.getTime()) %>"><%
+<%@ attribute name="date" required="true" type="java.util.Date" %><time datetime="<%= DateFormats.isoDateTime(date, AuthUtil.getProfile().getTimeZone()) %>"><%
+  String timeZone = AuthUtil.getProfile().getTimeZone();
   long diff = System.currentTimeMillis() - date.getTime();
   boolean comp = compact!=null && compact;
   DateTime c = new DateTime(date.getTime());
@@ -46,21 +48,21 @@
     }
   } else if (c.isAfter(today)) {
     if (comp) {
-      out.print(DateFormats.time().print(c));
+      out.print(DateFormats.time(c.toDate(), timeZone));
     } else {
-      out.print("сегодня " + DateFormats.time().print(c));
+      out.print("сегодня " + DateFormats.time(c.toDate(), timeZone));
     }
   } else if (c.isAfter(yesterday)) {
     if (comp) {
       out.print("вчера");
     } else {
-      out.print("вчера " + DateFormats.time().print(c));
+      out.print("вчера " + DateFormats.time(c.toDate(), timeZone));
     }
   } else {
     if (comp) {
-      out.print(DateFormats.date().print(c));
+      out.print(DateFormats.date(c.toDate(), timeZone));
     } else {
-      out.print(DateFormats.getShort().print(c));
+      out.print(DateFormats.dateTime(c.toDate(), timeZone));
     }
   }
 %></time>

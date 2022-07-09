@@ -1,4 +1,5 @@
 <%@ tag import="ru.org.linux.site.DateFormats" %>
+<%@ tag import="ru.org.linux.auth.AuthUtil" %>
 <%@ tag pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %>
 <%--
   ~ Copyright 1998-2015 Linux.org.ru
@@ -15,6 +16,6 @@
   ~    limitations under the License.
   --%>
 <%@ attribute name="date" required="true" type="java.util.Date" %><%
-  out.print(DateFormats.rfc822().print(date.getTime()));
+  out.print(DateFormats.rfc(date, AuthUtil.getProfile().getTimeZone()));
 %>
 

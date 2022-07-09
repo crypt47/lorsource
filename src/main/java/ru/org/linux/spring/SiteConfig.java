@@ -22,200 +22,208 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Конфигурация
  */
 @Service
 public class SiteConfig {
-  private static final String ERR_MSG = "Invalid MainUrl property: ";
+    private static final String ERR_MSG = "Invalid MainUrl property: ";
 
-  private final Properties properties;
+    public static final Set<String> AVAILABLE_TIMEZONES = new TreeSet<>(ZoneId.getAvailableZoneIds());
+    public static final String DEFAULT_TIMEZONE = "Europe/Amsterdam";
+    private final Properties properties;
 
-  private URI mainURI;
-  private URI secureURI;
+    private URI mainURI;
+    private URI secureURI;
 
-  @Autowired
-  public SiteConfig(@Qualifier("properties") Properties properties) {
-    this.properties = properties;
-  }
-
-  /**
-   * Предполагается, что на этапе запуска приложения, если с MainUrl что-то не так то контейнер не запустится :-)
-   */
-  @PostConstruct
-  public void init() {
-    try {
-      mainURI = new URI(properties.getProperty("MainUrl"), true, "UTF-8");
-    } catch (Exception e) {
-      throw new RuntimeException(ERR_MSG +e.getMessage());
-    }
-    if(!mainURI.isAbsoluteURI()) {
-      throw new RuntimeException(ERR_MSG +"URI not absolute path");
+    @Autowired
+    public SiteConfig(@Qualifier("properties") Properties properties) {
+        this.properties = properties;
     }
 
-    try {
-      String mainHost = mainURI.getHost();
-      if(mainHost == null) {
-        throw new RuntimeException(ERR_MSG +"bad URI host");
-      }
-    } catch (URIException e) {
-     throw new RuntimeException(ERR_MSG +e.getMessage());
+    /**
+     * Предполагается, что на этапе запуска приложения, если с MainUrl что-то не так то контейнер не запустится :-)
+     */
+    @PostConstruct
+    public void init() {
+        try {
+            mainURI = new URI(properties.getProperty("MainUrl"), true, "UTF-8");
+        } catch (Exception e) {
+            throw new RuntimeException(ERR_MSG + e.getMessage());
+        }
+        if (!mainURI.isAbsoluteURI()) {
+            throw new RuntimeException(ERR_MSG + "URI not absolute path");
+        }
+
+        try {
+            String mainHost = mainURI.getHost();
+            if (mainHost == null) {
+                throw new RuntimeException(ERR_MSG + "bad URI host");
+            }
+        } catch (URIException e) {
+            throw new RuntimeException(ERR_MSG + e.getMessage());
+        }
+
+        try {
+            secureURI = new URI(properties.getProperty("SecureUrl", mainURI.toString().replaceFirst("http", "https")), true, "UTF-8");
+        } catch (Exception e) {
+            throw new RuntimeException(ERR_MSG + e.getMessage());
+        }
     }
 
-    try {
-      secureURI = new URI(properties.getProperty("SecureUrl", mainURI.toString().replaceFirst("http", "https")), true, "UTF-8");
-    } catch (Exception e) {
-      throw new RuntimeException(ERR_MSG +e.getMessage());
+    public String getSecureUrlWithoutSlash() {
+        return getSecureUrl().replaceFirst("/$", "");
     }
-  }
 
-  public String getSecureUrlWithoutSlash() {
-    return getSecureUrl().replaceFirst("/$", "");
-  }
-
-  public String getSecureUrl() {
-    return secureURI.toString();
-  }
-
-  public URI getSecureURI() {
-    return secureURI;
-  }
-
-  public String getWSUrl() {
-    return properties.getProperty("WSUrl");
-  }
-
-  public URI getMainURI() {
-    return mainURI;
-  }
-
-  public String getElasticsearch() {
-    return properties.getProperty("Elasticsearch");
-  }
-
-  public String getSmtpHost() {
-    return Optional.ofNullable(properties.getProperty("smtp.host")).orElse("localhost");
-  }
-
-  public Integer getSmtpPort() {
-    return Integer.parseInt(Optional.ofNullable(properties.getProperty("smtp.port")).orElse("25"));
-  }
-  public String getSmtpLogin() {
-    return properties.getProperty("smtp.login");
-  }
-  public String getSmtpPass() {
-    return properties.getProperty("smtp.pass");
-  }
-
-  public String getHTMLPathPrefix() {
-    return properties.getProperty("HTMLPathPrefix");
-  }
-
-  public String getUploadPath() {
-    return properties.getProperty("upload.path");
-  }
-
-  public String getCaptchaPublicKey() {
-    return properties.getProperty("recaptcha.public");
-  }
-
-  public String getCaptchaPrivateKey() {
-    return properties.getProperty("recaptcha.private");
-  }
-
-  public String getSecret() {
-    return properties.getProperty("Secret");
-  }
-  public String getAdminEmailAddress() {
-    return properties.getProperty("admin.emailAddress");
-  }
-
-  /**
-   * Разрешено ли модераторам править чужие комментарии.
-   *
-   * @return true если разрешено, иначе false
-   */
-  public Boolean isModeratorAllowedToEditComments() {
-    String property = properties.getProperty("comment.isModeratorAllowedToEdit");
-    if (property == null) {
-      return false;
+    public String getSecureUrl() {
+        return secureURI.toString();
     }
-    return Boolean.valueOf(property);
-  }
 
-  /**
-   * Добавление заголовков Strict-Transport-Security.
-   *
-   * @return true если разрешено, иначе false
-   */
-  public Boolean enableHsts() {
-    String property = properties.getProperty("EnableHsts");
-    if (property == null) {
-      return false;
+    public URI getSecureURI() {
+        return secureURI;
     }
-    return Boolean.valueOf(property);
-  }
 
-  /**
-   * По истечении какого времени с момента добавления комментарий нельзя будет изменять.
-   *
-   * @return время в минутах
-   */
-  public Integer getCommentExpireMinutesForEdit() {
-    String property = properties.getProperty("comment.expireMinutesForEdit");
-    if (property == null) {
-      return null;
+    public String getWSUrl() {
+        return properties.getProperty("WSUrl");
     }
-    return Integer.valueOf(property);
-  }
 
-  /**
-   * Разрешено ли редактировать комментарии, если есть ответы.
-   *
-   * @return true если разрешено, иначе false
-   */
-  public Boolean isCommentEditingAllowedIfAnswersExists() {
-    String property = properties.getProperty("comment.isEditingAllowedIfAnswersExists");
-    if (property == null) {
-      return false;
+    public URI getMainURI() {
+        return mainURI;
     }
-    return Boolean.valueOf(property);
-  }
 
-  /**
-   * какое минимальное значение скора должно быть, чтобы пользователь мог редактировать комментарии.
-   *
-   * @return минимальное значение скора
-   */
-  public Integer getCommentScoreValueForEditing() {
-    String property = properties.getProperty("comment.scoreValueForEditing");
-    if (property == null) {
-      return null;
+    public String getElasticsearch() {
+        return properties.getProperty("Elasticsearch");
     }
-    return Integer.valueOf(property);
-  }
 
-  public String getTelegramToken() {
-    return properties.getProperty("telegram.token");
-  }
-
-
-  public Integer getMaxComplaintsCount() {
-    String property = properties.getProperty("user.maxComplaintsCount");
-    if (property == null) {
-      return 3;
+    public String getSmtpHost() {
+        return Optional.ofNullable(properties.getProperty("smtp.host")).orElse("localhost");
     }
-    return Integer.valueOf(property);
-  }
 
-  public int getMaxRegistrationsPerHour() {
-    return Integer.parseInt(Optional.ofNullable(properties.getProperty("registrations.maxPerHour")).orElse("6"));
-  }
+    public Integer getSmtpPort() {
+        return Integer.parseInt(Optional.ofNullable(properties.getProperty("smtp.port")).orElse("25"));
+    }
 
-  public int getRegistrationInterval() {
-    return Integer.parseInt(Optional.ofNullable(properties.getProperty("registrations.interval")).orElse("10"));
-  }
+    public String getSmtpLogin() {
+        return properties.getProperty("smtp.login");
+    }
+
+    public String getSmtpPass() {
+        return properties.getProperty("smtp.pass");
+    }
+
+    public String getHTMLPathPrefix() {
+        return properties.getProperty("HTMLPathPrefix");
+    }
+
+    public String getUploadPath() {
+        return properties.getProperty("upload.path");
+    }
+
+    public String getCaptchaPublicKey() {
+        return properties.getProperty("recaptcha.public");
+    }
+
+    public String getCaptchaPrivateKey() {
+        return properties.getProperty("recaptcha.private");
+    }
+
+    public String getSecret() {
+        return properties.getProperty("Secret");
+    }
+
+    public String getAdminEmailAddress() {
+        return properties.getProperty("admin.emailAddress");
+    }
+
+    /**
+     * Разрешено ли модераторам править чужие комментарии.
+     *
+     * @return true если разрешено, иначе false
+     */
+    public Boolean isModeratorAllowedToEditComments() {
+        String property = properties.getProperty("comment.isModeratorAllowedToEdit");
+        if (property == null) {
+            return false;
+        }
+        return Boolean.valueOf(property);
+    }
+
+    /**
+     * Добавление заголовков Strict-Transport-Security.
+     *
+     * @return true если разрешено, иначе false
+     */
+    public Boolean enableHsts() {
+        String property = properties.getProperty("EnableHsts");
+        if (property == null) {
+            return false;
+        }
+        return Boolean.valueOf(property);
+    }
+
+    /**
+     * По истечении какого времени с момента добавления комментарий нельзя будет изменять.
+     *
+     * @return время в минутах
+     */
+    public Integer getCommentExpireMinutesForEdit() {
+        String property = properties.getProperty("comment.expireMinutesForEdit");
+        if (property == null) {
+            return null;
+        }
+        return Integer.valueOf(property);
+    }
+
+    /**
+     * Разрешено ли редактировать комментарии, если есть ответы.
+     *
+     * @return true если разрешено, иначе false
+     */
+    public Boolean isCommentEditingAllowedIfAnswersExists() {
+        String property = properties.getProperty("comment.isEditingAllowedIfAnswersExists");
+        if (property == null) {
+            return false;
+        }
+        return Boolean.valueOf(property);
+    }
+
+    /**
+     * какое минимальное значение скора должно быть, чтобы пользователь мог редактировать комментарии.
+     *
+     * @return минимальное значение скора
+     */
+    public Integer getCommentScoreValueForEditing() {
+        String property = properties.getProperty("comment.scoreValueForEditing");
+        if (property == null) {
+            return null;
+        }
+        return Integer.valueOf(property);
+    }
+
+    public String getTelegramToken() {
+        return properties.getProperty("telegram.token");
+    }
+
+
+    public Integer getMaxComplaintsCount() {
+        String property = properties.getProperty("user.maxComplaintsCount");
+        if (property == null) {
+            return 3;
+        }
+        return Integer.valueOf(property);
+    }
+
+    public int getMaxRegistrationsPerHour() {
+        return Integer.parseInt(Optional.ofNullable(properties.getProperty("registrations.maxPerHour")).orElse("6"));
+    }
+
+    public int getRegistrationInterval() {
+        return Integer.parseInt(Optional.ofNullable(properties.getProperty("registrations.interval")).orElse("10"));
+    }
 }

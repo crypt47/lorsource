@@ -15,57 +15,40 @@
 
 package ru.org.linux.site;
 
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Locale;
 
-public class DateFormats {
-  public static final Locale RUSSIAN_LOCALE = new Locale("ru");
+public enum DateFormats {
+    ;
+    public static final Locale RUSSIAN_LOCALE = new Locale("ru");
 
-  private static final DateTimeFormatter DEFAULT =
-          DateTimeFormat.forPattern("dd.MM.yy HH:mm:ss").withLocale(RUSSIAN_LOCALE);
+    public static java.time.format.DateTimeFormatter getDefaultJavaDateFormat() {
+        return java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss (v)", RUSSIAN_LOCALE);
+    }
 
-  private static final DateTimeFormatter ISO8601 =
-          ISODateTimeFormat.dateTime();
+    public static String format(Date date, String timeZone, java.time.format.DateTimeFormatter dateTimeFormatter) {
+        return ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of(timeZone)).format(dateTimeFormatter);
+    }
 
-  private static final DateTimeFormatter SHORT =
-          DateTimeFormat.forPattern("dd.MM.yy HH:mm").withLocale(RUSSIAN_LOCALE);
+    public static String isoDateTime(Date date, String timeZone) {
+        return format(date, timeZone, java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+    }
 
-  private static final DateTimeFormatter TIME =
-          DateTimeFormat.forPattern("HH:mm").withLocale(RUSSIAN_LOCALE);
+    public static String dateTime(Date date, String timeZone) {
+        return format(date, timeZone, getDefaultJavaDateFormat());
+    }
 
-  private static final DateTimeFormatter RFC822 =
-          DateTimeFormat.forPattern("EEE, d MMM yyyy HH:mm:ss Z").withLocale(Locale.US);
+    public static String date(Date date, String timeZone) {
+        return format(date, timeZone, java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy", RUSSIAN_LOCALE));
+    }
 
-  private static final DateTimeFormatter DATE =
-          DateTimeFormat.forPattern("dd.MM.yy").withLocale(RUSSIAN_LOCALE);
+    public static String time(Date date, String timeZone) {
+        return format(date, timeZone, java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss (v)", RUSSIAN_LOCALE));
+    }
 
-  private DateFormats() {
-  }
-
-  public static DateTimeFormatter getDefault() {
-    return DEFAULT;
-  }
-
-  public static DateTimeFormatter iso8601() {
-    return ISO8601;
-  }
-
-  public static DateTimeFormatter getShort() {
-    return SHORT;
-  }
-
-  public static DateTimeFormatter time() {
-    return TIME;
-  }
-
-  public static DateTimeFormatter date() {
-    return DATE;
-  }
-
-  public static DateTimeFormatter rfc822() {
-    return RFC822;
-  }
+    public static String rfc(Date date, String timeZone) {
+        return format(date, timeZone, java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME);
+    }
 }

@@ -117,6 +117,7 @@ class EditProfileController(
 
     tmpl.getProf.setAvatarMode(avatar)
     tmpl.getProf.setShowAnonymous("on" == request.getParameter("showanonymous"))
+    tmpl.getProf.setTimeZone(request.getParameter("timeZone"))
     profileDao.writeProfile(tmpl.getCurrentUser, tmpl.getProf)
 
     new ModelAndView(new RedirectView("/people/" + nick + "/profile"))

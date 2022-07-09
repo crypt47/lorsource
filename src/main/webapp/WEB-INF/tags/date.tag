@@ -1,5 +1,6 @@
 <%@ tag pageEncoding="UTF-8" trimDirectiveWhitespaces="true" %><%@
         tag import="ru.org.linux.site.DateFormats" %>
+<%@ tag import="ru.org.linux.auth.AuthUtil" %>
 <%--
   ~ Copyright 1998-2015 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +18,6 @@
         taglib tagdir="/WEB-INF/tags" prefix="lor" %><%@
         taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@
         attribute name="itemprop" type="java.lang.String" required="false" %><%--
---%><time datetime="<%= DateFormats.iso8601().print(date.getTime()) %>" <c:if test="${not empty itemprop}">itemprop="${itemprop}"</c:if>><%
-  out.print(DateFormats.getDefault().print(date.getTime()));
+--%><time datetime="<%= DateFormats.isoDateTime(date, AuthUtil.getProfile().getTimeZone()) %>" <c:if test="${not empty itemprop}">itemprop="${itemprop}"</c:if>><%
+  out.print(DateFormats.format(date, AuthUtil.getProfile().getTimeZone(), DateFormats.getDefaultJavaDateFormat()));
 %></time>
