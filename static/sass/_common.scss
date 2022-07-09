@@ -294,6 +294,9 @@ DIV.sign {
 }
 
 div[itemprop="articleBody"] {
+    a {
+	text-decoration: none;
+    }
     text-indent: 1em;
     text-align: justify;
     margin-right: 4em;
