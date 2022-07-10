@@ -645,27 +645,10 @@
             <aggregation>
               <removeIncluded>false</removeIncluded>
               <insertNewLine>true</insertNewLine>
-              <output>${project.build.directory}/${project.build.finalName}/zomg_ponies/combined.css</output>
-              <includes>
-                <include>${project.build.directory}/${project.build.finalName}/zomg_ponies/style.css</include>
-              </includes>
-            </aggregation>
-            <aggregation>
-              <removeIncluded>false</removeIncluded>
-              <insertNewLine>true</insertNewLine>
               <output>${project.build.directory}/${project.build.finalName}/waltz/combined.css</output>
               <includes>
                 <include>${project.build.directory}/${project.build.finalName}/waltz/style.css</include>
                 <include>${project.build.directory}/${project.build.finalName}/waltz/syntax.css</include>
-              </includes>
-            </aggregation>
-            <aggregation>
-              <removeIncluded>false</removeIncluded>
-              <insertNewLine>true</insertNewLine>
-              <output>${project.build.directory}/${project.build.finalName}/black/combined.css</output>
-              <includes>
-                <include>${project.build.directory}/${project.build.finalName}/black/style.css</include>
-                <include>${project.build.directory}/${project.build.finalName}/black/ir_black.css</include>
               </includes>
             </aggregation>
           </aggregations>
