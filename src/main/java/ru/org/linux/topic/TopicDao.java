@@ -575,6 +575,14 @@ public class TopicDao {
     );
   }
 
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+  public void updateStatsAfterMove(int topicId) {
+    int commentsCount = jdbcTemplate.queryForObject("SELECT count(*) FROM comments WHERE topic=?", Integer.class, topicId);
+
+    jdbcTemplate.update("UPDATE topics SET stat1=?, lastmod=CURRENT_TIMESTAMP WHERE id = ?", commentsCount, topicId);
+    jdbcTemplate.update("UPDATE topics SET stat3=stat1 WHERE id=? AND stat3 > stat1", topicId);
+  }
+
   public List<Integer> getAllByUser(User user) {
     return jdbcTemplate.queryForList("SELECT id FROM topics WHERE userid=? AND not deleted", Integer.class, user.getId());
   }

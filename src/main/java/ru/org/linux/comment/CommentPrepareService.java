@@ -189,9 +189,11 @@ public class CommentPrepareService {
       undeletable = topicPermissionService.isUndeletable(topic, comment, tmpl.getCurrentUser(), info);
     }
 
+    boolean extractable = topicPermissionService.canExtractComment(comment, tmpl.getCurrentUser(), topic);
+
     return new PreparedComment(comment, ref, processedMessage, replyInfo,
             deletable, editable, remark, userpic, deleteInfo, editSummary,
-            postIP, userAgent, comment.getUserAgentId(), undeletable, answerCount, answerLink, answerSamepage);
+            postIP, userAgent, comment.getUserAgentId(), undeletable, answerCount, answerLink, answerSamepage, extractable);
   }
 
   private ApiDeleteInfo loadDeleteInfo(Comment comment) throws UserNotFoundException {
@@ -267,7 +269,7 @@ public class CommentPrepareService {
         null,
         null,
             0,
-            false, 0, null, false);
+            false, 0, null, false, false);
   }
 
   public List<PreparedRSSComment> prepareCommentListRSS(

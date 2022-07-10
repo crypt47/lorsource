@@ -18,6 +18,7 @@ package ru.org.linux.topic;
 import com.google.common.base.Strings;
 import org.apache.commons.text.StringEscapeUtils;
 import org.joda.time.DateTime;
+import ru.org.linux.comment.Comment;
 import ru.org.linux.group.Group;
 import ru.org.linux.section.Section;
 import ru.org.linux.user.User;
@@ -197,6 +198,34 @@ public class Topic implements Serializable {
     allowAnonymous = form.isAllowAnonymous();
   }
 
+  public Topic(Comment comment, Group group, String topicTitle) {
+    userAgent = comment.getUserAgentId();
+    postIP = comment.getPostIP();
+    linktext = null;
+    url = null;
+    title = topicTitle;
+    sectionid = group.getSectionId();
+    postdate = comment.getPostdate();
+    userid = comment.getUserid();
+    guid = group.getId();
+    // Defaults
+    msgid = 0;
+    postscore = 0;
+    sticky = false;
+    deleted = false;
+    expired = false;
+    commitby = 0;
+    commitDate = null;
+    groupUrl = "";
+    lastModified = new Timestamp(System.currentTimeMillis());
+    commentCount = 0;
+    moderate = false;
+    notop = false;
+    resolved = false;
+    minor = false;
+    draft = false;
+    allowAnonymous = false;
+  }
   public Topic(Group group, Topic original, EditTopicRequest form, boolean publish) {
     userAgent = original.userAgent;
     postIP = original.postIP;

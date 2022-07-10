@@ -24,6 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.org.linux.auth.AuthUtil;
+import ru.org.linux.comment.Comment;
+import ru.org.linux.comment.CommentDao;
+import ru.org.linux.comment.CommentReadService;
 import ru.org.linux.gallery.ImageService;
 import ru.org.linux.gallery.UploadedImagePreview;
 import ru.org.linux.group.Group;
@@ -33,8 +37,11 @@ import ru.org.linux.poll.PollVariant;
 import ru.org.linux.section.Section;
 import ru.org.linux.section.SectionService;
 import ru.org.linux.site.ScriptErrorException;
+import ru.org.linux.spring.SiteConfig;
 import ru.org.linux.spring.dao.DeleteInfoDao;
 import ru.org.linux.spring.dao.MessageText;
+import ru.org.linux.spring.dao.MsgbaseDao;
+import ru.org.linux.spring.dao.UserAgentDao;
 import ru.org.linux.tag.TagName;
 import ru.org.linux.user.*;
 import ru.org.linux.util.LorHttpUtils;
@@ -85,6 +92,21 @@ public class TopicService {
 
   @Autowired
   private MessageTextService textService;
+
+  @Autowired
+  private MsgbaseDao msgbaseDao;
+
+  @Autowired
+  private UserAgentDao userAgentDao;
+
+  @Autowired
+  private CommentDao commentDao;
+
+  @Autowired
+  private CommentReadService commentReadService;
+
+  @Autowired
+  private SiteConfig siteConfig;
 
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
   public Tuple2<Integer, Set<Integer>> addMessage(
@@ -140,6 +162,27 @@ public class TopicService {
     return Tuple2.apply(msgid, notified);
   }
 
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+  public Topic extractCommentAsTopic(Comment comment, Group group, String topicTitle) {
+
+    MessageText messageText = msgbaseDao.getMessageText(comment.getId());
+    User user = userDao.getUser(comment.getUserid());
+    String userAgent = userAgentDao.getUserAgentById(comment.getUserAgentId());
+    Topic preparedTopic = new Topic(comment, group, topicTitle);
+    int topicId = topicDao.saveNewMessage(preparedTopic, user, messageText, userAgent, group);
+    Topic topic = topicDao.findById(topicId).orElseThrow();
+
+    commentDao.updateRepliesForExtractedComment(comment, topic);
+    topicDao.updateStatsAfterMove(comment.getTopicId()); //old topic
+    topicDao.updateStatsAfterMove(topicId); //new topic
+    commentReadService.clearCacheForTopic(comment.getTopicId());
+
+    String newTopicUrl = siteConfig.getSecureUrlWithoutSlash() + TopicLinkBuilder.baseLink(topic).build();
+    String moderator = AuthUtil.getCurrentUser() != null ? AuthUtil.getCurrentUser().getNick() : "";
+    msgbaseDao.updateMessage(comment.getId(), String.format("Ветка комментариев выделена модератором @%s в отдельный топик: %s", moderator, newTopicUrl));
+
+    return topic;
+  }
   /**
    * Отправляет уведомления типа REF (ссылка на пользователя) и TAG (уведомление по тегу)
    *

@@ -68,6 +68,8 @@ public class PreparedComment {
   private final String answerLink;
   private final boolean answerSamepage;
 
+  private final boolean extractable;
+
   public PreparedComment(Comment comment,
                          ApiUserRef author,
                          String processedMessage,
@@ -84,7 +86,8 @@ public class PreparedComment {
                          boolean undeletable,
                          int answerCount,
                          @Nullable String answerLink,
-                         boolean answerSamepage) {
+                         boolean answerSamepage,
+                         boolean extractable) {
     this.deleteInfo = deleteInfo;
     this.editSummary = editSummary;
     this.postIP = postIP;
@@ -102,6 +105,7 @@ public class PreparedComment {
     this.answerCount = answerCount;
     this.answerLink = answerLink;
     this.answerSamepage = answerSamepage;
+    this.extractable = extractable;
 
     String encodedTitle = Strings.emptyToNull(comment.getTitle().trim());
 
@@ -200,5 +204,9 @@ public class PreparedComment {
 
   public int getUserAgentId() {
     return userAgentId;
+  }
+
+  public boolean isExtractable() {
+    return extractable;
   }
 }

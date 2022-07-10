@@ -24,14 +24,16 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.org.linux.site.MessageNotFoundException;
+import ru.org.linux.topic.Topic;
 import ru.org.linux.user.User;
 import ru.org.linux.util.StringUtil;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.*;
-import java.util.Date;
 
 /**
  * Операции над комментариями
@@ -321,5 +323,26 @@ public class CommentDao {
                             rs.getTimestamp("postdate"),
                             rs.getInt("userid"))
     );
+  }
+
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+  public void updateRepliesForExtractedComment(Comment oldComment, Topic newTopic) {
+    jdbcTemplate.update(
+            "UPDATE comments c SET topic = ? WHERE c.id in \n" +
+                    "                                       (WITH RECURSIVE comments_tree(id, parent_id, topic)\n" +
+                    "                                                                     AS (SELECT c.id, c.replyto, c.topic\n" +
+                    "                                                                         FROM comments c\n" +
+                    "                                                                         WHERE c.replyto = ?\n" +
+                    "                                                                         UNION ALL\n" +
+                    "                                                                         SELECT c.id, c.replyto, c.topic\n" +
+                    "                                                                         FROM comments_tree ct,\n" +
+                    "                                                                              comments c\n" +
+                    "                                                                         WHERE ct.id = c.replyto)\n" +
+                    "                                                  SELECT ct.id\n" +
+                    "                                                  FROM comments_tree ct)",
+            newTopic.getId(),
+            oldComment.getId()
+    );
+    jdbcTemplate.update("UPDATE comments c SET replyto = NULL where c.replyto = ?", oldComment.getId());
   }
 }

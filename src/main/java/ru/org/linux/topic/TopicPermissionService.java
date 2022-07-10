@@ -460,4 +460,19 @@ public class TopicPermissionService {
             && (!group.isPremoderated() || msg.isCommited() || msg.getAuthorUserId() != User.ANONYMOUS_ID);
   }
 
+  public boolean canExtractComment(
+          Comment comment,
+          @Nullable User currentUser,
+          Topic topic
+  ) {
+    if (comment.isDeleted() || topic.isDeleted()) {
+      return false;
+    }
+
+    if (currentUser==null || currentUser.isAnonymous()) {
+      return false;
+    }
+
+    return currentUser.isModerator();
+  }
 }

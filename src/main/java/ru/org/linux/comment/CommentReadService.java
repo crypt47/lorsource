@@ -124,4 +124,8 @@ public class CommentReadService {
 
     return hideSet;
   }
+
+  public void clearCacheForTopic(int topicId) {
+    cache.invalidate(topicId);
+  }
 }

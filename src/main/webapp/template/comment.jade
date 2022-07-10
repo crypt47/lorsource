@@ -121,6 +121,13 @@ mixin comment(comment, enableSchema, topic, showMenu)
         
                             | #{' '}
 
+                            if comment.extractable
+                                li
+                                    a(href='/move_comment.jsp?msgid=#{comment.id}')
+                                        | Вынести в отдельную тему
+
+                            | #{' '}
+
                             if comment.answerCount > 1
                                 li
                                     a(href='#{comment.answerLink}')

@@ -16,26 +16,29 @@
 package ru.org.linux.topic
 
 import com.typesafe.scalalogging.StrictLogging
-import javax.servlet.ServletRequest
-import javax.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.{RequestMapping, RequestMethod, RequestParam}
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.view.RedirectView
 import ru.org.linux.auth.AccessViolationException
+import ru.org.linux.comment.CommentDao
 import ru.org.linux.group.GroupDao
 import ru.org.linux.markup.MessageTextService
 import ru.org.linux.search.SearchQueueSender
-import ru.org.linux.section.{Section, SectionService}
+import ru.org.linux.section.SectionService
 import ru.org.linux.site.Template
 import ru.org.linux.spring.dao.MsgbaseDao
 import ru.org.linux.user.{UserDao, UserErrorException}
 
-import scala.jdk.CollectionConverters._
+import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
 import scala.compat.java8.OptionConverters._
+import scala.jdk.CollectionConverters._
 
 @Controller
-class TopicModificationController(prepareService: TopicPrepareService, messageDao: TopicDao,
+class TopicModificationController(prepareService: TopicPrepareService, topicDao: TopicDao,
+                                  commentDao: CommentDao,
+                                  topicService: TopicService,
                                   sectionService: SectionService, groupDao: GroupDao,
                                   userDao: UserDao, searchQueueSender: SearchQueueSender,
                                   msgbaseDao: MsgbaseDao, textService: MessageTextService) extends StrictLogging {
@@ -48,7 +51,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       throw new AccessViolationException("Not moderator")
     }
 
-    val message = messageDao.getById(msgid)
+    val message = topicDao.getById(msgid)
 
     new ModelAndView("setpostscore", Map(
       "message" -> message,
@@ -85,9 +88,9 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
 
     user.checkCommit()
 
-    val topic = messageDao.getById(msgid)
+    val topic = topicDao.getById(msgid)
 
-    messageDao.setTopicOptions(topic, postscore, sticky, notop)
+    topicDao.setTopicOptions(topic, postscore, sticky, notop)
 
     val out = new StringBuilder
     if (topic.getPostscore != postscore) {
@@ -122,7 +125,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       throw new AccessViolationException("Not moderator")
     }
 
-    val msg = messageDao.getById(msgid)
+    val msg = topicDao.getById(msgid)
     if (msg.isDeleted) {
       throw new AccessViolationException("Сообщение удалено")
     }
@@ -142,7 +145,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
         None
       }
 
-      messageDao.moveTopic(msg, newGrp, moveInfo.asJava)
+      topicDao.moveTopic(msg, newGrp, moveInfo.asJava)
       logger.info(s"topic ${msg.getId} moved by ${tmpl.getCurrentUser.getNick} from news/forum ${msg.getGroupUrl} to forum ${newGrp.getTitle}")
     }
 
@@ -159,7 +162,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       throw new AccessViolationException("Not authorized")
     }
 
-    val topic = messageDao.getById(msgid)
+    val topic = topicDao.getById(msgid)
 
 
     new ModelAndView("mtn", Map (
@@ -168,6 +171,32 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       "sections" -> sectionService.idToSection.asJava,
       "author" -> userDao.getUserCached(topic.getAuthorUserId)
     ).asJava)
+  }
+
+  @RequestMapping(value = Array("/move_comment.jsp"), method = Array(RequestMethod.GET))
+  def extractCommentAsTopic(request: ServletRequest, @RequestParam msgid: Int): ModelAndView = {
+    val tmpl = Template.getTemplate(request)
+
+    if (!tmpl.isModeratorSession) {
+      throw new AccessViolationException("Not authorized")
+    }
+
+    val comment = commentDao.getById(msgid)
+
+    new ModelAndView("move_comment", Map(
+      "message" -> comment,
+      "groups" -> groupDao.getAllForumGroups,
+      "sections" -> sectionService.idToSection.asJava,
+      "author" -> userDao.getUserCached(comment.getUserid)
+    ).asJava)
+  }
+
+  @RequestMapping(value = Array("/move_comment.jsp"), method = Array(RequestMethod.POST))
+  def extractCommentAsTopic(request: ServletRequest, @RequestParam msgid: Int, @RequestParam("moveto") newgr: Int, @RequestParam("topicTitle") topicTitle: String): RedirectView = {
+    val comment = commentDao.getById(msgid)
+    val group = groupDao.getGroup(newgr)
+    val topic = topicService.extractCommentAsTopic(comment, group, topicTitle)
+    new RedirectView(TopicLinkBuilder.baseLink(topic).forceLastmod.build)
   }
 
   @RequestMapping(value = Array("/mtn.jsp"), method = Array(RequestMethod.GET))
@@ -179,7 +208,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       throw new AccessViolationException("Not authorized")
     }
 
-    val topic = messageDao.getById(msgid)
+    val topic = topicDao.getById(msgid)
     val section = sectionService.getSection(topic.getSectionId)
 
     new ModelAndView("mtn", Map(
@@ -197,7 +226,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       throw new AccessViolationException("Not authorized")
     }
 
-    val message = messageDao.getById(msgid)
+    val message = topicDao.getById(msgid)
 
     checkUncommitable(message)
 
@@ -215,11 +244,11 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       throw new AccessViolationException("Not authorized")
     }
 
-    val message = messageDao.getById(msgid)
+    val message = topicDao.getById(msgid)
 
     checkUncommitable(message)
 
-    messageDao.uncommit(message)
+    topicDao.uncommit(message)
 
     searchQueueSender.updateMessage(message.getId, true)
 
