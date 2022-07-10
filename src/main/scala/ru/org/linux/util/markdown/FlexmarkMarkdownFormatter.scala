@@ -71,7 +71,7 @@ class FlexmarkMarkdownFormatter(siteConfig: SiteConfig, topicDao: TopicDao, comm
     }
 
     // uncomment to convert soft-breaks to hard breaks
-    //options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+    options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
 
     options.toImmutable
   }

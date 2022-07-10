@@ -302,7 +302,7 @@ div[itemprop="articleBody"] {
     margin-right: 4em;
     margin-bottom: .5em;
     margin-top: .5em;
-    font-family: sans-serif;
+
     li {
         text-indent: 0em;
     }
@@ -818,7 +818,8 @@ figure.medium-image {
 }
 
 .medium-image-container {
-    margin: 1em auto;
+    max-width: 85%;
+    margin: 1em;
 }
 
 @media screen and (min-width: 768px) {

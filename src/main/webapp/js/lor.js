@@ -414,7 +414,7 @@ $(document).ready(function() {
       var $this = $(this);
       if ($this.height() > 512) {
         $this
-          .append($('<a href="#" class="spoiler-open">Развернуть</a>').on('click', spoilerShow))
+          .append($('<a href="#" class="spoiler-open"><i class="emoji">&#8681;развернуть</i></a>').on('click', spoilerShow))
           .addClass('spoiled');
       }
     });

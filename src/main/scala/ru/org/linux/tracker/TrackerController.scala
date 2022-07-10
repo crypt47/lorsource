@@ -119,10 +119,6 @@ class TrackerController(groupListDao: GroupListDao, userService: UserService) {
     val useNew = !tmpl.getProf.isOldTracker &&
       userAgent.forall(agent => !agent.contains("Opera Mini") && !agent.contains("MSIE"))
 
-    if (user!=null && useNew) {
-      new ModelAndView("tracker-new", params)
-    } else {
       new ModelAndView("tracker", params)
-    }
   }
 }
