@@ -818,7 +818,8 @@ figure.medium-image {
 }
 
 .medium-image-container {
-    margin: 1em auto;
+    max-width: 85%;
+    margin: 1em;
 }
 
 @media screen and (min-width: 768px) {
