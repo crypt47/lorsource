@@ -179,6 +179,7 @@ public class CommentPrepareService {
     userAgent = userAgentDao.getUserAgentById(comment.getUserAgentId());
 
     boolean undeletable = false;
+    boolean extractable = false;
     if (tmpl!=null) {
       DeleteInfo info = null;
 
@@ -187,9 +188,9 @@ public class CommentPrepareService {
       }
 
       undeletable = topicPermissionService.isUndeletable(topic, comment, tmpl.getCurrentUser(), info);
+      extractable = topicPermissionService.canExtractComment(comment, tmpl.getCurrentUser(), topic);
     }
 
-    boolean extractable = topicPermissionService.canExtractComment(comment, tmpl.getCurrentUser(), topic);
 
     return new PreparedComment(comment, ref, processedMessage, replyInfo,
             deletable, editable, remark, userpic, deleteInfo, editSummary,
