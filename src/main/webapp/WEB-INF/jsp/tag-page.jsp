@@ -113,27 +113,6 @@
     .yandex-adaptive { min-height: 90px; width: 100% }
   }
 </style>
-<!-- Yandex.RTB R-A-337082-4 -->
-<div id="yandex_rtb_R-A-337082-4" class="yandex-adaptive"></div>
-<script type="text/javascript">
-    (function(w, d, n, s, t) {
-        w[n] = w[n] || [];
-        w[n].push(function() {
-            Ya.Context.AdvManager.render({
-                blockId: "R-A-337082-4",
-                renderTo: "yandex_rtb_R-A-337082-4",
-                async: true
-            });
-        });
-        t = d.getElementsByTagName("script")[0];
-        s = d.createElement("script");
-        s.type = "text/javascript";
-        s.src = "//an.yandex.ru/system/context.js";
-        s.async = true;
-        t.parentNode.insertBefore(s, t);
-    })(this, this.document, "yandexContextAsyncCallbacks");
-</script>
-</c:if>
 
 <section>
     <c:forEach var="msg" items="${fullNews}">
