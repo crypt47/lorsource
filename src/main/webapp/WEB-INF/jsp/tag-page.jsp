@@ -1,17 +1,17 @@
 <%--
-  ~ Copyright 1998-2022 Linux.org.ru
-  ~    Licensed under the Apache License, Version 2.0 (the "License");
-  ~    you may not use this file except in compliance with the License.
-  ~    You may obtain a copy of the License at
-  ~
-  ~        http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~    Unless required by applicable law or agreed to in writing, software
-  ~    distributed under the License is distributed on an "AS IS" BASIS,
-  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~    See the License for the specific language governing permissions and
-  ~    limitations under the License.
-  --%>
+~ Copyright 1998-2022 Linux.org.ru
+~    Licensed under the Apache License, Version 2.0 (the "License");
+~    you may not use this file except in compliance with the License.
+~    You may obtain a copy of the License at
+~
+~        http://www.apache.org/licenses/LICENSE-2.0
+~
+~    Unless required by applicable law or agreed to in writing, software
+~    distributed under the License is distributed on an "AS IS" BASIS,
+~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~    See the License for the specific language governing permissions and
+~    limitations under the License.
+--%>
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
@@ -45,237 +45,223 @@
 <div class="infoblock" style="font-size: medium">
     <div class="fav-buttons">
         <c:if test="${showFavoriteTagButton}">
-            <c:url var="tagFavUrl" value="/user-filter">
-                <c:param name="newFavoriteTagName" value="${tag}"/>
-            </c:url>
+        <c:url var="tagFavUrl" value="/user-filter">
+        <c:param name="newFavoriteTagName" value="${tag}"/>
+        </c:url>
 
-            <a id="tagFavAdd" href="${tagFavUrl}" title="В избранное"><i class="icon-eye"></i></a>
+        <a id="tagFavAdd" href="${tagFavUrl}" title="В избранное"><i class="icon-eye"></i></a>
         </c:if>
         <c:if test="${not template.sessionAuthorized}">
-            <a id="tagFavNoth" href="#"><i class="icon-eye"  title="Добавить в избранное"></i></a>
+        <a id="tagFavNoth" href="#"><i class="icon-eye"  title="Добавить в избранное"></i></a>
         </c:if>
         <c:if test="${showUnFavoriteTagButton}">
-            <c:url var="tagFavUrl" value="/user-filter"/>
+        <c:url var="tagFavUrl" value="/user-filter"/>
 
-            <a id="tagFavAdd" href="${tagFavUrl}" title="Удалить из избранного" class="selected"><i class="icon-eye"></i></a>
+        <a id="tagFavAdd" href="${tagFavUrl}" title="Удалить из избранного" class="selected"><i class="icon-eye"></i></a>
         </c:if>
         <br><span id="favsCount" title="Кол-во пользователей, добавивших в избранное">${favsCount}</span>
 
-	<br>
+        <br>
 
         <c:if test="${showIgnoreTagButton}">
-            <c:url var="tagIgnUrl" value="/user-filter">
-                <c:param name="newIgnoreTagName" value="${tag}"/>
-            </c:url>
+        <c:url var="tagIgnUrl" value="/user-filter">
+        <c:param name="newIgnoreTagName" value="${tag}"/>
+        </c:url>
 
-            <a id="tagIgnore" href="${tagIgnUrl}" title="Игнорировать"><i class="icon-eye-with-line"></i></a>
+        <a id="tagIgnore" href="${tagIgnUrl}" title="Игнорировать"><i class="icon-eye-with-line"></i></a>
         </c:if>
         <c:if test="${!showIgnoreTagButton && !showUnIgnoreTagButton}">
-            <a id="tagIgnNoth" href="#"><i class="icon-eye-with-line" title="Игнорировать"></i></a>
+        <a id="tagIgnNoth" href="#"><i class="icon-eye-with-line" title="Игнорировать"></i></a>
         </c:if>
         <c:if test="${showUnIgnoreTagButton}">
-            <c:url var="tagIgnUrl" value="/user-filter"/>
+        <c:url var="tagIgnUrl" value="/user-filter"/>
 
-            <a id="tagIgnore" href="${tagFavUrl}" title="Перестать игнорировать" class="selected"><i class="icon-eye-with-line"></i></a>
+        <a id="tagIgnore" href="${tagFavUrl}" title="Перестать игнорировать" class="selected"><i class="icon-eye-with-line"></i></a>
         </c:if>
         <br><span id="ignoreCount" title="Кол-во пользователей, игнорирующих тег">${ignoreCount}</span>
     </div>
-  <p>
+    <p>
     Всего сообщений: ${counter}
-  </p>
-  <c:if test="${not empty relatedTags}">
+    </p>
+    <c:if test="${not empty relatedTags}">
     См. также: <l:tags list="${relatedTags}"/>
-  </c:if>
+    </c:if>
 
-  <c:if test="${showDelete}">
+    <c:if test="${showDelete}">
     <c:url var="edit_url" value="/tags/change">
-      <c:param name="tagName" value="${tag}"/>
+    <c:param name="tagName" value="${tag}"/>
     </c:url>
     [<a href="${edit_url}">Переименовать тег</a>]
 
     <c:url var="delete_url" value="/tags/delete">
-      <c:param name="tagName" value="${tag}"/>
+    <c:param name="tagName" value="${tag}"/>
     </c:url>
     [<a href="${delete_url}">Удалить тег</a>]
-  </c:if>
+    </c:if>
 </div>
-
-<c:if test="${showAdsense and counter>=5}">
-<style>
-  @media screen and (max-width: 480px) {
-    .yandex-adaptive {
-      min-height: 250px;
-      width: 100%;
-    }
-  }
-
-  @media screen and (min-width: 481px) {
-    .yandex-adaptive { min-height: 90px; width: 100% }
-  }
-</style>
 
 <section>
     <c:forEach var="msg" items="${fullNews}">
-        <lor:news
-                preparedMessage="${msg.preparedTopic}"
-                messageMenu="${msg.topicMenu}"
-                multiPortal="false"
-                minorAsMajor="true"
-                moderateMode="false"/>
+    <lor:news
+                         preparedMessage="${msg.preparedTopic}"
+                         messageMenu="${msg.topicMenu}"
+                         multiPortal="false"
+                         minorAsMajor="true"
+                         moderateMode="false"/>
     </c:forEach>
 </section>
 
 <c:if test="${not empty briefNews}">
 <section>
-   <h2>Еще новости</h2>
+    <h2>Еще новости</h2>
 
-  <div class="container" id="tag-page-news">
-    <c:forEach var="map" items="${briefNews}" varStatus="iter">
-      <section>
-        <c:forEach var="entry" items="${map}">
-          <h3>${entry._1()}</h3>
-          <ul>
-            <c:forEach var="msg" items="${entry._2()}">
-              <li>
-                <c:if test="${msg.group.defined}">
-                  <span class="group-label">${msg.group.get()}</span>
-                </c:if>
-                <a href="${msg.url}"><l:title>${msg.title}</l:title></a>
-                <c:if test="${msg.commentCount>0}">(<lor:comment-count count="${msg.commentCount}"/>)</c:if>
-              </li>
+    <div class="container" id="tag-page-news">
+        <c:forEach var="map" items="${briefNews}" varStatus="iter">
+        <section>
+            <c:forEach var="entry" items="${map}">
+            <h3>${entry._1()}</h3>
+            <ul>
+                <c:forEach var="msg" items="${entry._2()}">
+                <li>
+                    <c:if test="${msg.group.defined}">
+                    <span class="group-label">${msg.group.get()}</span>
+                    </c:if>
+                    <a href="${msg.url}"><l:title>${msg.title}</l:title></a>
+                    <c:if test="${msg.commentCount>0}">(<lor:comment-count count="${msg.commentCount}"/>)</c:if>
+                </li>
+                </c:forEach>
+            </ul>
             </c:forEach>
-          </ul>
+        </section>
         </c:forEach>
-      </section>
-    </c:forEach>
-  </div>
-
-  <div class="tag-page-buttons">
-    <div>
-        <a href="${addNews}" class="btn btn-primary">Добавить новость</a>
-        <c:if test="${not empty moreNews}">
-          <a href="${moreNews}" class="btn btn-default">Все новости</a>
-        </c:if>
     </div>
-  </div>
+
+    <div class="tag-page-buttons">
+        <div>
+            <a href="${addNews}" class="btn btn-primary">Добавить новость</a>
+            <c:if test="${not empty moreNews}">
+            <a href="${moreNews}" class="btn btn-default">Все новости</a>
+            </c:if>
+        </div>
+    </div>
 </section>
 </c:if>
 
 <c:if test="${not empty polls}">
-  <section>
+<section>
     <h2>Опросы</h2>
 
     <div class="container" id="tag-page-polls">
-      <c:forEach var="map" items="${polls}">
+        <c:forEach var="map" items="${polls}">
         <section>
-          <c:forEach var="entry" items="${map}">
+            <c:forEach var="entry" items="${map}">
             <h3>${entry._1()}</h3>
             <ul>
-              <c:forEach var="msg" items="${entry._2()}">
+                <c:forEach var="msg" items="${entry._2()}">
                 <li>
-                  <c:if test="${msg.group.defined}">
+                    <c:if test="${msg.group.defined}">
                     <span class="group-label">${msg.group.get()}</span>
-                  </c:if>
-                  <a href="${msg.url}">${msg.title}</a>
-                  <c:if test="${msg.commentCount>0}">(<lor:comment-count count="${msg.commentCount}"/>)</c:if>
+                    </c:if>
+                    <a href="${msg.url}">${msg.title}</a>
+                    <c:if test="${msg.commentCount>0}">(<lor:comment-count count="${msg.commentCount}"/>)</c:if>
                 </li>
-              </c:forEach>
+                </c:forEach>
             </ul>
-          </c:forEach>
+            </c:forEach>
         </section>
-      </c:forEach>
+        </c:forEach>
     </div>
 
     <div class="tag-page-buttons">
-      <div>
-        <c:if test="${not empty pollsAdd}">
-          <a href="${pollsAdd}" class="btn btn-primary">Добавить опрос</a>
-        </c:if>
-        <c:if test="${not empty pollsMore}">
-          <a href="${pollsMore}" class="btn btn-default">Все темы</a>
-        </c:if>
-      </div>
+        <div>
+            <c:if test="${not empty pollsAdd}">
+            <a href="${pollsAdd}" class="btn btn-primary">Добавить опрос</a>
+            </c:if>
+            <c:if test="${not empty pollsMore}">
+            <a href="${pollsMore}" class="btn btn-default">Все темы</a>
+            </c:if>
+        </div>
     </div>
-  </section>
+</section>
 </c:if>
 
 <c:if test="${not empty gallery}">
 <section class="infoblock">
-  <h2>Галерея</h2>
+    <h2>Галерея</h2>
 
-  <div id="tag-page-gallery">
-    <c:forEach var="item" items="${gallery}">
-      <article>
-        <c:url var="url" value="${item.item.link}"/>
-        <a href="${url}">
-          <img
-                  src="${item.item.image.medium}"
-                  srcset="${item.item.image.srcset}"
-                  sizes="(min-width: 40em) 32vw, 100vw"
-                  alt="Скриншот: <l:title>${item.item.title}</l:title>">
-        </a><br>
-        <a href="${url}"><l:title>${item.item.title}</l:title></a><br>
-        ${item.user.nick}, <lor:dateinterval date="${item.item.commitDate}"/><br>
-        (<lor:comment-count count="${item.item.stat}"/>)
-      </article>
-    </c:forEach>
-  </div>
-
-  <div class="tag-page-buttons">
-    <div>
-      <c:if test="${not empty addGallery}">
-        <a href="${addGallery}" class="btn btn-primary">Добавить изображение</a>
-      </c:if>
-      <c:if test="${not empty moreGallery}">
-        <a href="${moreGallery}" class="btn btn-default">Все изображения</a>
-      </c:if>
-    </div>
-  </div>
-</section>
-</c:if>
-
-<c:if test="${not empty forum}">
-  <section>
-    <h2>Форум</h2>
-
-    <div class="container" id="tag-page-forum">
-      <c:forEach var="map" items="${forum}">
-        <section>
-          <c:forEach var="entry" items="${map}">
-            <h3>${entry._1()}</h3>
-            <ul>
-              <c:forEach var="msg" items="${entry._2()}">
-                <li>
-                  <c:if test="${msg.group.defined}">
-                    <span class="group-label">${msg.group.get()}</span>
-                  </c:if>
-                  <a href="${msg.url}">${msg.title}</a>
-                  <c:if test="${msg.commentCount>0}">(<lor:comment-count count="${msg.commentCount}"/>)</c:if>
-                </li>
-              </c:forEach>
-            </ul>
-          </c:forEach>
-        </section>
-      </c:forEach>
+    <div id="tag-page-gallery">
+        <c:forEach var="item" items="${gallery}">
+        <article>
+            <c:url var="url" value="${item.item.link}"/>
+            <a href="${url}">
+                <img
+                        src="${item.item.image.medium}"
+                        srcset="${item.item.image.srcset}"
+                        sizes="(min-width: 40em) 32vw, 100vw"
+                        alt="Скриншот: <l:title>${item.item.title}</l:title>">
+            </a><br>
+            <a href="${url}"><l:title>${item.item.title}</l:title></a><br>
+            ${item.user.nick}, <lor:dateinterval date="${item.item.commitDate}"/><br>
+            (<lor:comment-count count="${item.item.stat}"/>)
+        </article>
+            </c:forEach>
     </div>
 
     <div class="tag-page-buttons">
-      <div>
-        <c:if test="${not empty forumAdd}">
-          <a href="${forumAdd}" class="btn btn-primary">Добавить тему</a>
-        </c:if>
-        <c:if test="${not empty forumMore}">
-          <a href="${forumMore}" class="btn btn-default">Все темы</a>
-        </c:if>
-      </div>
+        <div>
+            <c:if test="${not empty addGallery}">
+            <a href="${addGallery}" class="btn btn-primary">Добавить изображение</a>
+            </c:if>
+            <c:if test="${not empty moreGallery}">
+            <a href="${moreGallery}" class="btn btn-default">Все изображения</a>
+            </c:if>
+        </div>
     </div>
-  </section>
-</c:if>
+</section>
+        </c:if>
 
-<script type="text/javascript">
-  $script.ready('lorjs', function() {
-    tag_memories_form_setup("${tag}", "${fn:escapeXml(csrfToken)}");
-  });
-</script>
+        <c:if test="${not empty forum}">
+        <section>
+            <h2>Форум</h2>
 
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+            <div class="container" id="tag-page-forum">
+                <c:forEach var="map" items="${forum}">
+                <section>
+                    <c:forEach var="entry" items="${map}">
+                    <h3>${entry._1()}</h3>
+                    <ul>
+                        <c:forEach var="msg" items="${entry._2()}">
+                        <li>
+                            <c:if test="${msg.group.defined}">
+                            <span class="group-label">${msg.group.get()}</span>
+                            </c:if>
+                            <a href="${msg.url}">${msg.title}</a>
+                            <c:if test="${msg.commentCount>0}">(<lor:comment-count count="${msg.commentCount}"/>)</c:if>
+                        </li>
+                        </c:forEach>
+                    </ul>
+                    </c:forEach>
+                </section>
+                </c:forEach>
+            </div>
+
+            <div class="tag-page-buttons">
+                <div>
+                    <c:if test="${not empty forumAdd}">
+                    <a href="${forumAdd}" class="btn btn-primary">Добавить тему</a>
+                    </c:if>
+                    <c:if test="${not empty forumMore}">
+                    <a href="${forumMore}" class="btn btn-default">Все темы</a>
+                    </c:if>
+                </div>
+            </div>
+        </section>
+        </c:if>
+
+        <script type="text/javascript">
+                $script.ready('lorjs', function() {
+                tag_memories_form_setup("${tag}", "${fn:escapeXml(csrfToken)}");
+                });
+        </script>
+
+        <jsp:include page="/WEB-INF/jsp/footer.jsp"/>
