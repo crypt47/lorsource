@@ -42,7 +42,7 @@
 
 <h1><i class="icon-tag"></i> ${title}</h1>
 
-<div class="infoblock" style="font-size: medium">
+<div class="mini-news" style="font-size: medium">
     <div class="fav-buttons">
         <c:if test="${showFavoriteTagButton}">
         <c:url var="tagFavUrl" value="/user-filter">
