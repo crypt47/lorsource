@@ -292,7 +292,8 @@
     <br>
 </c:if>
 
-<c:if test="${template.sessionAuthorized and !currentUser and not user.moderator}">
+<%--<c:if test="${template.sessionAuthorized and !currentUser and not user.moderator}">--%>
+<c:if test="${template.sessionAuthorized and !currentUser}">
     <c:if test="${ignored}">
         <form name='i_unblock' method='post' action='<c:url value="/user-filter/ignore-user"/>'>
             <lor:csrf/>
