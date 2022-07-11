@@ -47,9 +47,9 @@ public class IgnoreListDao {
   }
 
   public void addUser(User listOwner, User userToIgnore) throws AccessViolationException {
-    if (userToIgnore.isModerator()) {
+/*    if (userToIgnore.isModerator()) {
       throw new AccessViolationException("Нельзя игнорировать модератора");
-    }
+    }*/
 
     try {
       jdbcTemplate.update(
