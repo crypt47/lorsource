@@ -25,7 +25,6 @@
 <head>
 <link rel="stylesheet" type="text/css" href="/${template.style}/combined.css?MAVEN_BUILD_TIMESTAMP">
 
-<link rel="yandex-tableau-widget" href="/manifest.json" />
 <meta name="referrer" content="always">
 
 <script type="text/javascript">
