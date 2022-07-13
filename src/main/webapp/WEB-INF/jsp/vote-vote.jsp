@@ -15,7 +15,7 @@
   ~    limitations under the License.
   --%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 <%--@elvariable id="message" type="ru.org.linux.topic.Topic"--%>
 <%--@elvariable id="poll" type="ru.org.linux.poll.Poll"--%>
 

@@ -22,7 +22,7 @@
         >
   <absolute-ordering/>
 
-  <display-name>linux.org.ru</display-name>
+  <display-name>tagspace</display-name>
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>

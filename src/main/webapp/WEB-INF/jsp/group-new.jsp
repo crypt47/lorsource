@@ -34,7 +34,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="ftm" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>

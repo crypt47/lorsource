@@ -4,7 +4,7 @@
 <%@ tag import="ru.org.linux.spring.SiteConfig" %>
 <%@ tag pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="lor" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="lor" uri="http://tagspace" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <%@ attribute name="ipBlockInfo" required="false" type="ru.org.linux.auth.IPBlockInfo" %>

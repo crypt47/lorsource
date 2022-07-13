@@ -16,7 +16,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="lor" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="lor" uri="http://tagspace" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
   <h2>Облако Меток</h2>

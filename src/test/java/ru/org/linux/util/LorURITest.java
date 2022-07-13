@@ -41,7 +41,7 @@ public class LorURITest {
   @Before
   public void initTest() throws Exception {
     mainURI = new URI("http://127.0.0.1:8080/", true, "UTF-8");
-    mainLORURI = new URI("http://www.linux.org.ru/", true, "UTF-8");
+    mainLORURI = new URI("http://linuxtalks.co/", true, "UTF-8");
     canon = new URI("https://127.0.0.1:8085/", true);
 
     messageDao = mock(TopicDao.class);
@@ -244,9 +244,9 @@ public class LorURITest {
 
   @Test
   public void test13() throws Exception {
-    String url13_1 = "http://www.linux.org.ru/view-news.jsp?tag=c%2B%2B";
-    String url13_2 = "http://www.linux.org.ru/view-news.jsp?tag=c++";
-    String url13_3 = "http://www.linux.org.ru/view-news.jsp?tag=c+c";
+    String url13_1 = "http://linuxtalks.co/view-news.jsp?tag=c%2B%2B";
+    String url13_2 = "http://linuxtalks.co/view-news.jsp?tag=c++";
+    String url13_3 = "http://linuxtalks.co/view-news.jsp?tag=c+c";
     LorURL lorURI1 = new LorURL(mainLORURI, url13_1);
     LorURL lorURI2 = new LorURL(mainLORURI, url13_2);
     LorURL lorURI3 = new LorURL(mainLORURI, url13_3);
@@ -314,17 +314,17 @@ public class LorURITest {
     assertEquals("127.0.0.1:8080/forum/security/1948661?cid=1948668", uri1.formatUrlBody(80));
     // url == mainURL и mainURL host
     LorURL uri2 = new LorURL(mainLORURI, "https://linuxtalks.co/search.jsp?q=%D0%B1%D0%BB%D1%8F&oldQ=&range=ALL&interval=ALL&user=&_usertopic=on");
-    assertEquals("www.linux.org.ru/...", uri2.formatUrlBody(10));
-    assertEquals("www.linux.org.ru/...", uri2.formatUrlBody(20));
+    assertEquals("linuxtalks.co/...", uri2.formatUrlBody(10));
+    assertEquals("linuxtalks.co/...", uri2.formatUrlBody(20));
     assertEquals(20, uri2.formatUrlBody(20).length());
-    assertEquals("www.linux.org.ru/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertop...", uri2.formatUrlBody(80));
+    assertEquals("linuxtalks.co/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertop...", uri2.formatUrlBody(80));
     assertEquals(80, uri2.formatUrlBody(80).length());
     // unescaped url == mainURL и mainURL host
     LorURL uri3 = new LorURL(mainLORURI, "https://linuxtalks.co/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertopic=on");
-    assertEquals("www.linux.org.ru/...", uri3.formatUrlBody(10));
-    assertEquals("www.linux.org.ru/...", uri3.formatUrlBody(20));
+    assertEquals("linuxtalks.co/...", uri3.formatUrlBody(10));
+    assertEquals("linuxtalks.co/...", uri3.formatUrlBody(20));
     assertEquals(20, uri3.formatUrlBody(20).length());
-    assertEquals("www.linux.org.ru/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertop...", uri3.formatUrlBody(80));
+    assertEquals("linuxtalks.co/search.jsp?q=бля&oldQ=&range=ALL&interval=ALL&user=&_usertop...", uri3.formatUrlBody(80));
     assertEquals(80, uri3.formatUrlBody(80).length());
 
     // unescaped url != mainURL и mainURL host
@@ -348,7 +348,7 @@ public class LorURITest {
   
   @Test
   public void testBadId() throws Exception {
-    LorURL uri = new LorURL(mainLORURI, "http://www.linux.org.ru/forum/talks/12345678910");
+    LorURL uri = new LorURL(mainLORURI, "http://linuxtalks.co/forum/talks/12345678910");
 
     assertTrue(uri.isTrueLorUrl());
     assertFalse(uri.isMessageUrl());

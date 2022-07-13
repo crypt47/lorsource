@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 <%@ page contentType="text/html; charset=utf-8" %>
 <%--
   ~ Copyright 1998-2016 Linux.org.ru

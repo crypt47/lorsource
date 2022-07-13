@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%--
 ~ Copyright 1998-2022 Linux.org.ru

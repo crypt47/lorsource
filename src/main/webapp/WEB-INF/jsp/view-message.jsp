@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
 <%--
 ~ Copyright 1998-2022 Linux.org.ru

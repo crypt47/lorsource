@@ -21,7 +21,7 @@
     <description>Linux.org.ru utility tags</description>
     <tlib-version>1.0</tlib-version>
     <short-name>lor</short-name>
-    <uri>http://www.linux.org.ru</uri>
+    <uri>http://tagspace</uri>
     
     <function>
         <name>getMonthName</name>

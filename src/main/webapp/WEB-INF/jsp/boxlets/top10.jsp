@@ -15,8 +15,8 @@
 <%--@elvariable id="messages" type="java.util.List<ru.org.linux.topic.TopTenDao.TopTenMessageDTO>"--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="lor" uri="http://www.linux.org.ru" %>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="lor" uri="http://tagspace" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <h2>Top 10</h2>
 

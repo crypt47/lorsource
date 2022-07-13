@@ -17,7 +17,7 @@
   --%>
 <%--@elvariable id="topic" type="ru.org.linux.topic.Topic"--%>
 <%--@elvariable id="comment" type="ru.org.linux.comment.PreparedComment"--%>
-<%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="l" uri="http://tagspace" %>
 
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
 

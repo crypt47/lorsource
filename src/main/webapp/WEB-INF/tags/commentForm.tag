@@ -17,7 +17,7 @@
     <%@ tag pageEncoding="UTF-8"%>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
-    <%@ taglib prefix="l" uri="http://www.linux.org.ru" %>
+    <%@ taglib prefix="l" uri="http://tagspace" %>
     <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
     <%@ attribute name="topic" required="true" type="ru.org.linux.topic.Topic" %>

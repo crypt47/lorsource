@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ page import="ru.org.linux.site.Template"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="lor" uri="http://www.linux.org.ru" %>
+<%@ taglib prefix="lor" uri="http://tagspace" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="lorDir" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
