@@ -495,7 +495,8 @@
 <c:if test="${currentUser}">
     <h2>Действия</h2>
     <ul>
-        <li><a href="<c:url value="/user-filter"/>">Настройка фильтрации сообщений</a></li>
+        <li><a href="<c:url value="/user-filter"/>">Настройка тэгов</a></li>
+        <li><a href="<c:url value="/user-filter"/>">Настройка игнора</a></li>
         <c:if test="${hasRemarks}">
             <li>
                 <a href="/people/${user.nick}/remarks">Просмотр заметок о пользователях</a>
@@ -605,7 +606,7 @@
                 <td>
                     <strong>${item.item.action.description}</strong>
                     <c:if test="${not item.self}">
-                        &emsp;<img src="/img/tuxlor.png"><lor:user user="${item.actionUser}"/>
+                        <i class="icon-system-color emoji">&#128100;</i><lor:user user="${item.actionUser}"/>
                     </c:if><br>
                     <c:if test="${not empty item.item.options}">
                         <c:forEach items="${item.options}" var="option">
