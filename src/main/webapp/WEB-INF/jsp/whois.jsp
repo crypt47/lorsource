@@ -426,7 +426,7 @@
 
             <div class="control-group">
               <div class="controls">
-                <button type="submit" name="action" value="freeze">
+                <button type="submit" name="action" value="freeze" class="btn btn-small btn-default">
                      Отправить
                 </button>
               </div>
@@ -443,11 +443,11 @@
             <lor:csrf/>
             <input type='hidden' name='id' value='${user.id}'>
             <c:if test="${user.blocked}">
-                <button type='submit' name='action' value="unblock">разблокировать</button>
+                <button type='submit' name='action' value="unblock" class="btn btn-small btn-default">разблокировать</button>
             </c:if>
             <c:if test="${not user.blocked}">
                 <label>Причина: <input type="text" name="reason" size="40" required></label>
-                <button type='submit' name='action' value="block">заблокировать</button><br>
+                <button type='submit' name='action' value="block" class="btn btn-small btn-default">заблокировать</button><br>
 
                 [<a href="/people/${user.nick}/profile?wipe">перейти к блокировке с удалением сообщений</a>]
             </c:if>
@@ -469,7 +469,7 @@
     <lor:csrf/>
     <input type='hidden' name='id' value='${user.id}'>
     <input type='hidden' name='action' value='remove_userinfo'>
-    <button type='submit'>Удалить текст</button>
+    <button type='submit' class="btn btn-small btn-default">Удалить текст</button>
 </form>
 
 <p>
@@ -482,10 +482,10 @@
     <input type='hidden' name='action' value='toggle_corrector'>
     <c:choose>
         <c:when test="${user.corrector}">
-            <button type='submit'>Убрать права корректора</button>
+            <button type='submit' class="btn btn-small btn-default">Убрать права корректора</button>
         </c:when>
         <c:otherwise>
-            <button type='submit'>Сделать корректором</button>
+            <button type='submit' class="btn btn-small btn-default">Сделать корректором</button>
         </c:otherwise>
     </c:choose>
 </form>
