@@ -43,14 +43,11 @@
 <jsp:include page="header.jsp"/>
 <H1>Регистрация</H1>
 <p>
-Чтобы с гарантией получить письмо, используйте одного из широкоизвестных email-провайдеров.<br>
-На левые почтовые сервера емейлы могут не придти.<br>
-В целях защиты регистрационные письма приходят в дневное время. А также могут приходить<br>
-с задержкой в сутки.<br>
-
-<a href="/lostpwd.jsp">Восстановить пароль</a>.
-</p>
-
+    <div class="help-block" style="max-width:20rem;">
+	Для автоматического повышения скора пользователи linux.org.ru могут добавить фразу 'TrueMan' в свой профиль. Автоматическая проверка
+	производится в начале каждого часа. 
+	Ручная проверка и начисление скора производится в разделе <a href="https://linuxtalks.co/forum/feedback/2057">Наше сообщество.</a>
+    </div>
 <form:form modelAttribute="form" method="POST" action="register.jsp" id="registerForm">
     <lor:csrf/>
     <form:errors element="div" cssClass="error"/>
@@ -58,11 +55,14 @@
   <div class="control-group">
     <label for="nick">Login</label>
     <form:input class="btn btn-selected" path="nick" required="required" size="40" cssErrorClass="error"
-                title="Только латинские буквы, цифры и знаки _-, в первом символе только буквы"
-                pattern="[a-zA-Z][a-zA-Z0-9_-]*"
+                title="<br>Только латинские буквы, цифры и знаки _-,<br>
+                 в первом символе только буквы.<br>
+                 И не короче 5 символов.<br>"
+                pattern="[a-zA-Z][a-zA-Z0-9_-][a-zA-Z0-9_-][a-zA-Z0-9_-][a-zA-Z0-9_-][a-zA-Z0-9_-]*"
                 autocapitalize="off"
                 autofocus="autofocus" maxlength="<%= Integer.toString(User.MAX_NICK_LENGTH) %>"/>
-    <form:errors path="nick" element="span" cssClass="error help-inline" for="nick"/>
+                <br>
+    <form:errors path="nick" element="span" cssClass="error help-inline" for="nick"/><br>
     <div class="help-block">
       мы сохраняем регистр, в котором введён логин
     </div>
@@ -70,11 +70,14 @@
 
   <div class="control-group">
     <label for="email">E-mail</label>
-    <form:input readonly="${invite!=null}" path="email" type="email" required="required" cssClass="email btn btn-selected" size="40" cssErrorClass="error"/>
-    <form:errors class="btn btn-selected" path="email" element="span" cssClass="error help-inline" for="email"/>
-    <div class="help-block">
-      позже этот e-mail пригодится для восстановления<br>
-      учётной записи, если вы потеряете к ней доступ
+    <form:input readonly="${invite!=null}" path="email" type="email" required="required" cssClass="email btn btn-selected" size="40" cssErrorClass="error"/><br>
+    <form:errors class="btn btn-selected" path="email" element="span" cssClass="error help-inline" for="email"/><br>
+    <div class="help-block" style="max-width:20rem;">
+    <ul>Чтобы с гарантией получить письмо, 
+    <li>используйте одного из широкоизвестных email-провайдеров.</li>
+    <li>На левые почтовые сервера емейлы могут не придти.</li>
+    <li>В целях защиты регистрационные письма приходят в дневное время.</li>
+    </ul>
     </div>
   </div>
 
@@ -115,4 +118,7 @@
     <button type=submit class="btn btn-primary">Зарегистрироваться</button>
   </div>
 </form:form>
+<a href="/lostpwd.jsp">Восстановить пароль</a>.
+</p>
+
 <jsp:include page="footer.jsp"/>

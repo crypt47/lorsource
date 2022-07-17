@@ -252,13 +252,13 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
   @RequestMapping(Array("check-login"))
   def ajaxLoginCheck(@RequestParam nick: String): String = {
     if (nick.isEmpty) {
-      "Не задан nick."
+      "<br>Не задан nick.<br>"
     } else if (!StringUtil.checkLoginName(nick)) {
-      "Некорректное имя пользователя."
+      "<br>Некорректное имя пользователя.<br>"
     } else if (nick != null && nick.length > User.MAX_NICK_LENGTH) {
-      "Слишком длинное имя пользователя."
+      "<br>Слишком длинное имя пользователя.<br>"
     } else if (userDao.isUserExists(nick) || userDao.hasSimilarUsers(nick)) {
-      "Это имя пользователя уже используется. Пожалуйста выберите другое имя."
+      "<br>Это имя пользователя уже используется.<br>"
     } else {
       "true"
     }
@@ -292,23 +292,23 @@ class RegisterController(captcha: CaptchaService, rememberMeServices: RememberMe
     val tmpl = Template.getTemplate(request)
 
     if (!tmpl.isSessionAuthorized) {
-      throw new AccessViolationException("Not authorized")
+      throw new AccessViolationException("<br>Not authorized<br>")
     }
 
     val currentUser = tmpl.getCurrentUser
 
     if (!userService.canInvite(currentUser)) {
-      throw new AccessViolationException("Вы не можете пригласить нового пользователя")
+      throw new AccessViolationException("<br>Вы не можете пригласить нового пользователя<br>")
     }
 
     if (userDao.getByEmail(email, false) != null) {
-      throw new AccessViolationException("Пользователь с этим адресом уже зарегистрирован")
+      throw new AccessViolationException("<br>Пользователь с этим адресом уже зарегистрирован<br>")
     }
 
     val parsedEmail = new InternetAddress(email)
 
     if (!registerRequestValidator.isGoodDomainEmail(parsedEmail)) {
-      throw new AccessViolationException("Некорректный email домен")
+      throw new AccessViolationException("<br>Некорректный email домен<br>")
     }
 
     val (token, validUntil) = invitesDao.createInvite(currentUser, email)
