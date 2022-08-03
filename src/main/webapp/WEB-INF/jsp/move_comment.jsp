@@ -23,7 +23,10 @@
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
 <title>Вынос</title>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
-вынос ветки комментария <strong>${message.id}</strong> как отдельную тему:
+<c:if test="${not template.moderatorSession}">
+Если вы считаете, что данное сообщение не связано с обсуждаемой темой и носит личный характер,<br>
+</c:if>
+Вы можете вынести это сообщение (<strong>${message.id}</strong>) и все связанные с ним в отдельную тему. :
 <form method="post" action="/move_comment.jsp">
     <lor:csrf/>
     <input type=hidden name="msgid" value="${message.id}">
@@ -32,9 +35,12 @@
             <td>Раздел: </td>
             <td>
                 <select name="moveto">
+            	    <c:if test="${template.moderatorSession}">
                     <c:forEach var="group" items="${groups}">
                         <option value="${group.id}">${group.title} (${sections.get(group.sectionId).name})</option>
                     </c:forEach>
+                    </c:if>
+                    <option value="19390">Клуб</option>
                 </select>
             </td>
         </tr>

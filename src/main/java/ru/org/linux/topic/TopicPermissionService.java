@@ -473,6 +473,13 @@ public class TopicPermissionService {
       return false;
     }
 
-    return currentUser.isModerator();
+    if (currentUser.isModerator())  {
+	return true;
+    }
+
+    if (currentUser.getScore() > 200) {
+	return true;
+    }
+    return false;
   }
 }

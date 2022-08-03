@@ -121,9 +121,9 @@ class TopicModificationController(prepareService: TopicPrepareService, topicDao:
   def moveTopic(request: ServletRequest, @RequestParam msgid: Int, @RequestParam("moveto") newgr: Int): RedirectView = {
     val tmpl = Template.getTemplate(request)
 
-    if (!tmpl.isModeratorSession) {
+    /*if (!tmpl.isModeratorSession) {
       throw new AccessViolationException("Not moderator")
-    }
+    }*/
 
     val msg = topicDao.getById(msgid)
     if (msg.isDeleted) {
@@ -158,9 +158,9 @@ class TopicModificationController(prepareService: TopicPrepareService, topicDao:
   def moveTopicFormForum(request: ServletRequest, @RequestParam msgid: Int): ModelAndView = {
     val tmpl = Template.getTemplate(request)
 
-    if (!tmpl.isModeratorSession) {
+    /*if (!tmpl.isModeratorSession) {
       throw new AccessViolationException("Not authorized")
-    }
+    }*/
 
     val topic = topicDao.getById(msgid)
 
@@ -177,9 +177,9 @@ class TopicModificationController(prepareService: TopicPrepareService, topicDao:
   def extractCommentAsTopic(request: ServletRequest, @RequestParam msgid: Int): ModelAndView = {
     val tmpl = Template.getTemplate(request)
 
-    if (!tmpl.isModeratorSession) {
+    /*if (!tmpl.isModeratorSession) {
       throw new AccessViolationException("Not authorized")
-    }
+    }*/
 
     val comment = commentDao.getById(msgid)
 
@@ -204,9 +204,9 @@ class TopicModificationController(prepareService: TopicPrepareService, topicDao:
   def moveTopicForm(request: ServletRequest, @RequestParam msgid: Int): ModelAndView = {
     val tmpl = Template.getTemplate(request)
 
-    if (!tmpl.isModeratorSession) {
+    /*if (!tmpl.isModeratorSession) {
       throw new AccessViolationException("Not authorized")
-    }
+    }*/
 
     val topic = topicDao.getById(msgid)
     val section = sectionService.getSection(topic.getSectionId)
