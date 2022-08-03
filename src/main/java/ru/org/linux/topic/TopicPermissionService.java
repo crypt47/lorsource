@@ -477,7 +477,7 @@ public class TopicPermissionService {
 	return true;
     }
 
-    if (currentUser.getScore() > 200) {
+    if (currentUser.getScore() > 500) {
 	return true;
     }
     return false;
